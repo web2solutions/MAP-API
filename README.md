@@ -87,7 +87,28 @@ install Data::Dump
 install YAML suport
 
 	cpanm YAML
+	
+install  Any::Moose
 
+	cpanm Any::Moose
+	
+install Mouse
+
+	cpanm Mouse
+
+install AnyMQ
+
+	cpanm --force AnyMQ
+
+
+install Web::Hippie
+
+	cpanm --force Web::Hippie
+	
+install MooseX Traits
+
+	cpanm MooseX::Traits
+	
 
 install Twiggy
 
