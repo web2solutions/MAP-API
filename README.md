@@ -1,18 +1,26 @@
 # MAP-API
 
+Descrition
 
-MAP API RESTFul psgi application
+	MAP API RESTFul psgi application
 
 Language: Perl
+
 Framework: Dancer
+
+Application server: Centos 5.9
+
+Database driver on Application server: DBD Sybase
+
+Database Server: SQL Server
+
+
+The Centos 5.9 OS uses the Perl 5.8 distribution, we will install a independently perl distribution and use it, then avoiding to use the official OS perl distribution.
+
+In this way, we need to install perlbrew to be able to have and manage multiple Perl distributions installed on the server
 
 
 ## Environment deploy
-
-Application server -> Centos 5.9
-
-The Centos 5.9 OS uses the Perl 5.8 distribution, we will install standalone perl distributions and use it avoiding to use the OS perl distribution.
-
 
 install perlbrew
 
