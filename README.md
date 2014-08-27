@@ -106,6 +106,14 @@ install Starman
 install Server Starter
 
 	cpanm Server::Starter
+	
+install Unix Uptime checker support
+
+	cpanm Unix::Uptime
+
+install Linux SysInfo support
+
+	cpanm Linux::SysInfo
 
 
 Support SQL Server
