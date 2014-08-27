@@ -183,8 +183,11 @@ Install DBD-Sybase
 	$ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/freetds/lib
 	
 	$ cd /tmp
+	
 	$ gunzip DBD-Sybase-1.10.tar.gz
+	
 	$ tar xvf DBD-Sybase-1.10.tar
+	
 	$ cd DBD-Sybase-1.10
 	
 	
