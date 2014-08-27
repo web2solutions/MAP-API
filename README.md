@@ -84,6 +84,10 @@ install Data::Dump
 	cpanm Data::Dump
 
 
+install YAML suport
+
+	cpanm YAML
+
 
 install Twiggy
 
