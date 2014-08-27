@@ -1,5 +1,5 @@
 # MAP-API
-=======
+
 
 MAP API RESTFul psgi application
 
@@ -41,11 +41,6 @@ Switch Perl version on terminal
 
 
 
-
-
-
-
-
 install cpan minus -> cpanm tool
 	
 	#   % curl -L http://cpanmin.us | perl - App::cpanminus
@@ -58,6 +53,10 @@ Install Dancer framework
 	OR
 
 	cpanm Dancer
+	
+	OR, if you are facing issues when install, try:
+	
+	cpanm --force Dancer
 
 
 Install Dancer RESTful plugin
