@@ -1,0 +1,95 @@
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script src="http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/CAIRS_fw.js"></script>
+ 
+<script>
+CAIRS.init();
+var socket = null;
+
+ 
+function send_msg(message) {
+    socket.Send("welcome routing_key: " + message);
+}
+window.onload = function( e )
+{
+	socket = CAIRS.socket.connect(
+{
+	resource : 	"ws://dhtmlx.com.br/_hippie/ws"
+	//,pipe : "welcome"
+	,onOpen : function( messageEvent ){
+		$('#connection-status').text("Connected");
+		
+		
+		socket.Send( {
+			type : 'subscribe'// message, subscribe    -> mandatory
+			,routing_key : 'welcome'
+			,message : 'connected from watcher client'
+		} );
+		
+		socket.Send( 'connected from watcher client as: client id: ' + socket.getClientID() );
+		
+		socket.Send( {
+			type : 'subscribe'// message, subscribe    -> mandatory
+			,routing_key : 'RabbitMQ Test Routing key'
+			,message : 'subscribed to "RabbitMQ Test Routing key" routing_key - from watcher client'
+		} );
+		
+
+	}
+	,onClose : function( messageEvent ){
+
+	}
+	,onBeforeClose : function( client_id ){
+		socket.Send("client id: " + client_id  + " disconnecting from watcher");
+	}
+	,onBeforeSend : function( ){
+
+	}
+	,onMessage : function( data, messageEvent )
+	{
+		console.log("new message from server");
+		console.log(messageEvent);
+		console.log(messageEvent.data);
+		console.log(data);
+		var data = JSON.parse(messageEvent.data);
+		if (data.msg) {
+			console.log(data.msg);
+			var time = Date();
+			$('ul').prepend('<li>' + time + ': ' + data.msg + '</li>');
+			$('ul').prepend('<li>new message from server</li>');
+		}
+	}
+	,onError : function( error ){
+		console.log( error );
+		//self._setStatusSocket("server offline", true);
+		var time = Date();
+       
+		$('ul').prepend('<li>' + time + ': server offline</li>');
+	}
+});
+}
+window.onunload = function( e )
+{
+	socket.close();
+}
+</script>
+</head>
+ 
+<body>
+ 
+<h1 id="title">Websocket and RabbitMQ</h1>
+Connection Status:
+<span id="connection-status"> Disconnected </span>
+ 
+<div>
+<textarea id="mymessage">testing</textarea>
+<input value="Send Message" type=button onClick="send_msg(document.getElementById('mymessage').value)"/>
+<input value="clear" type=button onClick="$('ul').empty()"/>
+</div>
+ 
+<span style="font-weight:bold"> Messages </span>
+<ul id="list"></ul>
+ 
+</body>
+</html>

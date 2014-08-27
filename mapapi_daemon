@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+    use warnings;
+    use strict;
+    use Daemon::Control;
+
+    Daemon::Control->new(
+        name        => "MAPIStarter",
+        lsb_start   => '$syslog $remote_fs',
+        lsb_stop    => '$syslog',
+        lsb_sdesc   => 'MAPIStarter starter',
+        lsb_desc    => 'MAPIStarter controls the MAP API daemon.',
+        path        => '/etc/init.d/mapapi_daemon',
+
+        program     => '/usr/bin/plackup',
+        program_args => [ '-R', '/opt/MAP-API/lib/MAP', '-E', 'deployment', '-s', 'Twiggy', '--workers=10', '-p', '5000', '-a', '/opt/MAP-API/bin/app.pl' ], 
+
+        pid_file    => '/tmp/mydaemon.pid',
+        stderr_file => '/tmp/mydaemon.out',
+        stdout_file => '/tmp/mydaemon.out',
+
+        fork        => 2,
+
+    )->run;
