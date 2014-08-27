@@ -19,6 +19,10 @@ The Centos 5.9 OS uses the Perl 5.8 distribution, we will install a independentl
 
 In this way, we need to install perlbrew to be able to have and manage multiple Perl distributions installed on the server
 
+note:
+
+	The following tutorial is considering your are logged as root
+
 
 ## Environment deploy
 
@@ -54,95 +58,95 @@ Switch Perl version on terminal
 
 install cpan minus -> cpanm tool
 	
-	#   % curl -L http://cpanmin.us | perl - App::cpanminus
+	$   % curl -L http://cpanmin.us | perl - App::cpanminus
 
 
 Install Dancer framework
 
-	curl -L http://cpanmin.us | perl - --sudo Dancer
+	$ curl -L http://cpanmin.us | perl - --sudo Dancer
 
 	OR
 
-	cpanm Dancer
+	$ cpanm Dancer
 	
 	OR, if you are facing issues when install, try:
 	
-	cpanm --force Dancer
+	$ cpanm --force Dancer
 
 
 Install Dancer RESTful plugin
 
-	cpanm Dancer::Plugin::REST
+	$ cpanm Dancer::Plugin::REST
 
 Install sha256 crypt support
 
-	cpanm Crypt::Digest::SHA256
+	$ cpanm Crypt::Digest::SHA256
 
 
 install DBI
 
-	cpanm DBI
+	$ cpanm DBI
 
 install Encode
 
-	cpanm Encode
+	$ cpanm Encode
 
 install Data::Dump
 
-	cpanm Data::Dump
+	$ cpanm Data::Dump
 
 
 install YAML suport
 
-	cpanm YAML
+	$ cpanm YAML
 	
 install  Any::Moose
 
-	cpanm Any::Moose
+	$ cpanm Any::Moose
 	
 install Mouse
 
-	cpanm Mouse
+	$ cpanm Mouse
 
 install AnyMQ
 
-	cpanm --force AnyMQ
+	$ cpanm --force AnyMQ
 
 
 install Web::Hippie
 
-	cpanm --force Web::Hippie
+	$ cpanm --force Web::Hippie
 	
 install MooseX Traits
 
-	cpanm MooseX::Traits
+	$ cpanm MooseX::Traits
 	
 
 install Twiggy
 
-	cpanm Twiggy
+	$ cpanm Twiggy
 	
 
 install Twiggy  Plack Handler
 
-	 cpanm --force Plack::Handler::Twiggy
+	 $ cpanm --force Plack::Handler::Twiggy
 
 install Starman
 
-	cpanm Starman
+	$ cpanm Starman
 
 
 install Server Starter
 
-	cpanm Server::Starter
+	$ cpanm Server::Starter
 	
 install Unix Uptime checker support
 
-	cpanm Unix::Uptime
+	$ cpanm Unix::Uptime
 
 install Linux SysInfo support
 
-	cpanm Linux::SysInfo
+	$ cpanm Linux::SysInfo
 
 
 ## Support SQL Server
@@ -153,25 +157,23 @@ install Linux SysInfo support
 
 goes to /tmp directory
 
-	cd /tmp
+	$ cd /tmp
 
 download freetds
 
-	wget http://mirrors.ibiblio.org/freetds/stable/freetds-stable.tgz
+	$ wget http://mirrors.ibiblio.org/freetds/stable/freetds-stable.tgz
 	
 download DBD Sybase
 
-	 wget http://search.cpan.org/CPAN/authors/id/M/ME/MEWP/DBD-Sybase-1.10.tar.gz
+	 $ wget http://search.cpan.org/CPAN/authors/id/M/ME/MEWP/DBD-Sybase-1.10.tar.gz
 	 
 Install freetds
 
-	cd freetds-0.91/
+	$ cd freetds-0.91/
 	
-	./configure --with-tdsver=7.0 --prefix=/usr/local/freetds
+	$ ./configure --with-tdsver=7.0 --prefix=/usr/local/freetds
 	
-	su
-	
-	make install
+	$ make install
 	
 	
 Install DBD-Sybase
