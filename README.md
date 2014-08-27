@@ -195,7 +195,7 @@ Install DBD-Sybase
 	/usr/local/freetds
 	
 	$ echo $LD_LIBRARY_PATH
-	/u01/app/oracle/product/10.2.0/db_1/lib:/lib:/usr/lib:/usr/local/lib:/usr/local/freetds/lib
+	:/usr/local/freetds/lib
 
 
 	$ perl Makefile.PL
