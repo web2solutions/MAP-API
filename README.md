@@ -88,6 +88,11 @@ install Data::Dump
 install Twiggy
 
 	cpanm Twiggy
+	
+
+install Twiggy  Plack Handler
+
+	 cpanm --force Plack::Handler::Twiggy
 
 install Starman
 
