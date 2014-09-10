@@ -234,9 +234,20 @@ del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 	my $sth = $dbh->prepare( $strSQL, );
 	$sth->execute( ) or MAP::API->fail( $sth->errstr . "   ----   ". $strSQL );
 	
+	
 	my $strSQLdelRule = 'DELETE FROM formmaker_pages_rules WHERE [target_id] IN ('.$str_id.')';
 	$sth = $dbh->prepare( $strSQLdelRule, );
 	$sth->execute( ) or MAP::API->fail( $sth->errstr . "   ----   ". $strSQLdelRule );
+	
+	
+	my $strSQLdelOptions = 'DELETE FROM formmaker_fieldoptions WHERE [page_id] IN ('.$str_id.')';
+	$sth = $dbh->prepare( $strSQLdelOptions, );
+	$sth->execute( ) or MAP::API->fail( $sth->errstr . "   ----   ". $strSQLdelOptions );
+	
+	
+	my $strSQLdelFields = 'DELETE FROM Formmaker_Fields WHERE [page_id] IN ('.$str_id.')';
+	$sth = $dbh->prepare( $strSQLdelFields, );
+	$sth->execute( ) or MAP::API->fail( $sth->errstr . "   ----   ". $strSQLdelFields );
 	
 	
 	MAP::API->normal_header();
@@ -244,6 +255,8 @@ del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 		status => 'success', response => 'Item(s) '.$str_id.' deleted from '.$collectionName.'',
 		sql => $strSQL,
 		sqlrule => $strSQLdelRule,
+		sqlfields => $strSQLdelFields,
+		sqloptions => $strSQLdelOptions,
 		''.$primaryKey.'' => $str_id
 	};
 };
