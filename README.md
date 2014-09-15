@@ -243,6 +243,8 @@ Install DBD-Sybase
 
 # Working on DEV branch
 
+	login on 192.168.1.41:22 via SSH using the root user
+
 start API on 5000 HTTP port - requires VPN access
 
 	$ cd /opt/MAP-API/
