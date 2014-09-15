@@ -245,6 +245,8 @@ Install DBD-Sybase
 
 start API on 5000 HTTP port
 
+	$ cd /opt/MAP-API/
+	
 	$ start_server --port=5000 --pid-file=apidevenv_pid --status-file=apidevenv_status -- plackup -R /opt/MAP-API/lib/MAP -E deployment -s Twiggy bin/app.pl
 	
 
