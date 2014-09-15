@@ -243,7 +243,7 @@ Install DBD-Sybase
 
 # Working on DEV branch
 
-start API on 5000 HTTP port
+start API on 5000 HTTP port - requires VPN access
 
 	$ cd /opt/MAP-API/
 	
@@ -281,6 +281,6 @@ Explaining parameters
 	
 
 
-restart DEV API branch
+restart DEV API branch - requires VPN access
 	
 	start_server --restart --pid-file=apidevenv_pid --status-file=apidevenv_status 
