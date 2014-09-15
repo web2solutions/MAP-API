@@ -239,3 +239,24 @@ Install DBD-Sybase
 	$ su
 	
 	$ make install
+
+
+# Working on DEV branch
+
+start API on 5000 HTTP port
+
+	start_server --port=5000 --pid-file=apidevenv_pid --status-file=apidevenv_status -- plackup -R /opt/MAP-API/lib/MAP -E deployment -s Twiggy bin/app.pl
+	
+	
+	--port 
+		define the HTTP port
+	
+	--pid-file=filename
+		if set, writes the process id of the start_server process to the file
+
+	--status-file=filename
+		if set, writes the status of the server process(es) to the file
+
+
+restart DEV API branch
+	start_server --restart --pid-file=apidevenv_pid --status-file=apidevenv_status 
