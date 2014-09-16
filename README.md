@@ -243,7 +243,7 @@ Install DBD-Sybase
 
 # Working on DEV branch
 
-Client side
+## Client side
 
 	Set you client side code to use the DEV branch address:
 	
@@ -254,7 +254,7 @@ Client side
 	CAIRS.MAP.API.apiURL = "https://apidev.myadoptionportal.com"; -> We are waiting the Patrick help to create the A entry "apidev" on BIND dns server
 
 
-Server Side	
+## Server Side	
 	
 	login on 192.168.1.41:22 via SSH using the root user
 
@@ -268,7 +268,7 @@ start API on 5000 HTTP port - requires VPN access
 <img src="https://raw.githubusercontent.com/web2solutions/MAP-API/master/docs/imgs/dev_branch_api_process_running_on_terminal.jpg?token=684249__eyJzY29wZSI6IlJhd0Jsb2I6d2ViMnNvbHV0aW9ucy9NQVAtQVBJL21hc3Rlci9kb2NzL2ltZ3MvZGV2X2JyYW5jaF9hcGlfcHJvY2Vzc19ydW5uaW5nX29uX3Rlcm1pbmFsLmpwZyIsImV4cGlyZXMiOjE0MTE0NDA3Njh9--d66b3419fbf52669d762612828a89e96be7655ef">
 	
 
-Explaining parameters
+## Explaining parameters
 
 	--port 
 		define the HTTP port
@@ -297,6 +297,19 @@ Explaining parameters
 	bin/app.pl 
 		path of the Dancer PSGI wrapper of the API
 	
+
+## Debug on run time
+
+When you make any change on the application directory, for example upload file, delete files, rename files, the middleware application reads all the contents again and try to compile the code considering all new changes.
+
+If is there any error, mey be a simple ";" missing, it will be not compiled and a error message will be displayed on the API process watcher that we are seeing on Bitivise Xterminal ( a ssh client )
+
+I will issue on error on the process watcher by renaming a directory (lib/MAP/contact to lib/MAP/-contact) and display the print screen here:
+
+<img src="https://raw.githubusercontent.com/web2solutions/MAP-API/master/docs/imgs/issuing_error.jpg?token=684249__eyJzY29wZSI6IlJhd0Jsb2I6d2ViMnNvbHV0aW9ucy9NQVAtQVBJL21hc3Rlci9kb2NzL2ltZ3MvZGV2X2JyYW5jaF9hcGlfcHJvY2Vzc19ydW5uaW5nX29uX3Rlcm1pbmFsLmpwZyIsImV4cGlyZXMiOjE0MTE0NDA3Njh9--d66b3419fbf52669d762612828a89e96be7655ef">
+
+
+
 
 
 restart DEV API branch - requires VPN access
