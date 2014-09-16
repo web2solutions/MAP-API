@@ -318,7 +318,8 @@ Now, I will fix the directory name (renaming lib/MAP/-contact to lib/MAP/contact
 	
 	note 2: when you start the API process on terminal and closes the terminal, the API process stills alive.
 	
-	note 3: if API process is running, AND, you need to watch middleware process on terminal, you need to kill the existing API process and start the API again
+	note 3: if API process is running, AND, you need to watch middleware process on terminal,
+	you need to kill the existing API process and start the API again
 
 
 restart DEV API branch - requires VPN access
