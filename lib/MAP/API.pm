@@ -15,17 +15,18 @@ use MAP::Forms::Forms;
 use MAP::EmailMessages::EmailMessages;
 use MAP::Agency::Agency;
 
-use MAP::Clients;
-
-
+use MAP::DHTMLX;
 use MAP::Agencies::Agencies;
 
+use MAP::contact::Contact;
 
-use MAP::LoadingAverage;
 
-use MAP::Socket;
+## in test
+#use MAP::Clients;
+#use MAP::LoadingAverage;
+#use MAP::Socket;
 
-use MAP::DHTMLX;
+
 
 
 our $VERSION = '0.1';
@@ -96,14 +97,25 @@ sub normal_header{
 
 sub dbh{
 	my $database = params->{database} || "";
-	#debug $database;
-	$ENV{DSQUERY} = '192.168.1.19';
-	my $dbh = DBI->connect('DBI:Sybase:database='.$database.';scriptName=MAP_API;', "ESCairs", "FishB8", {
-			PrintError => 0#,
-			#syb_enable_utf8 => 1
-	}) or return "Can't connect to sql server: $DBI::errstr";
-	#$dbh->{syb_enable_utf8} = 1 ;
-	$dbh->do('use '. $database);
+	my $server = '192.168.1.19';
+	my $os = params->{os} || "linux";
+	
+	my $dbh;
+	
+	if ( $os eq "linux") {
+		$ENV{DSQUERY} = '192.168.1.19';
+		$dbh = DBI->connect('DBI:Sybase:database='.$database.';scriptName=MAP_API;', "ESCairs", "FishB8", {
+				PrintError => 0#,
+				#syb_enable_utf8 => 1
+		}) or return "Can't connect to sql server: $DBI::errstr";
+		
+		#$dbh->{syb_enable_utf8} = 1 ;
+		$dbh->do('use '. $database);
+	}
+	else
+	{
+		$dbh = DBI->connect("DBI:ODBC:Driver={SQL Server};Server=$server;Database=$database;UID=ESCairs;PWD=FishB8")  or return "Can't connect to sql server: $DBI::errstr";
+	}
 	return $dbh;
 }
 

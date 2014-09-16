@@ -344,6 +344,12 @@ del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 	$sth->execute( ) or MAP::API->fail( $sth->errstr . "   ----   ". $strSQLdelRuleNotifications );
 	
 	
+	
+	my $strSQLdelOptions = 'DELETE FROM formmaker_fieldoptions WHERE [field_id] IN ('.$str_id.')';
+	$sth = $dbh->prepare( $strSQLdelOptions, );
+	$sth->execute( ) or MAP::API->fail( $sth->errstr . "   ----   ". $strSQLdelOptions );
+	
+	
 	MAP::API->normal_header();
 	return {
 		status => 'success', response => 'Item(s) '.$str_id.' deleted from '.$collectionName.'',
@@ -351,6 +357,7 @@ del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 		sqlrule => $strSQLdelRule,
 		sqlrulepages => $strSQLdelRulePages,
 		sqlrulenotifications => $strSQLdelRuleNotifications,
+		sqloptions => $strSQLdelOptions,
 		''.$primaryKey.'' => $str_id
 	};
 };
