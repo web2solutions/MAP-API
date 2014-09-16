@@ -243,6 +243,19 @@ Install DBD-Sybase
 
 # Working on DEV branch
 
+Client side
+
+	Set you client side code to use the DEV branch address:
+	
+	CAIRS.MAP.API.apiURL = "http://192.168.1.41:5000"; -> it requires VPN access
+	
+	OR
+	
+	CAIRS.MAP.API.apiURL = "https://apidev.myadoptionportal.com"; -> We are waiting the Patrick help to create the A entry "apidev" on BIND dns server
+
+
+Server Side	
+	
 	login on 192.168.1.41:22 via SSH using the root user
 
 start API on 5000 HTTP port - requires VPN access
@@ -250,6 +263,9 @@ start API on 5000 HTTP port - requires VPN access
 	$ cd /opt/MAP-API/
 	
 	$ start_server --port=5000 --pid-file=apidevenv_pid --status-file=apidevenv_status -- plackup -R /opt/MAP-API/lib/MAP -E deployment -s Starman bin/app.pl
+	
+
+<img src="https://raw.githubusercontent.com/web2solutions/MAP-API/master/docs/imgs/dev_branch_api_process_running_on_terminal.jpg?token=684249__eyJzY29wZSI6IlJhd0Jsb2I6d2ViMnNvbHV0aW9ucy9NQVAtQVBJL21hc3Rlci9kb2NzL2ltZ3MvZGV2X2JyYW5jaF9hcGlfcHJvY2Vzc19ydW5uaW5nX29uX3Rlcm1pbmFsLmpwZyIsImV4cGlyZXMiOjE0MTE0NDA3Njh9--d66b3419fbf52669d762612828a89e96be7655ef">
 	
 
 Explaining parameters
