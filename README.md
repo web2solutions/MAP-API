@@ -298,7 +298,7 @@ start API on 5000 HTTP port - requires VPN access
 		path of the Dancer PSGI wrapper of the API
 	
 
-## Debug on run time
+## API process management && Debug on run time
 
 When you make any change on the application directory, for example upload file, delete files, rename files, the middleware application reads all the contents again and try to compile the code considering all new changes.
 
@@ -314,6 +314,11 @@ Now, I will fix the directory name (renaming lib/MAP/-contact to lib/MAP/contact
 <img src="https://raw.githubusercontent.com/web2solutions/MAP-API/master/docs/imgs/fixing_issuing_error.jpg?token=684249__eyJzY29wZSI6IlJhd0Jsb2I6d2ViMnNvbHV0aW9ucy9NQVAtQVBJL21hc3Rlci9kb2NzL2ltZ3MvZml4aW5nX2lzc3VpbmdfZXJyb3IuanBnIiwiZXhwaXJlcyI6MTQxMTQ0MjI5N30%3D--441eda06cc194be296b454a9102e6904e4940fe8">
 
 
+	note 1: on dev branch, if server restarts, you need to start the API process manually again
+	
+	note 2: when you start the API process on terminal and closes the terminal, the API process stills alive.
+	
+	note 3: if API process is running, AND, you need to watch middleware process on terminal, you need to kill the existing API process and start the API again
 
 
 restart DEV API branch - requires VPN access
