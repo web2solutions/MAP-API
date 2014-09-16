@@ -239,3 +239,50 @@ Install DBD-Sybase
 	$ su
 	
 	$ make install
+
+
+# Working on DEV branch
+
+	login on 192.168.1.41:22 via SSH using the root user
+
+start API on 5000 HTTP port - requires VPN access
+
+	$ cd /opt/MAP-API/
+	
+	$ start_server --port=5000 --pid-file=apidevenv_pid --status-file=apidevenv_status -- plackup -R /opt/MAP-API/lib/MAP -E deployment -s Starman bin/app.pl
+	
+
+Explaining parameters
+
+	--port 
+		define the HTTP port
+	
+	--pid-file=filename
+		if set, writes the process id of the start_server process to the file
+
+	--status-file=filename
+		if set, writes the status of the server process(es) to the file
+		
+	plackup
+		is the middleware application
+		
+	-R
+		set middleware to reload application when it files change, like for example when you upload a new file.
+	
+	/opt/MAP-API/lib/MAP 
+		is the aplication path
+		
+	-E deployment
+		environment name. just a flag
+		
+	-s Starman
+		set the HTTP server which the middleware will use to run your application
+	
+	bin/app.pl 
+		path of the Dancer PSGI wrapper of the API
+	
+
+
+restart DEV API branch - requires VPN access
+	
+	start_server --restart --pid-file=apidevenv_pid --status-file=apidevenv_status 
