@@ -306,7 +306,7 @@ If is there any error, mey be a simple ";" missing, it will be not compiled and 
 
 I will issue on error on the process watcher by renaming a directory (lib/MAP/contact to lib/MAP/-contact) and display the print screen here:
 
-<img src="https://raw.githubusercontent.com/web2solutions/MAP-API/master/docs/imgs/issuing_error.jpg?token=684249__eyJzY29wZSI6IlJhd0Jsb2I6d2ViMnNvbHV0aW9ucy9NQVAtQVBJL21hc3Rlci9kb2NzL2ltZ3MvZGV2X2JyYW5jaF9hcGlfcHJvY2Vzc19ydW5uaW5nX29uX3Rlcm1pbmFsLmpwZyIsImV4cGlyZXMiOjE0MTE0NDA3Njh9--d66b3419fbf52669d762612828a89e96be7655ef">
+<img src="https://raw.githubusercontent.com/web2solutions/MAP-API/master/docs/imgs/issuing_error.jpg?token=684249__eyJzY29wZSI6IlJhd0Jsb2I6d2ViMnNvbHV0aW9ucy9NQVAtQVBJL21hc3Rlci9kb2NzL2ltZ3MvaXNzdWluZ19lcnJvci5qcGciLCJleHBpcmVzIjoxNDExNDQxOTk2fQ%3D%3D--c4650ab8822e933ef406aa7a2af6ffe03cf82953">
 
 
 
