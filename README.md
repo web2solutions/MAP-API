@@ -318,10 +318,39 @@ Now, I will fix the directory name (renaming lib/MAP/-contact to lib/MAP/contact
 	
 	note 2: when you start the API process on terminal and closes the terminal, the API process stills alive.
 	
-	note 3: if API process is running, AND, you need to watch middleware process on terminal,
-	you need to kill the existing API process and start the API again
-
-
-restart DEV API branch - requires VPN access
+	note 3: if the API process is running, AND, you need to watch middleware process on terminal,
+	you need to kill the the existing API process and start the API again
 	
+	
+Stoping currently API 
+-------
+
+lets list the process list and ports
+
+	$ netstat -lnptu
+
+Now, look the process list and look for the process which is using the tcp 5000 port
+
+<img src="https://raw.githubusercontent.com/web2solutions/MAP-API/master/docs/imgs/fixing_issuing_error.jpg?token=684249__eyJzY29wZSI6IlJhd0Jsb2I6d2ViMnNvbHV0aW9ucy9NQVAtQVBJL21hc3Rlci9kb2NzL2ltZ3MvZml4aW5nX2lzc3VpbmdfZXJyb3IuanBnIiwiZXhwaXJlcyI6MTQxMTQ0MjI5N30%3D--441eda06cc194be296b454a9102e6904e4940fe8">
+	
+	
+	$ kill - 5628
+	
+
+Ensure the process was really killed and type again:
+
+	$ netstat -lnptu
+	
+if is there any process running on 5000 port again, kill it
+
+Start the api process again:
+
+	$ start_server --port=5000 --pid-file=apidevenv_pid --status-file=apidevenv_status -- plackup -R /opt/MAP-API/lib/MAP -E deployment -s Starman bin/app.pl
+
+
+
+
+DEV API branch - requires VPN access
+-------
+
 	start_server --restart --pid-file=apidevenv_pid --status-file=apidevenv_status 
