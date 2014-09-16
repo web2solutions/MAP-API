@@ -249,7 +249,7 @@ start API on 5000 HTTP port - requires VPN access
 
 	$ cd /opt/MAP-API/
 	
-	$ start_server --port=5000 --pid-file=apidevenv_pid --status-file=apidevenv_status -- plackup -R /opt/MAP-API/lib/MAP -E deployment -s Twiggy bin/app.pl
+	$ start_server --port=5000 --pid-file=apidevenv_pid --status-file=apidevenv_status -- plackup -R /opt/MAP-API/lib/MAP -E deployment -s Starman bin/app.pl
 	
 
 Explaining parameters
@@ -275,7 +275,7 @@ Explaining parameters
 	-E deployment
 		environment name. just a flag
 		
-	-s Twiggy
+	-s Starman
 		set the HTTP server which the middleware will use to run your application
 	
 	bin/app.pl 
