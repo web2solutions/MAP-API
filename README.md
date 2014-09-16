@@ -322,7 +322,7 @@ Now, I will fix the directory name (renaming lib/MAP/-contact to lib/MAP/contact
 	you need to kill the the existing API process and start the API again
 	
 	
-Stoping currently API 
+Stoping currently API process
 -------
 
 lets list the process list and ports
@@ -331,7 +331,7 @@ lets list the process list and ports
 
 Now, look the process list and look for the process which is using the tcp 5000 port
 
-<img src="https://raw.githubusercontent.com/web2solutions/MAP-API/master/docs/imgs/fixing_issuing_error.jpg?token=684249__eyJzY29wZSI6IlJhd0Jsb2I6d2ViMnNvbHV0aW9ucy9NQVAtQVBJL21hc3Rlci9kb2NzL2ltZ3MvZml4aW5nX2lzc3VpbmdfZXJyb3IuanBnIiwiZXhwaXJlcyI6MTQxMTQ0MjI5N30%3D--441eda06cc194be296b454a9102e6904e4940fe8">
+<img src="https://raw.githubusercontent.com/web2solutions/MAP-API/master/docs/imgs/netstat.jpg?token=684249__eyJzY29wZSI6IlJhd0Jsb2I6d2ViMnNvbHV0aW9ucy9NQVAtQVBJL21hc3Rlci9kb2NzL2ltZ3MvbmV0c3RhdC5qcGciLCJleHBpcmVzIjoxNDExNDQzMjQxfQ%3D%3D--4568f8f673e547689635739c19f91f38e898a04d">
 	
 	
 	$ kill - 5628
