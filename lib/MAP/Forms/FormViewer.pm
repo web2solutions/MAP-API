@@ -56,7 +56,7 @@ get '/getdata.:format' => sub {
 		 $formname = $record->{formname};
 	}
  
-	$tableName = 'dbo.formmaker_'.$agency_id .'_'.$formname.'';
+	$tableName = 'dbo.formmaker_'.$agency_id .'_'.$formname.'_tmp';
 	
 	##### check and persist table structure integrity
 	my $strSQLtable = '
@@ -74,15 +74,6 @@ get '/getdata.:format' => sub {
 		';
 	$sth = $dbh->prepare( $strSQLtable, );
 	$sth->execute(  ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLtable );
-	my $strSQLsubmited = '
-		IF NOT EXISTS(SELECT * FROM sys.columns 
-			WHERE [name] = N\'submited\' AND [object_id] = OBJECT_ID(N\'formmaker_'.$agency_id .'_'.$formname.'\'))
-		BEGIN
-			ALTER TABLE dbo.formmaker_'.$agency_id .'_'.$formname.' ADD submited integer default 0;
-		END
-	';
-	$sth = $dbh->prepare( $strSQLsubmited, );
-	$sth->execute( ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLsubmited );
 	##### check and persist table structure integrity
    
    
@@ -129,7 +120,7 @@ post '/save.:format' => sub {
 		 $formname = $record->{formname};
 	}
  
-	$tableName = 'formmaker_'.$agency_id .'_'.$formname.'';
+	$tableName = 'formmaker_'.$agency_id .'_'.$formname.'_tmp';
 	
 	
 	# check if form exists,
@@ -306,16 +297,6 @@ get '/getsubmit.:format' => sub {
 		';
 	$sth = $dbh->prepare( $strSQLtable, );
 	$sth->execute(  ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLtable );
-	
-	my $strSQLsubmited = '
-		IF NOT EXISTS(SELECT * FROM sys.columns 
-			WHERE [name] = N\'submited\' AND [object_id] = OBJECT_ID(N\'formmaker_'.$agency_id .'_'.$formname.'\'))
-		BEGIN
-			ALTER TABLE dbo.formmaker_'.$agency_id .'_'.$formname.' ADD submited integer default 0;
-		END
-	';
-	$sth = $dbh->prepare( $strSQLsubmited, );
-	$sth->execute( ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLsubmited );
 	##### check and persist table structure integrity
    
    
@@ -426,7 +407,7 @@ post '/submit.:format' => sub {
 		
 		my $strSQLquery = 'UPDATE
 			' . $tableName . '
-			SET ' . substr($strUpdate, 0, -2) . ', submited = 1
+			SET ' . substr($strUpdate, 0, -2) . '
 			WHERE
 				connId = '.$connId.' AND connectionId = '.$connectionId.' AND user_id = '.$user_id.'';
 				
@@ -481,8 +462,8 @@ post '/submit.:format' => sub {
 		push @sql_values, $user_id;
 		
 		my $strSQLquery = 'INSERT 
-			INTO ' . $tableName . '(' . substr($strInsert, 0, -2) . ', submited)
-				VALUES(' . substr($sql_placeholders, 0, -2) . ', 1)';
+			INTO ' . $tableName . '(' . substr($strInsert, 0, -2) . ')
+				VALUES(' . substr($sql_placeholders, 0, -2) . ')';
 		
 		my $sth = $dbh->prepare( $strSQLquery, );
 		$sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLquery );

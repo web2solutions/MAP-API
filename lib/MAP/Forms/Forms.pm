@@ -314,18 +314,6 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 		';
 		$sth = $dbh->prepare( $strSQLtable, );
 		$sth->execute(  ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLtable );
-		
-		
-		
-		my $strSQLsubmited = '
-			IF NOT EXISTS(SELECT * FROM sys.columns 
-				WHERE [name] = N\'submited\' AND [object_id] = OBJECT_ID(N\'formmaker_'.$agency_id .'_'.$formname.'\'))
-			BEGIN
-				ALTER TABLE dbo.formmaker_'.$agency_id .'_'.$formname.' ADD submited integer default 0;
-			END
-		';
-		$sth = $dbh->prepare( $strSQLsubmited, );
-		$sth->execute( ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLsubmited ); 
 	}
 	# ===== especific
 	
@@ -422,35 +410,13 @@ del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 	$sth->execute( ) or MAP::API->fail( $sth->errstr . "   ----   ". $strSQL );
 	
 	
-	my $strSQLdelRule = 'DELETE FROM formmaker_fields_rules WHERE [form_id] IN ('.$str_id.')';
-	$sth = $dbh->prepare( $strSQLdelRule, );
-	$sth->execute( ) or MAP::API->fail( $sth->errstr . "   ----   ". $strSQLdelRule );
-	
-	
-	my $strSQLdelRulePages = 'DELETE FROM formmaker_pages_rules WHERE [form_id] IN ('.$str_id.')';
-	$sth = $dbh->prepare( $strSQLdelRulePages, );
-	$sth->execute( ) or MAP::API->fail( $sth->errstr . "   ----   ". $strSQLdelRulePages );
-	
-	
-	my $strSQLdelRuleNotifications = 'DELETE FROM formmaker_notification_rules WHERE [form_id] IN ('.$str_id.')';
-	$sth = $dbh->prepare( $strSQLdelRuleNotifications, );
-	$sth->execute( ) or MAP::API->fail( $sth->errstr . "   ----   ". $strSQLdelRuleNotifications );
-	
-	
-	my $strSQLdelRuleNotification = 'DELETE FROM formmaker_notification_rule WHERE [form_id] IN ('.$str_id.')';
-	$sth = $dbh->prepare( $strSQLdelRuleNotification, );
-	$sth->execute( ) or MAP::API->fail( $sth->errstr . "   ----   ". $strSQLdelRuleNotification );
 	
 	
 	
 	
 	MAP::API->normal_header();
 	return {
-		status => 'success', response => 'Item(s) '.$str_id.' deleted from '.$collectionName.'', sql => $strSQL, ''.$primaryKey.'' => $str_id, 
-		sqlrule => $strSQLdelRule,
-		sqlrulepages => $strSQLdelRulePages,
-		sqlrulenotification => $strSQLdelRuleNotification,
-		sqlrulenotifications => $strSQLdelRuleNotifications,
+		status => 'success', response => 'Item(s) '.$str_id.' deleted from '.$collectionName.'', sql => $strSQL, ''.$primaryKey.'' => $str_id
 	};
 };
 
