@@ -247,11 +247,7 @@ Install DBD-Sybase
 
 	Set you client side code to use the DEV branch address:
 	
-	CAIRS.MAP.API.apiURL = "http://192.168.1.41:5000"; -> it requires VPN access
-	
-	OR
-	
-	CAIRS.MAP.API.apiURL = "https://apidev.myadoptionportal.com"; -> We are waiting the Patrick help to create the A entry "apidev" on BIND dns server
+	CAIRS.environment = "dev"; // production, dev, test. Default: test
 
 
 ## Server Side	
