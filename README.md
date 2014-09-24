@@ -49,6 +49,10 @@ MAP API end points are *CRUD focused end points*. It means that, *by default*, i
 There are end points which provides specific support, like for example file upload, and others.
 
 
+**End points documentation**
+
+	http://cdmap01.myadoptionportal.com/modules/API_DOC/
+
 ==================================
 
 ## Deploy
