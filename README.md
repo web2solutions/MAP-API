@@ -48,6 +48,13 @@ MAP API end points are *CRUD focused end points*. It means that, *by default*, i
 
 There are end points which provides specific support, like for example file upload, and others.
 
+**API Branches**
+
+		production: https://api.myadoptionportal.com
+		
+		dev: https://apidev.myadoptionportal.com
+		
+		test: https://perltest.myadoptionportal.com
 
 **End points documentation**
 
