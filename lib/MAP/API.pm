@@ -23,7 +23,7 @@ use MAP::contact::Contact;
 
 ## in test
 #use MAP::Clients;
-#use MAP::LoadingAverage;
+use MAP::LoadingAverage;
 #use MAP::Socket;
 
 
@@ -61,7 +61,7 @@ sub normal_header{
 	header('Cache-Control' => 'max-age=0, must-revalidate, no-cache, no-store');
 	header('Vary' => 'Accept-Encoding');
 	header('X-Server-Time' => time);
-	header('X-Server' => 'Starman');
+	header('X-Server' => 'Twiggy');
 	header('Expires' => 'Thu, 01 Jan 1970 00:00:00');
 	header('X-FRAME-OPTIONS' => 'DENY');
 	header('X-XSS-Protection' => '1; mode=block');

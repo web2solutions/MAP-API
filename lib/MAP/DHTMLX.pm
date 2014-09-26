@@ -4,6 +4,7 @@ use Dancer ':syntax';
 use Encode       qw( encode );
 use DBI;
 use MAP::DHTMLX::GRID::FEED;
+use MAP::DHTMLX::COMBO::FEED;
 use MAP::DHTMLX::FORM;
 
 our $VERSION = '0.1';
