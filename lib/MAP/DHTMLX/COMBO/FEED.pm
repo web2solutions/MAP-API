@@ -29,6 +29,7 @@ get '/feed.xml' => sub {
    my $posStart = params->{pos} || 0;
    my $mask = params->{mask} || 0;
    my $column_to_search = params->{column_to_search};
+   my $value_column = params->{value_column} || $primaryKey;
    
 
     my $newDoc = XML::Mini::Document->new();
@@ -79,13 +80,9 @@ get '/feed.xml' => sub {
    while ( my $record = $sth->fetchrow_hashref())
    {
         
-            if (defined($record->{$column_to_search})) {
-                my $optionNode = $completeNode->createChild('option')->text($record->{$column_to_search});
-            }
-            else
-            {
-                my $optionNode = $completeNode->createChild('option')->text('');
-            }
+        my $optionNode = $completeNode->createChild('option');
+		$optionNode->text( $record->{$column_to_search} );
+		$optionNode->attribute('value', $record->{$value_column});
     }
    
    #$dbh->disconnect();
