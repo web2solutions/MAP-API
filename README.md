@@ -414,12 +414,51 @@ DEV API branch - requires VPN access
 *get all contacts*
 
 	GET        /contact.json
-	example: https://perltest.myadoptionportal.com/contact.json
+	
+	CAIRS.MAP.API.get({
+	   resource : 	"/contact" 
+	   ,format : "json" 
+	   ,payload : "columns=FName&order="+JSON.stringify({direction:'ASC', orderby:'FName'})
+	   ,onSuccess : function(request)
+	   { 
+			var json = JSON.parse( request.response );
+			if( json.status == "success" )	
+			{
+				alert(json.contact);
+				console.log(json.contact);
+				alert(json.contact[0].FName);
+			}
+	   }
+	   ,onFail : function(request)
+	   {
+			var json = JSON.parse( request.response );
+	   }
+	});
+	     
 
 *get a contact*
 
 	GET        /contact/0000.json
-	example: https://perltest.myadoptionportal.com/contact/1416.json
+	
+	CAIRS.MAP.API.get({
+	   resource : 	"/contact/1416" 
+	   ,format : "json" 
+	   ,payload : "columns=FName"
+	   ,onSuccess : function(request)
+	   { 
+			var json = JSON.parse( request.response );
+			if( json.status == "success" )	
+			{
+				alert(json.hash);
+				console.log(json.hash);
+				alert(json.hash.FName);
+			}
+	   }
+	   ,onFail : function(request)
+	   {
+			var json = JSON.parse( request.response );
+	   }
+	});
 
 *insert new contact*
 
