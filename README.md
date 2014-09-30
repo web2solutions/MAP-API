@@ -539,6 +539,40 @@ DEV API branch - requires VPN access
 	        
 	    }
 	});
+
+*Search Contact*
+
+This a dhtmlx combo focused end point
+
+	GET    /contact/dhtmlx/combo.xml
+
+This is to be consumed by a DHTMLX combo only. Filtering need to be enabled.
+
+	https://perltest.myadoptionportal.com/contact/dhtmlx/combo/feed.xml?pos=0&mask=cha
+
+	https://perltest.myadoptionportal.com/contact/dhtmlx/combo/feed.xml?pos=20&mask=cha
+
+pagination implemented on API layer, then it will have bad performance if compared with pagination on SP layer
+
+Client side example:
+
+        combo = new dhtmlXCombo("combo", "combo", 200);
+        var combo_url = CAIRS.MAP.API.getMappedURL({
+            resource: "/contact/dhtmlx/combo/feed",
+            responseType: "xml"
+        });
+        combo.enableFilteringMode(true, combo_url, true, true);
+
+this end point receives only two parameters:
+
+    pos = for pagination support. automatically appended when using dhtmlx combo
+    mask = string to search for. automatically appended when using dhtmlx combo
+
+then you don't need to manually pass any parameter
+
+Online example:
+
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/contact_dhtmlx_combo_end_point.html
     
 
 =============================
