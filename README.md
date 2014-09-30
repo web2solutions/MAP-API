@@ -414,10 +414,10 @@ DEV API branch - requires VPN access
 
 *get contact types by passing IsBusiness*
 
-	GET        /contact/types.json
+	GET        /contact/types/all.json
 	
 	CAIRS.MAP.API.get({
-	   resource : 	"/contact/types" 
+	   resource : 	"/contact/types/all" 
 	   ,format : "json" 
 	   ,payload : "IsBusiness=1"
 	   ,onSuccess : function(request)
