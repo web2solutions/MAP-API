@@ -409,8 +409,101 @@ DEV API branch - requires VPN access
 
 ## Implemented end points
 
+###### Contact End Point
 
-###### lkp End points
+*get all contacts*
+
+	GET        /contact.json
+	example: https://perltest.myadoptionportal.com/contact.json
+
+*get a contact*
+
+	GET        /contact/0000.json
+	example: https://perltest.myadoptionportal.com/contact/1416.json
+
+*insert new contact*
+
+	POST      /contact.json
+	
+	var hash = {
+		"FName" : "Eduardo", MName" : "Perotta", LName" : "de Almeida", Nickname" : "", BirthName" : "", BirthDate" : "", 
+		Gender" : "", SSN" : "", PlaceOfBirthCity" : "", PlaceOfBirthStateId" : "", PlaceOfBirthCountryId" : "", 
+		DateOfDeath" : "", DoNotSendMail" : "", BusName" : "", ContactNotes" : "", LicenceNumber" : "", FEIDNumber" : ""
+	};
+	
+	CAIRS.MAP.API.post({
+		resource : 	"/contact" 
+		,format : "json"
+		,payload : "hash=" + JSON.stringify( hash )
+		,onSuccess : function( request ) 
+		{ 
+			var json = JSON.parse( request.response );
+			console.log(request);
+			alert("Id of the new contact: " + json.ContactId);
+		}
+		,onFail : function( request )
+		{ 
+			var json = JSON.parse( request.response );
+		}
+	});
+     
+
+
+
+*edit a contact*
+
+	PUT        /contact/0000.json
+	
+	// var hash = form.getFormData();
+	var hash = {
+		"FName" : "José Eduardo", MName" : "Perotta", LName" : "de Almeida", Nickname" : "", BirthName" : "", BirthDate" : "", 
+		Gender" : "", SSN" : "", PlaceOfBirthCity" : "", PlaceOfBirthStateId" : "", PlaceOfBirthCountryId" : "", 
+		DateOfDeath" : "", DoNotSendMail" : "", BusName" : "", ContactNotes" : "", LicenceNumber" : "", FEIDNumber" : ""
+	};
+	
+	CAIRS.MAP.API.put({
+		resource : 	"/contact/1416" 
+		,format : "json"
+		,payload : "hash=" + JSON.stringify( hash )
+		,onSuccess : function( request ) 
+		{ 
+			var json = JSON.parse( request.response );
+			console.log(request);
+			alert("Id of the updated contact: " + json.ContactId);
+		}
+		,onFail : function( request )
+		{ 
+			var json = JSON.parse( request.response );
+		}
+	});
+     
+
+
+
+*delete a contact*
+
+	DEL        /contact/0000.json
+	
+	CAIRS.MAP.API.del({
+	    resource: "/contact/0000",
+	    format: "json",
+	    onSuccess: function(request) {
+	        var json = JSON.parse(request.response);
+	        dhtmlx.message({
+	            text: json.response
+	        });
+	        
+	    },
+	    onFail: function(request) {
+	        var json = JSON.parse(request.response);
+	        
+	    }
+	});
+    
+
+
+
+######  Set of End points for lkp tables
 
 **lkp Countries end point**
 
