@@ -410,6 +410,105 @@ DEV API branch - requires VPN access
 ## Implemented end points
 
 =============================
+###### Contact type End Point
+
+*get contact types by passing IsBusiness*
+
+	GET        /contact/types.json
+	
+	CAIRS.MAP.API.get({
+	   resource : 	"/contact" 
+	   ,format : "json" 
+	   ,payload : "IsBusiness=1"
+	   ,onSuccess : function(request)
+	   { 
+			var json = JSON.parse( request.response );
+			if( json.status == "success" )	
+			{
+				alert(json.types);
+				console.log(json.types);
+				alert(json.types[0].RelationshipTypeId);
+				alert(json.types[0].RelationshipTypeText);
+			}
+	   }
+	   ,onFail : function(request)
+	   {
+			var json = JSON.parse( request.response );
+	   }
+	});
+	
+	
+	CAIRS.MAP.API.get({
+	   resource : 	"/contact" 
+	   ,format : "json" 
+	   ,payload : "IsBusiness=0"
+	   ,onSuccess : function(request)
+	   { 
+			var json = JSON.parse( request.response );
+			if( json.status == "success" )	
+			{
+				alert(json.types);
+				console.log(json.types);
+				alert(json.types[0].RelationshipTypeId);
+				alert(json.types[0].RelationshipTypeText);
+			}
+	   }
+	   ,onFail : function(request)
+	   {
+			var json = JSON.parse( request.response );
+	   }
+	});
+
+*get business contact types only*
+
+	GET        /contact/types/business.json
+	
+	CAIRS.MAP.API.get({
+	   resource : 	"/contact/business" 
+	   ,format : "json"
+	   ,onSuccess : function(request)
+	   { 
+			var json = JSON.parse( request.response );
+			if( json.status == "success" )	
+			{
+				alert(json.types);
+				console.log(json.types);
+				alert(json.types[0].RelationshipTypeId);
+				alert(json.types[0].RelationshipTypeText);
+			}
+	   }
+	   ,onFail : function(request)
+	   {
+			var json = JSON.parse( request.response );
+	   }
+	});
+
+*get not business contact types only*
+
+	GET        /contact/types/notbusiness.json
+	
+	CAIRS.MAP.API.get({
+	   resource : 	"/contact/notbusiness" 
+	   ,format : "json"
+	   ,onSuccess : function(request)
+	   { 
+			var json = JSON.parse( request.response );
+			if( json.status == "success" )	
+			{
+				alert(json.types);
+				console.log(json.types);
+				alert(json.types[0].RelationshipTypeId);
+				alert(json.types[0].RelationshipTypeText);
+			}
+	   }
+	   ,onFail : function(request)
+	   {
+			var json = JSON.parse( request.response );
+	   }
+	});
+
+
+=============================
 ###### Contact End Point
 
 *get all contacts*
