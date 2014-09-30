@@ -409,6 +409,7 @@ DEV API branch - requires VPN access
 
 ## Implemented end points
 
+=============================
 ###### Contact End Point
 
 *get all contacts*
@@ -540,7 +541,7 @@ DEV API branch - requires VPN access
 	});
     
 
-
+=============================
 
 ######  Set of End points for lkp tables
 
@@ -688,4 +689,4 @@ DEV API branch - requires VPN access
 	DEL		/contact/degrees/0000.json
 
 
-
+=============================
