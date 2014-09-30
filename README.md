@@ -485,10 +485,10 @@ DEV API branch - requires VPN access
 
 *get not business contact types only*
 
-	GET        /contact/types/notbusiness.json
+	GET        /contact/types/person.json
 	
 	CAIRS.MAP.API.get({
-	   resource : 	"/contact/types/notbusiness" 
+	   resource : 	"/contact/types/person" 
 	   ,format : "json"
 	   ,onSuccess : function(request)
 	   { 
