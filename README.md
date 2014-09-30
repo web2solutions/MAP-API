@@ -417,7 +417,7 @@ DEV API branch - requires VPN access
 	GET        /contact/types.json
 	
 	CAIRS.MAP.API.get({
-	   resource : 	"/contact" 
+	   resource : 	"/contact/types" 
 	   ,format : "json" 
 	   ,payload : "IsBusiness=1"
 	   ,onSuccess : function(request)
@@ -439,7 +439,7 @@ DEV API branch - requires VPN access
 	
 	
 	CAIRS.MAP.API.get({
-	   resource : 	"/contact" 
+	   resource : 	"/contact/types" 
 	   ,format : "json" 
 	   ,payload : "IsBusiness=0"
 	   ,onSuccess : function(request)
@@ -464,7 +464,7 @@ DEV API branch - requires VPN access
 	GET        /contact/types/business.json
 	
 	CAIRS.MAP.API.get({
-	   resource : 	"/contact/business" 
+	   resource : 	"/contact/types/business" 
 	   ,format : "json"
 	   ,onSuccess : function(request)
 	   { 
@@ -488,7 +488,7 @@ DEV API branch - requires VPN access
 	GET        /contact/types/notbusiness.json
 	
 	CAIRS.MAP.API.get({
-	   resource : 	"/contact/notbusiness" 
+	   resource : 	"/contact/types/notbusiness" 
 	   ,format : "json"
 	   ,onSuccess : function(request)
 	   { 
