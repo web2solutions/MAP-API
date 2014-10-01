@@ -439,7 +439,7 @@ DEV API branch - requires VPN access
 	
 	
 	CAIRS.MAP.API.get({
-	   resource : 	"/contact/types" 
+	   resource : 	"/contact/types/all" 
 	   ,format : "json" 
 	   ,payload : "IsBusiness=0"
 	   ,onSuccess : function(request)
