@@ -18,7 +18,10 @@ my $collectionName = 'forms';
 my $primaryKey = 'form_id';
 my $tableName = 'formmaker_properties';
 my $defaultColumns = 'form_id,formlabel,formname,formtext,formindex,redirecturl,adminalert,autorespond,tiplocation,display,preview,nomultiple,captcha,key_id,form_agency_id,submissionmsg,displaycolumns,numofrecords,formtype,formdisplaytype,skin';
-my $root_path = '/var/www/html/userhome/MAP-API/'.$collectionName;
+
+my $api_path = '/var/www/html/userhome/MAP-API';
+
+my $root_path = $api_path. '/'.$collectionName;
 
 my $relationalColumn = undef; # undef
 
@@ -351,8 +354,17 @@ put '/'.$collectionName.'/:'.$primaryKey.'/metadata.:format' => sub {
 	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
 	my $template = params->{template} || MAP::API->fail( "please provide template" );
 	
+
+
 	# check if dir exist
-	unless(-e $root_path){
+
+
+
+
+	unless(-e $api_path){
+		mkdir($api_path, 0777);
+	}
+    unless(-e $root_path){
 		mkdir($root_path, 0777);
 	}
 	unless(-e $root_path . '/' .$agency_id){

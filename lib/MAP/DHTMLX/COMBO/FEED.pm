@@ -21,15 +21,27 @@ get '/feed.xml' => sub {
    
    #MAP::API->check_authorization( params->{token}, request->header("Origin") );
    
+   my $dbh = MAP::API->dbh();
 
-   my $primaryKey = params->{primary_key};
-   my $tableName = params->{table_name};
+   my $primaryKey =  params->{primary_key}  || MAP::API->fail( 'primary_key is missing' );
+   $primaryKey =~ s/[^\w\d.-]+//g;
+
+   my $tableName =  params->{table_name}  || MAP::API->fail( 'table_name is missing' );
+   $tableName =~ s/[^\w\d.-]+//g;#~ tr/A-Za-z0-9//cd;
+
+   #debug $tableName;
 
    my $count = params->{count} || 20;
    my $posStart = params->{pos} || 0;
-   my $mask = params->{mask} || 0;
-   my $column_to_search = params->{column_to_search};
+
+   my $mask = params->{mask} || '';
+   $mask =~ s/'//g;
+
+   my $column_to_search = params->{column_to_search}  || MAP::API->fail( 'column_to_search is missing' );
+   $column_to_search =~ s/[^\w\d.-]+//;
+   
    my $value_column = params->{value_column} || $primaryKey;
+   $value_column =~ s/[^\w\d.-]+//;
    
 
     my $newDoc = XML::Mini::Document->new();
@@ -51,18 +63,9 @@ get '/feed.xml' => sub {
    $count = $count + 1;
    $posStart = $posStart + 1;
    
-   my $sql_filters =  ' AND ' . $column_to_search . ' LIKE \'%' . $mask . '%\' ';
+   my $sql_filters =  ' AND ' . $column_to_search . ' LIKE \'%'.$mask.'%\' ';
    my $sql_ordering = ' ORDER BY '.$primaryKey.' DESC';
    
-   my $dbh = MAP::API->dbh();
-   my $totalCount = 0;
-   my $sth = $dbh->prepare( "SELECT COUNT(".$primaryKey.") as total_count FROM ".$tableName." WHERE 1=1 $sql_filters;", );
-   $sth->execute() or MAP::API->fail( $sth->errstr );
-   
-   while ( my $record = $sth->fetchrow_hashref())
-   {
-        $totalCount = $record->{"total_count"};
-    }
    
    my $strSQL = '; WITH results AS (
             SELECT 
@@ -73,13 +76,12 @@ get '/feed.xml' => sub {
         FROM results
         WHERE rowNo BETWEEN '.$posStart.' AND '. $posStart. ' + '.$count.'';
 
-   $sth = $dbh->prepare( $strSQL, );
+   my $sth = $dbh->prepare( $strSQL, );
    #$completeNode->attribute('sql', $strSQL);
-   $sth->execute() or MAP::API->fail( $sth->errstr );
+   $sth->execute( ) or MAP::API->fail( $sth->errstr );
    
    while ( my $record = $sth->fetchrow_hashref())
    {
-        
         my $optionNode = $completeNode->createChild('option');
 		$optionNode->text( $record->{$column_to_search} );
 		$optionNode->attribute('value', $record->{$value_column});
