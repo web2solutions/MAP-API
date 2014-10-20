@@ -1,5 +1,9 @@
-# Contact End Point
+# Contact End Points
 
+Please navigate on above directories to read other end point documentations regarding contacts
+
+
+## Main Contact End Point
 
 	GET		/contact.json
 	GET		/contact/0000.json
