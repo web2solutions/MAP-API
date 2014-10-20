@@ -52,12 +52,17 @@ get '/'.$collectionName.'.:format' => sub {
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
    
    my $strColumns = params->{columns} || $defaultColumns;
+   $strColumns=~ s/'//g;
    my @columns = split(/,/, $strColumns);
    $strColumns = MAP::API->normalizeColumnNames( $strColumns, $defaultColumns );
+   
+
+#  $value_column =~ s/[^\w\d.-]+//;
    
    my $relational_id = undef;
    if ( defined(  $relationalColumn ) ) {
 		$relational_id = params->{$relationalColumn} || MAP::API->fail( $relationalColumn . '  is missing on url' );
+		$relational_id=~ s/'//g;
    }
    
    # ------ Filtering and Ordering -------------------
@@ -65,31 +70,58 @@ get '/'.$collectionName.'.:format' => sub {
    my $orderstr = params->{order} || '{}';
    my $filters =  from_json( $filterstr );
    my $sql_filters = "";
+
+   my $filter_operator = params->{filter_operator} || 'and';
+   $filter_operator=~ s/[^\w\d.-]+//;
    
    my %filters = %{ $filters };
    foreach my $key (%filters) {
 		if ( defined( $filters{$key} ) ) {
-			$sql_filters = $sql_filters . " AND " . $key . " LIKE '%" . $filters{$key} . "%' ";
+			my $string = $filters{$key};
+			$string=~ s/'//g;
+			my $column = $key;
+            $column=~ s/[^\w\d.-]+//;
+			$sql_filters = $sql_filters . " " . $column . " LIKE '%" . $string . "%'  ". $filter_operator ."  ";
 		}
    }
+	
+	if ( length($sql_filters) > 1 ) {
+		$sql_filters = ' AND ( '.  substr($sql_filters, 0, -5) . ' )';
+	}
+	
+	
    
-   my $sql_ordering = ' ORDER BY '.$primaryKey.' DESC';
+   my $sql_ordering = ' ORDER BY '.$primaryKey.' ASC';
    my $order =  from_json( $orderstr );
    if ( defined( $order->{orderby} ) && defined( $order->{direction} ) )
    {
-		$sql_ordering = ' ORDER BY ' . $order->{orderby} . ' '. $order->{direction};
+		my $column = $order->{orderby};
+		$column=~ s/[^\w\d.-]+//;
+		my $direction = $order->{direction};
+		$direction=~ s/[^\w\d.-]+//;
+		$sql_ordering = ' ORDER BY ' . $column . ' '. $direction ;
    }
    # ------ Filtering and Ordering -------------------
    
    my $dbh = MAP::API->dbh();
 
-   my $strSQLstartWhere = '1 = 1';
+   my $strSQLstartWhere = ' 1 = 1 ';
    if ( defined(  $relationalColumn ) ) {
-		$strSQLstartWhere = ' ['.$relationalColumn.'] IN ('.$relational_id.') ';
+		$strSQLstartWhere = '( ['.$relationalColumn.'] IN ('.$relational_id.') ) ';
    }
-   my $strSQL = 'SELECT '.$strColumns.' FROM '.$tableName.' WHERE '.$strSQLstartWhere.' ' . $sql_filters . ' '. $sql_ordering . '';
-   my $sth = $dbh->prepare( $strSQL, );
-   $sth->execute() or MAP::API->fail( $sth->errstr );
+   
+	my $strSQL = '';
+	if ( length($strSQLstartWhere) < 3 && length($sql_filters) < 3 ) {
+		$strSQL = 'SELECT '.$strColumns.' FROM '.$tableName.' '. $sql_ordering . '';
+	}
+	else
+	{
+		$strSQL = 'SELECT '.$strColumns.' FROM '.$tableName.' WHERE '.$strSQLstartWhere.' ' . $sql_filters . ' '. $sql_ordering . '';
+	}
+	
+   
+	my $sth = $dbh->prepare( $strSQL, );
+   $sth->execute() or MAP::API->fail( $sth->errstr . ' ----------- '.$strSQL);
    
    my @records;
    while ( my $record = $sth->fetchrow_hashref()) 
@@ -145,6 +177,7 @@ post '/'.$collectionName.'.:format' => sub {
 	my @sql_values;
     
 	my %hash = %{ $hash };
+
 	
 	my $dbh = MAP::API->dbh();
 
@@ -194,12 +227,13 @@ post '/'.$collectionName.'.:format' => sub {
 	};
 };
 
-
+# update form
 put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
    
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
    
     my $item_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
+	$item_id=~ s/'//g;
 	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
 	#$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
 	
@@ -210,72 +244,7 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 	my $sql_setcolumns = "";
 	my $sql_placeholders = "";
 	my @sql_values;
-
-	#debug ref( $hash );
-    #if ( ref( $hash ) eq 'HASH') {
-	#	
-	#}
     
-	my %hash = %{ $hash };
-    foreach my $key (%hash)
-	{
-		if ( defined( $hash{$key} ) )
-		{
-			if ( index(MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns ), '['.$key.']') != -1 )
-			{
-				if ( $key ne $primaryKey) {
-					if ( index($sql_setcolumns, '[' .$key.']') < 0 )
-					{
-						$sql_setcolumns = $sql_setcolumns .'['. $key .'] = ?, ';
-						push @sql_values, $hash{$key};
-					}
-				}
-			}
-		}
-    }
-   
-    my $dbh = MAP::API->dbh();
-	my $strSQL = 'UPDATE '.$tableName.' SET ' . substr($sql_setcolumns, 0, -2) . ' WHERE ['.$primaryKey.'] IN ('.$item_id.')';
-	my $sth = $dbh->prepare( $strSQL, );
-	$sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL . " --- " . dump(@sql_values) . " ----- " . $item_id );
-	
-
-	MAP::API->normal_header();
-	return {
-		status => 'success',
-		response => 'Item '.$item_id.' updated on ' . $collectionName,
-		sql => $strSQL,
-		''.$primaryKey.'' => $item_id,
-		place_holders_dump => dump(@sql_values)
-	};
-};
-
-
-
-put '/'.$collectionName.'.:format' => sub {
-   
-    MAP::API->check_authorization( params->{token}, request->header("Origin") );
-   
-    my $item_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
-	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
-	#$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
-	
-	my $hashStr = params->{hash} || '{}';
-	my $json_bytes = encode('UTF-8', $hashStr);
-	my $hash = JSON->new->utf8->decode($json_bytes) or MAP::API->fail( "unable to decode" );
-	#my $hash =  from_json( $hashStr );
-	my $sql_setcolumns = "";
-	my $sql_placeholders = "";
-	my @sql_values;
-
-	#debug ref( $hash );
-    #if ( ref( $hash ) eq 'HASH') {
-	#	
-	#}
-	
-	my @array_of_hashs = @{ $hash };    
-
-
 	my %hash = %{ $hash };
     foreach my $key (%hash)
 	{
@@ -315,6 +284,7 @@ del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
 	
     my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
+	$str_id=~ s/'//g;
 	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
 	my $dbh = MAP::API->dbh();
 	
@@ -341,7 +311,7 @@ get '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
    
    my $strColumns = params->{columns} || $defaultColumns;  
    my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
-    
+	$str_id=~ s/'//g;
    # ===== especific
    my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
    

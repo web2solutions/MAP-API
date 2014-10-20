@@ -86,11 +86,7 @@ get '/'.$collectionName.'.:format' => sub {
    }
 	
 	if ( length($sql_filters) > 1 ) {
-		$sql_filters = ' ( '.  substr($sql_filters, 0, -5) . ' )';
-	}
-	else
-	{
-		$sql_filters = '  1 = 1 ';
+		$sql_filters = ' AND ( '.  substr($sql_filters, 0, -5) . ' )';
 	}
 	
 	
@@ -109,9 +105,9 @@ get '/'.$collectionName.'.:format' => sub {
    
    my $dbh = MAP::API->dbh();
 
-   my $strSQLstartWhere = '';
+   my $strSQLstartWhere = ' 1 = 1 ';
    if ( defined(  $relationalColumn ) ) {
-		$strSQLstartWhere = '( ['.$relationalColumn.'] IN ('.$relational_id.') ) AND ';
+		$strSQLstartWhere = '( ['.$relationalColumn.'] IN ('.$relational_id.') ) ';
    }
    
 	my $strSQL = '';
