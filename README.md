@@ -414,7 +414,17 @@ DEV API branch - requires VPN access
 
 *get contact types by passing IsBusiness*
 
-	GET        /contact/types/all.json
+	GET		/contact/types/all.json
+	GET		/contact/types/business.json
+	GET		/contact/types/person.json
+	GET		/contact/types/0000.json
+	POST		/contact/types.json
+	PUT		/contact/types/0000.json
+	DEL		/contact/types/0000.json
+
+Examples
+
+	GET        /contact.json
 	
 	CAIRS.MAP.API.get({
 	   resource : 	"/contact/types/all" 
@@ -510,6 +520,16 @@ DEV API branch - requires VPN access
 
 =============================
 ###### Contact End Point
+
+
+	GET		/contact.json
+	GET		/contact/0000.json
+	POST		/contact.json
+	PUT		/contact/0000.json
+	DEL		/contact/0000.json
+	GET    		/contact/dhtmlx/combo.xml
+
+Examples
 
 *get all contacts*
 
