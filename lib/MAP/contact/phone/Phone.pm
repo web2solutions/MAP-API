@@ -6,6 +6,8 @@ use Encode qw( encode );
 use DBI;
 use Data::Dump qw(dump);
 
+use MAP::contact::phone::PhoneType;
+
 
 our $VERSION = '0.1';
 my $collectionName = 'phones';

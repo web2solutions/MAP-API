@@ -29,6 +29,23 @@ options '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 	MAP::API->options_header();
 };
 
+options '/'.$collectionName.'/doc' => sub {
+	MAP::API->options_header();
+};
+
+get '/'.$collectionName.'/doc' => sub {
+	my @defaultColumns = split(/,/, $defaultColumns);	
+	template 'doc', { 
+		'collectionName' => $collectionName,
+		'tableName' => $tableName,
+		'prefix' => '/contact',
+		'defaultColumns' => [@defaultColumns],
+		'defaultColumnsStr' => $defaultColumns,
+		'primaryKey' => $primaryKey
+  };
+
+};
+
  
 # routing OPTIONS header
 
