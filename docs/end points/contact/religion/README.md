@@ -9,4 +9,4 @@ NOTE: 1557 can be any another contact id
 
 *online example*: 
 
-http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/religion.html?ContactId=1557
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/religion.html?ContactId=1557
