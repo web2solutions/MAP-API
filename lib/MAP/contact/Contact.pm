@@ -7,7 +7,7 @@ use Encode qw( encode );
 use DBI;
 use Data::Dump qw(dump);
 
-
+use MAP::contact::address::Address;
 use MAP::contact::education::Education;
 use MAP::contact::email::Email;
 use MAP::contact::phone::Phone;
