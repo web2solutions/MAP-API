@@ -412,8 +412,6 @@ DEV API branch - requires VPN access
 =============================
 ###### Contact type End Point
 
-*get contact types by passing IsBusiness*
-
 	GET		/contact/types/all.json
 	GET		/contact/types/business.json
 	GET		/contact/types/person.json
@@ -423,6 +421,8 @@ DEV API branch - requires VPN access
 	DEL		/contact/types/0000.json
 
 Examples
+
+*get contact types by passing IsBusiness*
 
 	GET        /contact.json
 	
