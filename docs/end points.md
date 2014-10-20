@@ -433,6 +433,15 @@ http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/contact_dhtmlx_combo
 	DEL		/contact/degrees/0000.json
 
 
+**lkp Race**
+
+	GET		/contact/lkp/races.json
+	GET		/contact/lkp/races/0000.json
+	POST		/contact/lkp/races.json
+	PUT		/contact/lkp/races/0000.json
+	DEL		/contact/lkp/races/0000.json
+
+
 
 =============================
 
