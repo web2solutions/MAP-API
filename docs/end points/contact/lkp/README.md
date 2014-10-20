@@ -1,8 +1,4 @@
-# Implemented end points
-
-
-
-######  Set of End points for lkp tables
+#  End points group for lkp tables
 
 **lkp Countries end point**
 
