@@ -1,153 +1,119 @@
 #  End points group for lkp tables
 
-**lkp Countries end point**
+### **lkp Countries end point**
 
-	GET		/contact/lkp/countries.json
-	GET		/contact/lkp/countries/0000.json
-	POST		/contact/lkp/countries.json
-	PUT		/contact/lkp/countries/0000.json
-	DEL		/contact/lkp/countries/0000.json
+*Online live doc:* (https://perltest.myadoptionportal.com/contact/lkp/countries/doc)[https://perltest.myadoptionportal.com/contact/lkp/countries/doc]
 
-*online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpCountry.html
+*online example*: (http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpCountry.html)[http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpCountry.html]
 
 
-**lkp Address Province end point**
+### **lkp Address Province end point**
 
-	GET		/contact/lkp/addressProvince.json
-	GET		/contact/lkp/addressProvince/0000.json
-	POST		/contact/lkp/addressProvince.json
-	PUT		/contact/lkp/addressProvince/0000.json
-	DEL		/contact/lkp/addressProvince/0000.json
+*Online live doc:* (https://perltest.myadoptionportal.com/contact/lkp/addressProvince/doc)[https://perltest.myadoptionportal.com/contact/lkp/addressProvince/doc]
 
 
 *online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpAddressProvince.html
 
 
 
-**lkp Address Type end point**
+### **lkp Address Type end point**
 
-	GET		/contact/lkp/addressType.json
-	GET		/contact/lkp/addressType/0000.json
-	POST		/contact/lkp/addressType.json
-	PUT		/contact/lkp/addressType/0000.json
-	DEL		/contact/lkp/addressType/0000.json
+*Online live doc:* (https://perltest.myadoptionportal.com/contact/lkp/addressType/doc)[https://perltest.myadoptionportal.com/contact/lkp/addressType/doc]
+
 
 **online example**: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpAddressType.html
 
 
 
-**lkp States end point**
+### **lkp States end point**
 
-	GET		/contact/lkp/states.json
-	GET		/contact/lkp/states/0000.json
-	POST		/contact/lkp/states.json
-	PUT		/contact/lkp/states/0000.json
-	DEL		/contact/lkp/states/0000.json
+(https://perltest.myadoptionportal.com/contact/lkp/states/doc)[https://perltest.myadoptionportal.com/contact/lkp/states/doc]
 
 *online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpState.html
 
 
 
-**lkp Religions end point**
+### **lkp Religions end point**
 
-	GET		/contact/lkp/states.json
-	GET		/contact/lkp/states/0000.json
-	POST		/contact/lkp/states.json
-	PUT		/contact/lkp/states/0000.json
-	DEL		/contact/lkp/states/0000.json
+(https://perltest.myadoptionportal.com/contact/lkp/religions/doc)[https://perltest.myadoptionportal.com/contact/lkp/religions/doc]
 
 *online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpReligion.html
 
 
-**lkp Nationalities end point**
+### **lkp Nationalities end point**
 
-	GET		/contact/lkp/nationalities.json
-	GET		/contact/lkp/nationalities/0000.json
-	POST		/contact/lkp/nationalities.json
-	PUT		/contact/lkp/nationalities/0000.json
-	DEL		/contact/lkp/nationalities/0000.json
+(https://perltest.myadoptionportal.com/contact/lkp/nationalities/doc)[https://perltest.myadoptionportal.com/contact/lkp/nationalities/doc]
 
 *online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpNationality.html
 
 
 
-**lkp Languages end point**
+### **lkp Languages end point**
 
-	GET		/contact/lkp/languages.json
-	GET		/contact/lkp/languages/0000.json
-	POST		/contact/lkp/languages.json
-	PUT		/contact/lkp/languages/0000.json
-	DEL		/contact/lkp/languages/0000.json
+(https://perltest.myadoptionportal.com/contact/lkp/languages/doc)[https://perltest.myadoptionportal.com/contact/lkp/languages/doc]
 
 *online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpLanguage.html
 
 
 
-**lkp Ethnicities end point**
+### **lkp Ethnicities end point**
 
-	GET		/contact/lkp/ethnicities.json
-	GET		/contact/lkp/ethnicities/0000.json
-	POST		/contact/lkp/ethnicities.json
-	PUT		/contact/lkp/ethnicities/0000.json
-	DEL		/contact/lkp/ethnicities/0000.json
+*Online live doc:* 
 
-*online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpEthnicity.html
+(https://perltest.myadoptionportal.com/contact/lkp/ethnicities/doc)[https://perltest.myadoptionportal.com/contact/lkp/ethnicities/doc]
 
+*online example*: 
 
-
-**lkp Culture end point**
-
-	GET		/contact/lkp/culture.json
-	GET		/contact/lkp/culture/0000.json
-	POST		/contact/lkp/culture.json
-	PUT		/contact/lkp/culture/0000.json
-	DEL		/contact/lkp/culture/0000.json
-
-*online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpCulture.html
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpEthnicity.html
 
 
 
-**lkp Counties end point**
+### **lkp Culture end point**
 
-	GET		/contact/lkp/counties.json
-	GET		/contact/lkp/counties/0000.json
-	POST		/contact/lkp/counties.json
-	PUT		/contact/lkp/counties/0000.json
-	DEL		/contact/lkp/counties/0000.json
+*Online live doc:* 
 
-*online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpCounty.html
+(https://perltest.myadoptionportal.com/contact/lkp/culture/doc)[https://perltest.myadoptionportal.com/contact/lkp/culture/doc]
 
-**lkp Phone types**
+*online example*: 
 
-	GET		/contact/phoneTypes.json
-	GET		/contact/phoneTypes/0000.json
-	POST		/contact/phoneTypes.json
-	PUT		/contact/phoneTypes/0000.json
-	DEL		/contact/phoneTypes/0000.json
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpCulture.html
 
 
-**lkp Email types**
 
-	GET		/contact/emailTypes.json
-	GET		/contact/emailTypes/0000.json
-	POST		/contact/emailTypes.json
-	PUT		/contact/emailTypes/0000.json
-	DEL		/contact/emailTypes/0000.json
+### **lkp Counties end point**
 
+*Online live doc:* 
 
-**lkp Degrees**
+(https://perltest.myadoptionportal.com/contact/lkp/counties/doc)[https://perltest.myadoptionportal.com/contact/lkp/counties/doc]
 
-	GET		/contact/degrees.json
-	GET		/contact/degrees/0000.json
-	POST		/contact/degrees.json
-	PUT		/contact/degrees/0000.json
-	DEL		/contact/degrees/0000.json
+*online example*: 
+
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpCounty.html
 
 
-**lkp Races**
+### **lkp Phone types**
 
-	GET		/contact/lkp/races.json
-	GET		/contact/lkp/races/0000.json
-	POST		/contact/lkp/races.json
-	PUT		/contact/lkp/races/0000.json
-	DEL		/contact/lkp/races/0000.json
+*Online live doc:* 
+
+(https://perltest.myadoptionportal.com/contact/phoneTypes/doc)[https://perltest.myadoptionportal.com/contact/phoneTypes/doc]
+
+
+### **lkp Email types**
+
+*Online live doc:* 
+
+(https://perltest.myadoptionportal.com/contact/emailTypes/doc)[https://perltest.myadoptionportal.com/contact/emailTypes/doc]
+
+
+### **lkp Degrees**
+
+*Online live doc:* 
+
+(https://perltest.myadoptionportal.com/contact/degrees/doc)[https://perltest.myadoptionportal.com/contact/degrees/doc]
+
+
+### **lkp Races**
+
+*Online live doc:* 
+
+(https://perltest.myadoptionportal.com/contact/lkp/races/doc)[https://perltest.myadoptionportal.com/contact/lkp/races/doc]
