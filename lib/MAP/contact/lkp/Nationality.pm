@@ -27,6 +27,22 @@ options '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 	MAP::API->options_header();
 };
 
+options '/'.$collectionName.'/doc' => sub {
+	MAP::API->options_header();
+};
+
+get '/'.$collectionName.'/doc' => sub {
+	my @defaultColumns = split(/,/, $defaultColumns);	
+	template 'doc', { 
+		'collectionName' => $collectionName,
+		'tableName' => $tableName,
+		'prefix' => '/contact/lkp',
+		'defaultColumns' => [@defaultColumns],
+		'defaultColumnsStr' => $defaultColumns,
+		'primaryKey' => $primaryKey
+  };
+
+};
  
 # routing OPTIONS header
 
@@ -70,6 +86,10 @@ get '/'.$collectionName.'.:format' => sub {
 	
 	if ( length($sql_filters) > 1 ) {
 		$sql_filters = ' ( '.  substr($sql_filters, 0, -5) . ' )';
+	}
+	else
+	{
+		$sql_filters = '  1 = 1 ';
 	}
 	
 	
@@ -160,9 +180,7 @@ post '/'.$collectionName.'.:format' => sub {
 	my @sql_values;
     
 	my %hash = %{ $hash };
-	
-	# check formname
-	$hash{formname} = MAP::API->regex_alnum($hash{formname});
+
 	
 	my $dbh = MAP::API->dbh();
 
@@ -218,6 +236,7 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
    
     my $item_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
+	$item_id=~ s/'//g;
 	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
 	#$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
 	
@@ -268,6 +287,7 @@ del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
 	
     my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
+	$str_id=~ s/'//g;
 	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
 	my $dbh = MAP::API->dbh();
 	
@@ -294,7 +314,7 @@ get '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
    
    my $strColumns = params->{columns} || $defaultColumns;  
    my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
-    
+	$str_id=~ s/'//g;
    # ===== especific
    my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
    

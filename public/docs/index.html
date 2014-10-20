@@ -1,0 +1,1033 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><% collectionName %></title>
+<link type="text/css" rel="stylesheet" href="https://perltest.myadoptionportal.com/docs/styles/shCoreDefault.css"/>
+<link href='https://perltest.myadoptionportal.com/docs/styles/shCore.css' rel='stylesheet' type='text/css' />
+<link href='https://perltest.myadoptionportal.com/docs/styles/shThemeDefault.css' rel='stylesheet' type='text/css' />
+<link type="text/css" rel="Stylesheet" href="https://perltest.myadoptionportal.com/docs/styles/shThemeMidnight.css"/>
+<link type="text/css" rel="Stylesheet" href="https://perltest.myadoptionportal.com/docs/styles/shThemeRDark.css"/>
+<link type="text/css" rel="Stylesheet" href="https://perltest.myadoptionportal.com/docs/styles/shThemeFadeToGrey.css"/>
+<script type="text/javascript" src="https://perltest.myadoptionportal.com/docs/scripts/shCore.js"></script>
+<script type="text/javascript" src="https://perltest.myadoptionportal.com/docs/scripts/shBrushPerl.js"></script>
+<script type="text/javascript" src="https://perltest.myadoptionportal.com/docs/scripts/shBrushPhp.js"></script>
+<script type="text/javascript" src="https://perltest.myadoptionportal.com/docs/scripts/shBrushJScript.js"></script>
+<script type="text/javascript" src="https://perltest.myadoptionportal.com/docs/scripts/shBrushPlain.js"></script>
+
+<script src='https://perltest.myadoptionportal.com/docs/scripts/shAutoloader.js' type='text/javascript'></script>
+<script src='https://perltest.myadoptionportal.com/docs/scripts/shBrushXml.js' type='text/javascript'></script>
+<script src='https://perltest.myadoptionportal.com/docs/scripts/shBrushCss.js' type='text/javascript'></script>
+<script type="text/javascript">SyntaxHighlighter.all();</script>
+<style type="text/css" media="screen"> 
+
+html, body {
+width: 100%;
+height: 100%;
+margin: 0px;
+background:#FFF;
+padding:0px;
+font-family:Arial, Helvetica, sans-serif;
+font-size:12px;
+background:#0D1D32;
+color:#ffffff;
+}
+input, textarea{
+border:solid 1px #69C;
+font-size:10px;
+}
+h1, h2, h3, p, a {
+	width:85%;
+	padding:4px;
+	margin:0px;
+	color:#FF9700;
+}
+h1{color:#FF9700;font-size:19px;}
+h2{font-size:17px;}
+h3{color:#FFB951;font-size:14px;}
+p{
+	color:#ffffff;
+	font-size:12px;
+}
+span{font-weight:bold; color:#FC0; font-size:13px; font-family:Tahoma, Geneva, sans-serif}
+.white{font-weight:bold; color:#fff; font-size:13px; font-family:Tahoma, Geneva, sans-serif}
+.whiteBig{font-weight:bold; color:#fff; font-size:20px; font-family:Tahoma, Geneva, sans-serif}
+
+</style>
+</head>
+
+<body>
+<h1><img src="../images/cairs_logo.png" width="315" height="54" alt="CAIRS" /></h1>
+<h1><% prefix %>/<% collectionName %> end point documentation</h1>
+<p><em><span class="white">this software is property of CAIRS Solutions</span></em></p>
+<p>&nbsp;</p>
+<h2>&nbsp;</h2>
+<h2>Client-side calls using MAP RESTful client</h2>
+<p>&nbsp;</p>
+<p><em><strong><span>This documentation presumes that you already have DHTMLX Suite PRO version and CAIRS fw  installed on your system</span></strong></em><strong>.</strong></p>
+<p>&nbsp;</p>
+<h3>Insert <% collectionName %></h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+var hash = {
+	<% FOREACH column IN defaultColumns %>
+	   "<% column %>" : ""
+	<% END %>
+};
+
+CAIRS.MAP.API.post({
+    resource :  "<% prefix %>/<% collectionName %>" 
+    ,format : "json"
+    ,payload : "hash=" + JSON.stringify( hash )
+    ,onSuccess : function( request ) 
+    { 
+        var json = JSON.parse( request.response );
+        console.log(request);
+        alert("Id of the new contact: " + json.ContactId);
+    }
+    ,onFail : function( request )
+    { 
+        var json = JSON.parse( request.response );
+    }
+});
+</pre>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<h3>Complete call</h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+			PaymentFlow.newFlow(  {
+				invoice_id : (new Date().getTime()),	// mandatory, must to be unique
+				
+				invoice_pay_for_desc : "Adoption Portal",// mandatory. payment description
+				invoice_custom_message : "thank you guy...",	//not, mandatory, default 'thank you for your pay...'
+				
+				customer_id : 10,	// mandatory
+				customer_firstName : "Mark",	// mandatory
+				customer_lastName : "Livings",	// mandatory
+				customer_email : "mark@cairs.com",	// mandatory
+				customer_address1 : "11643 Groove Street",	// mandatory
+
+				// ====== not mandatory area					
+				customer_address2 : "final address",	// not mandatory
+				customer_city : "Seminole",	// not mandatory
+				customer_state : "Florida",	// not mandatory
+				customer_zipcode : "33772",	// not mandatory
+				customer_country : "US",	// not mandatory, two ISO letters
+				customer_phonenumber : "(111)111-1111",	// not mandatory
+				customer_mobilenumber : "(000)000-0000",	// not mandatory
+				customer_company : "CAIRS Solutions",	// not mandatory
+				customer_account_number : "55555",	// not mandatory
+				customer_routing_number : "011400178",	// not mandatory
+				// ====== not mandatory area
+				
+				/*==      Agency information       ==*/
+				agency_id : 1,	// mandatory
+				agency_name : "Agency LTD",	// mandatory
+				agency_email : "mark@cairs.com",	// mandatory
+				agency_address1 : "11643 Groove Street",	// mandatory
+				agency_city : "Seminole",	// mandatory
+				agency_state : "Florida",	// mandatory
+				agency_zipcode : "33772",	// mandatory
+				agency_country : "US",	// mandatory, two ISO letters
+				agency_phonenumber : "(111)111-1111",	// mandatory
+				
+                // ====== not mandatory area					
+				agency_address2 : "final address",	// not mandatory
+				agency_faxnumber : "(000)000-0000",	// not mandatory
+				agency_logo : "agency_logo.png",	// not mandatory, default cairs_logo.png
+				// ====== not mandatory area
+                
+                signature_saving_path : 'D:/web/localuser/web2solutions/www/poc/signatures/', // mandatory			
+				application_url : "http://www.web2solutions.com.br/poc/paymentFlow/", // mandatory			
+
+				// not mandatory, but you will can not pay for anything
+				pay_for_items : [ 
+					{invoice_item_id : 1, values : ["ABC 1234 ", "0.05"]},
+					{invoice_item_id : 2, values : ["XDC 456", "0.05"]}, 
+					{invoice_item_id : 3, values : ["Item testC", "0.10"]},
+					{invoice_item_id : 4, values : ["Item test D", "0.03"]},
+					{invoice_item_id : 5, values : ["Item test F", "0.02"]},
+					{invoice_item_id : 6, values : ["XDC 456", "0.05"]}
+					
+				],
+
+				// not mandatory, but the client will have not a payment type to choice
+				gateways_allowed : [
+					/* paypal */
+					{
+						/* is paypal enabled ? */ 
+						paypal : true // mandatory
+						
+						// == merchant information
+						
+						/* Agency receiver email - Adaptive Payment (credit card) */ 
+						,email : "eduardo@web2solutions.com.br" // mandatory
+						
+						/* Agency receiver API user - Express checkout (paypal ballance) */ 
+						,user : "mark.livings_api1.cairsolutions.com"	// mandatory
+						
+						/* Agency receiver API password - Express checkout (paypal ballance) */ 
+						,password : "SEFDP8NLDGMSUGSR"	// mandatory
+						
+						/* Agency receiver API signature - Express checkout (paypal ballance) */ 
+						,signature : "A6D8UzqWrj5AYBYltSLpA3lbrzkCAACnrXIoVLbTDCK1UpMnYNPMXweG" // mandatory
+                        
+                        /* NEW 06-10-2013 */
+                        ,Visa : true // not mandatory, default true
+                        ,MasterCard : true	// not mandatory, default true
+                        ,AmericanExpress : true	// not mandatory, default true
+                        ,Discover : true	// not mandatory, default true
+                        /* NEW 06-10-2013 */
+					},	
+					/* authorize.net */
+					{
+						/* is authorize.net enabled ? */ 
+						authorize_net : true // mandatory
+						
+						// == merchant information
+						
+						/* Agency receiver API ID */ 
+						,user : "46kC8eDT"		// mandatory for authorize.net
+						
+						/* Agency receiver API transaction key */ 
+						,password : "4cLevw28W633hTF5"	// mandatory for authorize.net
+                        
+                        /* NEW 06-10-2013 */
+                        ,Visa : true // not mandatory, default true
+                        ,MasterCard : true	// not mandatory, default true
+                        ,AmericanExpress : true	// not mandatory, default true
+                        ,Discover : true	// not mandatory, default true
+                        /* NEW 06-10-2013 */
+					},	
+					{ wire_transfer : true},	// mandatory
+					{ echeck : true},	// mandatory
+					{ check : true}	// mandatory
+				],
+
+				currency : "USD", // USD - // not mandatory, default USD
+				timezone : "America/Sao_Paulo", // not mandatory, default America/New_York
+                
+                /* NEW 04-10-2013 */
+				charge_percentage_paypal : true,	// not mandatory, default false
+				charge_percentage_wiretransfer : false,	// not mandatory, default false
+				charge_percentage_check : false,	// not mandatory, default false
+				charge_percentage_echeck : false,	// not mandatory, default false
+				charge_percentage_Visa : true,	// not mandatory, default false
+				charge_percentage_MasterCard : true,	// not mandatory, default false
+				charge_percentage_AmericanExpress : true,	// not mandatory, default false
+				charge_percentage_Discover : true,	// not mandatory, default false
+				/* NEW 04-10-2013 */
+
+				fee_paypal : 0.25,	// not mandatory, default 0
+				fee_wiretransfer : 2.37,	// not mandatory, default 0
+				fee_check : 3.15,	// not mandatory, default 0
+				fee_echeck : 2.75,	// not mandatory, default 0
+				fee_Visa : 0.01,	// not mandatory, default 0
+				fee_MasterCard : 0.01,	// not mandatory, default 0
+				
+				paymentCallBack : myPersonalCallBackFunction
+			} );
+</pre>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<h3>Callback System</h3>
+<p>The callback system provides a way for updating the main application which the PaymenFlow component was plugged. It will call a function which you determine that is inside of you application code, passing all the information about the payment flow requested in a object literal format.</p>
+<p>In your callback function, you can update your main aplication interface and database (using AJAX).</p>
+<p>The callback system is called when:</p>
+<ul>
+  <li>User cancel the payment by click on 'cancel' button</li>
+  <li>User close the PaymentFlow without paying</li>
+  <li>User pay with success</li>
+  <li>User pay and get errors</li>
+  <li>There is a programming error on server side</li>
+</ul>
+<p>Now, lets assume the next scenario as your application´s code:</p>
+<pre class="brush: js;ruler: true; first-line: 1; highlight: [11, 12, 13, 14, 15, 16, 17,18, 19, 20, 151]; ">
+	&lt;html&gt;
+    	&lt;head&gt;
+        
+        	/* your application´s code goes here */
+            /* your application´s code goes here */
+            /* your application´s code goes here */
+            &lt;script&gt;
+            
+            var toolbar;
+            
+            function myPersonalCallBackFunction(response)
+            {
+                // update grid here
+                // do some tasks
+                //console.log( response );
+				//console.log( response.action );
+				//console.log( response.status );
+				//console.log( response.message );
+                //alert("callBack returned now we can update the main application");
+           
+                
+                var params = '';
+                params = params + "action=" + response.action;
+                params = params + "&amount=" + response.amount;
+                params = params + "&currency=" + response.currency;
+                params = params + "&customer_id=" + response.customer_id;
+                params = params + "&date=" + response.date;
+                params = params + "&error=" + response.error;
+                
+                params = params + "&transactionID=" + response.gateway.transactionID;
+                params = params + "&token=" + response.gateway.token;
+                params = params + "&payment_type=" + response.gateway.brand;
+               	
+                if(response.gateway.avs_code)
+                {
+                	params = params + "&avs_code=" + encodeURIComponent(response.gateway.avs_code);
+                }
+                if(response.gateway.cavv_response)
+                {
+                	params = params + "&cavv_response=" + encodeURIComponent(response.gateway.cavv_response);
+                }
+                if(response.gateway.cavv2_response)
+                {
+                	params = params + "&cavv2_response=" + encodeURIComponent(response.gateway.cavv2_response);
+                }
+               
+                params = params + "&invoice_id=" + response.invoice_id;
+                params = params + "&message=" + encodeURIComponent(response.message);
+                params = params + "&status=" + response.status;
+                params = params + "&time=" + response.time;
+                params = params + "&timezone=" + response.timezone;
+                
+                dhtmlxAjax.post( "my/path/save_on_database.php", params, function(loader)
+                {
+                    
+                });
+            }
+            
+            /* your application´s code goes here */
+            /* your application´s code goes here */
+            /* your application´s code goes here */
+            
+            window.onload = function (e)
+            {			
+                /* 
+                	we need to call the PaymentFlow for let agency or customer pay for
+                   	in this example I´m using a dhtmlxToolbar to call the PaymentFlow
+                    but you can call the flow using a button on your grid for example.
+                */
+                
+                /* creating a toolbar */
+                toolbar = new dhtmlXToolbarObject( ... );
+                /* adding the pay button */
+                toolbar.addButton("button_for_paying", 1, "button_for_paying", "cash.png", "cash_dis.png");
+                /* attaching an event to the button for paying */
+                toolbar.attachEvent("onClick", function(id)
+                {
+                    
+                    if(id == "button_for_paying")
+                    {
+                    	
+                        /* Call the PaymentFlow component*/
+                        PaymentFlow.newFlow(  {
+                            invoice_id : (new Date().getTime()),	// mandatory, must to be unique
+                            
+                            invoice_pay_for_desc : "Adoption Portal",// mandatory. payment description
+                            invoice_custom_message : "thank you guy...",	//not, mandatory, default 'thank you for your pay...'
+                            
+                            customer_id : 10,	// mandatory
+                            customer_firstName : "Mark",	// mandatory
+                            customer_lastName : "Livings",	// mandatory
+                            customer_email : "mark@cairs.com",	// mandatory
+                            customer_address1 : "11643 Groove Street",	// mandatory
+            
+                            // ====== not mandatory area					
+                            customer_address2 : "final address",	// not mandatory
+                            customer_city : "Seminole",	// not mandatory
+                            customer_state : "Florida",	// not mandatory
+                            customer_zipcode : "33772",	// not mandatory
+                            customer_country : "US",	// not mandatory, two ISO letters
+                            customer_phonenumber : "(111)111-1111",	// not mandatory
+                            customer_mobilenumber : "(000)000-0000",	// not mandatory
+                            customer_company : "CAIRS Solutions",	// not mandatory
+                            customer_account_number : "55555",	// not mandatory
+                            customer_routing_number : "011400178",	// not mandatory
+                            // ====== not mandatory area
+                            
+                            /*==      Agency information       ==*/
+                            agency_id : 1,	// mandatory
+                            agency_name : "Agency LTD",	// mandatory
+                            agency_email : "mark@cairs.com",	// mandatory
+                            agency_address1 : "11643 Groove Street",	// mandatory
+                            agency_city : "Seminole",	// mandatory
+                            agency_state : "Florida",	// mandatory
+                            agency_zipcode : "33772",	// mandatory
+                            agency_country : "US",	// mandatory, two ISO letters
+                            agency_phonenumber : "(111)111-1111",	// mandatory
+                            
+                            // ====== not mandatory area					
+                            agency_address2 : "final address",	// not mandatory
+                            agency_faxnumber : "(000)000-0000",	// not mandatory
+                            agency_logo : "agency_logo.png",	// not mandatory, default cairs_logo.png
+                            // ====== not mandatory area	
+                            
+                            signature_saving_path : 'D:/web/localuser/web2solutions/www/poc/signatures/', // mandatory			
+							application_url : "http://www.web2solutions.com.br/poc/paymentFlow/", // mandatory
+            
+                            // not mandatory, but you will can not pay for anything
+                            pay_for_items : [ 
+                                {invoice_item_id : 1, values : ["ABC 1234 ", "0.05"]},
+                                {invoice_item_id : 2, values : ["XDC 456", "0.05"]}, 
+                                {invoice_item_id : 3, values : ["Item testC", "0.10"]},
+                                {invoice_item_id : 4, values : ["Item test D", "0.03"]},
+                                {invoice_item_id : 5, values : ["Item test F", "0.02"]},
+                                {invoice_item_id : 6, values : ["XDC 456", "0.05"]}
+                                
+                            ],
+            
+                            // not mandatory, but the client will have not a payment type to choice
+                            gateways_allowed : [
+                                /* paypal */
+                                {
+                                    /* is paypal enabled ? */ 
+                                    paypal : true // mandatory
+                                    
+                                    // == merchant information
+                                    
+                                    /* Agency receiver email - Adaptive Payment (credit card) */ 
+                                    ,email : "eduardo@web2solutions.com.br" // mandatory
+                                    
+                                    /* Agency receiver API user - Express checkout (paypal ballance) */ 
+                                    ,user : "mark.livings_api1.cairsolutions.com"	// mandatory
+                                    
+                                    /* Agency receiver API password - Express checkout (paypal ballance) */ 
+                                    ,password : "SEFDP8NLDGMSUGSR"	// mandatory
+                                    
+                                    /* Agency receiver API signature - Express checkout (paypal ballance) */ 
+                                    ,signature : "A6D8UzqWrj5AYBYltSLpA3lbrzkCAACnrXIoVLbTDCK1UpMnYNPMXweG" // mandatory
+                                    
+                                    
+                                    /* NEW 06-10-2013 */
+                                    ,Visa : true // not mandatory, default true
+                                    ,MasterCard : true	// not mandatory, default true
+                                    ,AmericanExpress : true	// not mandatory, default true
+                                    ,Discover : true	// not mandatory, default true
+                                    /* NEW 06-10-2013 */
+                                },	
+                                /* authorize.net */
+                                {
+                                    /* is authorize.net enabled ? */ 
+                                    authorize_net : true // mandatory
+                                    
+                                    // == merchant information
+                                    
+                                    /* Agency receiver API ID */ 
+                                    ,user : "46kC8eDT"		// mandatory for authorize.net
+                                    
+                                    /* Agency receiver API transaction key */ 
+                                    ,password : "4cLevw28W633hTF5"	// mandatory for authorize.net
+                                    
+                                    /* NEW 06-10-2013 */
+                                    ,Visa : true // not mandatory, default true
+                                    ,MasterCard : true	// not mandatory, default true
+                                    ,AmericanExpress : true	// not mandatory, default true
+                                    ,Discover : true	// not mandatory, default true
+                                    /* NEW 06-10-2013 */
+                                },	
+                                { wire_transfer : true},	// mandatory
+                                { echeck : true},	// mandatory
+                                { check : true}	// mandatory
+                            ],
+            
+                            currency : "USD", // USD - // not mandatory, default USD
+                            timezone : "America/Sao_Paulo", // not mandatory, default America/New_York
+            
+                            fee_paypal : 0.25,	// not mandatory, default 0
+                            fee_wiretransfer : 2.37,	// not mandatory, default 0
+                            fee_check : 3.15,	// not mandatory, default 0
+                            fee_echeck : 2.75,	// not mandatory, default 0
+                            fee_Visa : 0.01,	// not mandatory, default 0
+                            fee_MasterCard : 0.01,	// not mandatory, default 0
+                            
+                            paymentCallBack : myPersonalCallBackFunction
+                        } );
+                    }
+                });
+            };
+            &lt;/script&gt;
+            
+        
+        &lt;/head&gt;
+    	&lt;body&gt;
+        
+        &lt;!-- your application´s code goes here --&gt;
+        &lt;!-- your application´s code goes here --&gt;
+        &lt;!-- your application´s code goes here --&gt;
+        &lt;!-- your application´s code goes here --&gt;
+        
+        &lt;/body&gt;
+    &lt;/html&gt;
+</pre>
+<p>When the PaymentFlow calls your callback function, it provides a parameter in object format named '<strong>Response object</strong>' in JSON format.</p>
+<p>The response object contains all the information about the did payment by client.</p>
+<p>The structure for the Response object is defined in this way:</p>
+<p>&nbsp;</p>
+<p></p>
+
+
+<h2>Response object scope</h2>
+
+<pre class="brush: js;ruler: true; first-line: 1;">
+response = 
+{
+	// unique ID variable. used internally in PaymentFlow component - string
+    uid : "",
+	
+    // indicates what was the action toke by user - string
+    action : "", // paid, cancelled
+	
+    // stores the status payment returned by the Flow - string
+    status : "", // success, err, cancelled
+	
+    // stores the payment details returned by the payment gateways - object
+    gateway: {
+			// store what was the gateway selected for paying
+            brand: "", // Paypal, authorize.net, wire_transfer, check, e - check, "" (empty)
+			
+            // store the Paypal Expreess Checkout token
+            token: "",
+			
+            // Store the Paypal Transaction ID OR Authorize.net authorization code
+            transactionID: "",
+			
+            avs_code : "", // for authorize.net payments
+			cvv2_response : "", // for authorize.net payments
+			cavv_response : "" // for authorize.net payments
+	},
+	
+    message : "", // empty, or gateway response
+	
+    // if is there an error:
+	// return an object with error details or return false - object or boolean false
+	error : {
+			type : "", // server error, processor error
+			message : "" // server error message or gateway error message
+	}, 
+	timezone : &quot;&quot;, // timezone used when returning the payment date and time
+    date : "", // date of calling the callBack system
+	time : "", // time of calling the callBack system
+	amount : "", // invoice amount
+	currency : "", // USD, CAD
+	customer_id: 0, // customer ID
+	invoice_id: 0 // invoice ID
+}
+</pre>
+<h2><strong>Response messages for authorize.net</strong></h2>
+<h3><strong>AVS Responses</strong></h3>
+<p>$messages{A} = &quot;The street address matches, but the 5-digit ZIP code does not&quot;;<br />
+  $messages{B} = &quot;Address information was not submitted in the transaction information, so AVS check could not be performed&quot;;<br />
+  $messages{E} = &quot;The AVS data provided is invalid, or AVS is not allowed for the card type submitted&quot;;<br />
+  $messages{G} = &quot;The credit card issuing bank is of non-U.S. origin and does not support AVS&quot;;<br />
+  $messages{N} = &quot;Neither the street address nor the 5-digit ZIP code matches the address and ZIP code on file for the card&quot;;<br />
+  $messages{P} = &quot;AVS is not applicable for this transaction&quot;;<br />
+  $messages{R} = &quot;AVS was unavailable at the time the transaction was processed. Retry transaction&quot;;<br />
+  $messages{S} = &quot;The U.S. card issuing bank does not support AVS&quot;;<br />
+  $messages{U} = &quot;Address information is not available for the customer's credit card&quot;;<br />
+  $messages{W} = &quot;The 9-digit ZIP code matches, but the street address does not match&quot;;<br />
+  $messages{Y} = &quot;The street address and the first 5 digits of the ZIP code match perfectly&quot;;<br />
+  $messages{Z} = &quot;The first 5 digits of the ZIP code matches, but the street address does not match&quot;;<br />
+</p>
+<h3><strong>CVV2 Responses</strong></h3>
+<p>$messages{&quot;&quot;} = 'Check failed either because CVV2 value entered is incorrect or no CVV2 value was entered';<br />
+  $messages{M} = &quot;Match&quot;;<br />
+  $messages{N} = &quot;No match&quot;;<br />
+  $messages{P} = &quot;Not processed, CVV2 could not be verified&quot;;<br />
+  $messages{S} = &quot;Issuer indicates that CVV2 should be present on the card, but no CVV2 data was entered with transaction&quot;;<br />
+  $messages{U} = &quot;Issuer does not support CVV2&quot;;<br />
+</p>
+<h3><strong>CAVV Responses</strong></h3>
+<p>$messages{&quot;&quot;} = '';<br />
+  $messages{&quot;0&quot;} = 'CAVV not validated because erroneous data was submitted';<br />
+  $messages{&quot;1&quot;} = 'CAVV failed validation';<br />
+  $messages{&quot;2&quot;} = 'CAVV passed validation';<br />
+  $messages{&quot;3&quot;} = 'CAVV validation could not be performed; issuer attempt incomplete';<br />
+  $messages{&quot;4&quot;} = 'CAVV validation could not be performed; issuer system error';<br />
+  $messages{&quot;5&quot;} = 'Reserved for future use';<br />
+  $messages{&quot;6&quot;} = 'Reserved for future use';<br />
+  $messages{&quot;7&quot;} = 'CAVV attempt – failed validation – issuer available (U.S.-issued card/non-U.S acquirer)';<br />
+  $messages{&quot;8&quot;} = 'CAVV attempt – passed validation – issuer available (U.S.-issued card/non-U.S. acquirer)';<br />
+  $messages{&quot;9&quot;} = 'CAVV attempt – failed validation – issuer unavailable (U.S.-issued card/non-U.S. acquirer)';<br />
+  $messages{&quot;A&quot;} = 'CAVV attempt – passed validation – issuer unavailable (U.S.-issued card/non-U.S. acquirer)';<br />
+  $messages{&quot;B&quot;} = 'CAVV passed validation, information only, no liability shift';</p>
+<p>&nbsp;</p>
+
+<h2>Response examples</h2>
+<h3>Paypal express checkout success response</h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+response = {
+    action: "paid",
+    amount: "31.25",
+    currency: "USD",
+    customer_id: 10,
+    date: "3/12/2013", // mm/dd/yyyy
+    error: false,
+    gateway: 
+    {
+        avs_code: "",
+        brand: "paypal",
+        cavv_response: "",
+        cvv2_response: "",
+        token: "EC-7LG06737AL785771C",
+        transactionID: "34S10784W0289624F"
+	},
+    invoice_id: 1363048267944,
+    message: "Paid by express checkout",
+    status: "success",
+    time: "3:18:14",   // hh:mm:ss
+	timezone : &quot;America/Sao_Paulo&quot;, // timezone for agency locale
+    uid: "10_1363048267944"
+}
+</pre>
+
+<h3>Paypal express checkout error response 1</h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+response = {
+	action: "paid",
+    amount: 2.25,
+    currency: "USD",
+    customer_id: 10,
+    date: "3/12/2013",
+    error: 
+    {
+    	message: "Error when trying to login  into paypal sandbox. Check the credentials on server side.",
+    	type: "processor error"
+    },
+    gateway: 
+    {
+        avs_code: "",
+        brand: "paypal",
+        cavv_response: "",
+        cvv2_response: "",
+        token: "",
+        transactionID: "",
+	},
+    invoice_id: 1363113920181,
+    message: "Error when trying to login  into paypal sandbox. Check the credentials on server side.",
+    status: "err",
+    time: "15:47:37",
+    timezone: "America/Sao_Paulo",
+    uid: "10_1363113920181"
+}
+</pre>
+
+<h3>Paypal express checkout error response 2</h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+response = {
+	action: "paid",
+    amount: 2.25,
+    currency: "USD",
+    customer_id: 10,
+    date: "3/12/2013",
+    error: 
+    {
+    	message: "Error when athenticating into Paypal. Check your Paypal e-mail and password.",
+    	type: "processor error"
+    }
+    gateway: 
+    {
+        avs_code: "",
+        brand: "paypal",
+        cavv_response: "",
+        cvv2_response: "",
+        token: "",
+        transactionID: "",
+    },
+    invoice_id: 1363128267551,
+    message: "Error when athenticating into Paypal. Check your Paypal e-mail and password.",
+    status: "err",
+    time: "19:45:32",
+    timezone: "America/Sao_Paulo",
+    uid: "10_1363128267551"
+}
+</pre>
+
+<h3>Authorize.net - Visa success response</h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+response = {
+	action: "paid",
+    amount: "31.82",
+    currency: "USD",
+    customer_id: 10,
+    date: "12/3/2013", // mm/dd/yyyy
+    error: false,
+    gateway: 
+    {
+        avs_code: "Y - The street address and the first 5 digits of the ZIP code match perfectly",
+        brand: "Visa",
+        cavv_response: " - ",
+        cvv2_response: "M - Match",
+        token: "",
+        transactionID: "09769G",
+    },
+    invoice_id: 1363073682866,
+    message: "Card captured successfully: 09769G",
+    status: "success",
+    time: "4:39:14",   // hh:mm:ss
+    timezone: "America/Sao_Paulo",
+    uid: "10_1363073682866"
+}
+</pre>
+
+<h3>Authorize.net - Visa error response 1</h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+response = {
+	action: "paid",
+    amount: "2.82",
+    currency: "USD",
+    customer_id: 10,
+    date: "3/12/2013", // mm/dd/yyyy
+    error:
+    {
+    	message: "The credit card has expired.",
+    	type: "processor error"
+    },
+    gateway:
+    {
+        avs_code: "P - AVS is not applicable for this transaction",
+        brand: "Visa",
+        cavv_response: " - ",
+        cvv2_response: " - Check failed either because CVV2 value entered is incorrect or no CVV2 value was entered",
+        token: "",
+        transactionID: "",
+    },
+    invoice_id: 1363075405013,
+    message: "The credit card has expired.",
+    status: "err",
+    time: "5:6:19",   // hh:mm:ss
+    timezone: "America/Sao_Paulo",
+    uid: "10_1363075405013"
+}
+</pre>
+
+
+<h3>Authorize.net - Visa error response 2</h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+response = {
+	action: "paid",
+    amount: "2.82",
+    currency: "USD",
+    customer_id: 10,
+    date: "3/12/2013",
+    error:
+    {
+    	message: "The card code is invalid. - The value submitted in x_card_code failed format validation.",
+    	type: "processor error"
+    },
+    gateway:
+    {
+    	avs_code: "P - AVS is not applicable for this transaction",
+    	brand: "Visa",
+    	cavv_response: " - ",
+    	cvv2_response: " - Check failed either because CVV2 value entered is incorrect or no CVV2 value was entered",
+    	token: "",
+    	transactionID: ""
+	},
+    invoice_id: 1363076697418,
+    message: "The card code is invalid. - The value submitted in x_card_code failed format validation.",
+    status: "err",
+    time: "5:27:19",
+    timezone: "America/Sao_Paulo",
+    uid: "10_1363076697418"
+}
+</pre>
+
+
+
+
+
+<h3>Authorize.net - MasterCard error response</h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+response = {
+	action: "paid",
+    amount: "32.38",
+    currency: "USD",
+    customer_id: 10,
+    date: "3/12/2013", // mm/dd/yyyy
+    error: 
+    {
+    	message: "This transaction has been declined.",
+    	type: "processor error"
+    },
+    gateway:
+    {
+        avs_code: "N - Neither the street address nor the 5-digit ZIP code matches the address and ZIP code on file for the card",
+        brand: "MasterCard",
+        cavv_response: " - ",
+        cvv2_response: "M - Match",
+        token: "",
+        transactionID: ""
+	},
+    invoice_id: 1363056005355,
+    message: "This transaction has been declined.",
+    status: "err",
+    time: "3:18:14",  // hh:mm:ss
+    timezone : "America/Sao_Paulo", // timezone for agency locale
+    uid: "10_1363056005355"
+}
+</pre>
+<p>&nbsp;</p>
+<h2>How to disable or enable a payment gateway inside the PaymentFlow component?</h2>
+<p>The PaymentFlow component provides several payment gateways: Authorize.net (Master and VIsa), Paypal (Paypal ballance and credit card), E-check, Check and Wire Transfer.</p>
+<p>But in some cases, the user which you use the PaymentFlow does not have one or more of that gateways enabled in your account.</p>
+<p>PaymentFlow component lets you to call the <strong>PaymentFlow.newFlow()</strong> method setting what are the gateways which will be rendered on the window. For it, the component provides the <strong>gateways_allowed</strong> property.</p>
+<p>This property is an array type variable which stores literal objects defining each allowed/disallowed payment gateways.</p>
+<p>The following example shows how to disable or enable a payment gateway:</p>
+<pre class="brush: js;ruler: true; first-line: 1;highlight: [6, 9, 12, 15];">
+	gateways_allowed : [
+		{
+			paypal : true   //==> will to render paypal			
+		},	
+		{
+			authorize_net : false   //==> will not to render authorize.net options
+		},	
+		{
+        	wire_transfer : false	//==> will not to render wire transfer
+        },
+		{
+        	echeck : false   //==> will not to render e-check
+        },
+		{
+        	check : false   //==> will not to render check
+        }	
+	]
+</pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+<h2>Defining which payment gateway will be rendered</h2>
+<p>To define which payment gateway wich will avaliable to the customer, use the array <span>gateways_allowed</span> inside the <span>newFlow</span> method.</p>
+<p>Set to <span>false</span> the gateway which will not be avaliable to the end user.</p>
+<pre class="brush: js;ruler: true; first-line: 1;highlight: [86];">
+	gateways_allowed : [
+        /* paypal */
+        {
+            /* is paypal enabled ? */ 
+            paypal : true // mandatory
+            
+            // == merchant information
+            
+            /* Agency receiver email - Adaptive Payment (credit card) */ 
+            ,email : "eduardo@web2solutions.com.br" // mandatory
+            
+            /* Agency receiver API user - Express checkout (paypal ballance) */ 
+            ,user : "mark.livings_api1.cairsolutions.com"	// mandatory
+            
+            /* Agency receiver API password - Express checkout (paypal ballance) */ 
+            ,password : "SEFDP8NLDGMSUGSR"	// mandatory
+            
+            /* Agency receiver API signature - Express checkout (paypal ballance) */ 
+            ,signature : "A6D8UzqWrj5AYBYltSLpA3lbrzkCAACnrXIoVLbTDCK1UpMnYNPMXweG" // mandatory
+        },	
+        /* authorize.net */
+        {
+            /* is authorize.net enabled ? */ 
+            authorize_net : true // mandatory
+            
+            // == merchant information
+            
+            /* Agency receiver API ID */ 
+            ,user : "46kC8eDT"		// mandatory for authorize.net
+            
+            /* Agency receiver API transaction key */ 
+            ,password : "4cLevw28W633hTF5"	// mandatory for authorize.net
+        },	
+        { wire_transfer : true},	// mandatory
+        { echeck : true},	// mandatory
+        { check : true}	// mandatory
+	]
+</pre>
+<p>If the authorize.net gateway is <span>enabled</span>, the payments using credit card (MasterCard and Visa) will be performed over <span>authorize.net</span> gateway</p>
+<p>If the authorize.net gateway is <span>disabled</span>, the payments using credit card (MasterCard and Visa) will be performed over <span>Paypal</span> gateway</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<h2>Configuring the saving path for signatures</h2>
+
+<p>Inside the <span>PaymentFlow.newFlow({})</span> method, use the following property:</p>
+<p></p>
+<ul>
+<li><span>signature_saving_path</span></li>
+</ul>
+<p></p>
+<pre class="brush: js;ruler: true; first-line: 1;highlight: [7];">
+	// ====== not mandatory area					
+	agency_address2 : "final address",	// not mandatory
+	agency_faxnumber : "(000)000-0000",	// not mandatory
+	agency_logo : "agency_logo.png",	// not mandatory, default cairs_logo.png
+	// ====== not mandatory area	
+	
+	signature_saving_path : 'D:/web/localuser/web2solutions/www/poc/signatures/', // mandatory			
+	application_url : "http://www.web2solutions.com.br/poc/paymentFlow/", // mandatory
+            
+	// not mandatory, but you will can not pay for anything
+	pay_for_items : [ 
+	    {invoice_item_id : 1, values : ["ABC 1234 ", "0.05"]},
+	    {invoice_item_id : 2, values : ["XDC 456", "0.05"]}, 
+	    {invoice_item_id : 3, values : ["Item testC", "0.10"]},
+	    {invoice_item_id : 4, values : ["Item test D", "0.03"]},
+	    {invoice_item_id : 5, values : ["Item test F", "0.02"]},
+	    {invoice_item_id : 6, values : ["XDC 456", "0.05"]}
+	    
+	],
+</pre>
+
+
+
+<h2>Installing the PaymentFlow processors on your server</h2>
+<p>The server side processors for authorize.net and Paypal are made in Perl.</p>
+<p>Perl is already installed by default on the most linux and unix operational systems.</p>
+<p>In Windows you can use the Strawberry Perl or ActivePerl.</p>
+<p>To ensure you have Perl installed, open the terminal or prompt and type:</p>
+<pre class="brush: plain;ruler: true; first-line: 1;highlight: [86];">
+	perl -v
+    
+    // you will get something similar
+    
+    
+    This is perl 5, version 12, subversion 2 (v5.12.2) built for MSWin32-x86-multi-t
+    (with 8 registered patches, see perl -V for more detail)
+    
+    Copyright 1987-2010, Larry Wall
+    
+    Binary build 1203 [294165] provided by ActiveState http://www.ActiveState.com
+    Built Dec  9 2010 04:03:28
+    
+    Perl may be copied only under the terms of either the Artistic License or the
+    GNU General Public License, which may be found in the Perl 5 source kit.
+    
+    Complete documentation for Perl, including FAQ lists, should be found on
+    this system using "man perl" or "perldoc perl".  If you have access to the
+    Internet, point your browser at http://www.perl.org/, the Perl Home Page.
+
+</pre>
+<h3>Perl modules</h3>
+<p>The processors uses some Perl modules. These modules shall be installed.</p>
+<h3>WINDOWS 2003, 2008 and 7
+- Internet Information Services / Active Perl 5.8 and 5.12</h3><p>To install the modules, type the following commands on terminal or prompt: (gives enter for each command)</p>
+<pre class="brush: plain;ruler: true; first-line: 1;highlight: [86];">
+	cpan install WWW::Mechanize
+    cpan install DateTime
+    cpan install Tie
+    cpan install LWP
+    cpan install HTML::TreeBuilder
+    cpan install Net::HTTPS
+	cpan install Business::PayPal::NVP
+    cpan install Business::OnlinePayment
+    cpan install URI::Escape
+	cpan install HTTP::Request::Common
+	cpan install LWP::UserAgent
+</pre>
+<h3 id="#centos5.9">CentOS 5.9 - Apache2 / Perl 5.8.8</h3>
+<p>In CentOS 5.9 Operational System, <strong><span>don´t</span></strong> install the modules mentioned on the Windows section in this documentation. </p>
+<p>Check if you have the <strong><span>LWP</span></strong> and <strong><span>DateTime</span></strong> modules already installed. If you have it installed, please <strong><span>remove</span></strong> them.</p>
+<p>The PaymentFlow module will to use that modules, but embed in your lib inside the codebase.</p>
+<p>In this box we will to install (or ensure if it is installed) the following modules (dependencies of embed modules):</p>
+<pre class="brush: plain;ruler: true; first-line: 1;highlight: [86];">
+	cpanm HTTP::Config
+    cpanm HTTP::Message
+    cpanm Encode
+    cpanm Compress::Raw::Bzip2
+    cpanm IO::HTML
+    cpanm Params::Validate
+    cpanm Params::Util
+    cpanm Package::Stash
+    cpanm Class::Singleton
+    cpanm Class::Load
+    cpanm Sub::Install
+    cpanm Sub::Exporter
+    cpanm XML::XPathEngine
+    cpanm Module::Runtime
+    cpanm Module::Implementation
+    cpanm Try::Tiny
+    cpanm List::MoreUtils
+    cpanm Parent
+    cpanm LWP::MediaTypes
+    cpanm IO::Socket::SSL
+    cpanm NET::SSLeay
+    cpanm Crypt::SSLeay
+    cpanm File::Listing
+    cpanm HTTP::Cookies
+    cpanm CGI
+</pre>
+<p>In a Apache2 box you will also need to install/enable <strong><span>mod_perl</span></strong> for better performance. Classical CGI as well is not the best way of running perl because it creates one process for each request and does not handles it. The mod_perl will run scripts faster and take care of the execution environment, running all the requests inside a managed Apache process</p>
+<p>Now you need enable the CGI perl scripts in Apache, adding <span>ExecCGI</span> to the options and place a new line <span>"AddHandler"</span></p>
+<p>Open the httpd.conf file:</p>
+<pre class="brush: plain;ruler: true; first-line: 1;">
+	# gedit /etc/httpd/conf/httpd.conf
+</pre>
+<p>Look for the <span>&lt;Directory&gt;</span> placeholder</p>
+<pre class="brush: plain;ruler: true; first-line: 1;highlight: [3, 9];">
+	&lt;Directory "/var/www/html"&gt;
+ 
+        Options Indexes FollowSymLinks ExecCGI
+     
+        AllowOverride None
+     
+        Order allow,deny
+        Allow from all
+        AddHandler cgi-script cgi pl
+       
+    &lt;/Directory&gt;
+</pre>
+
+<p>Another approach to get better "results" is to use a middleware, like Plack.</p>
+<p> We can also to install mod_proxy on Apache, and turn the apache a reverse proxy working together with a backend like Starman, a High-performance preforking PSGI web server.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>List of american timezone examples (tz)</h2>
+<p>Use a tz inside the <span>newFlow</span> method for defining  the  payment timezone</p>
+<pre class="brush: plain;ruler: true; first-line: 1;highlight: [19];">
+    America/Chicago
+    America/Dawson
+    America/Dawson_Creek
+    America/Denver
+    America/Detroit
+    America/Edmonton
+    America/Indiana/Indianapolis
+    America/Indiana/Knox
+    America/Indiana/Marengo
+    America/Indiana/Petersburg
+    America/Indiana/Tell_City
+    America/Indiana/Vevay
+    America/Indiana/Vincennes
+    America/Indiana/Winamac
+    America/Kentucky/Louisville
+    America/Kentucky/Monticello
+    America/Los_Angeles
+    America/Montreal
+    America/New_York     ==> 	Default
+    America/North_Dakota/Beulah
+    America/North_Dakota/Center
+    America/North_Dakota/New_Salem
+    America/Phoenix
+    America/Sao_Paulo
+    America/Thunder_Bay
+    America/Toronto
+    America/Tortola
+    America/Vancouver
+    America/Whitehorse
+    America/Winnipeg
+    America/Yakutat
+    America/Yellowknife
+</pre>
+<p><span>Complete</span> list at: <strong><a href="http://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_new">List of tz database time zones</a></strong></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><img src="../imgs/cairs_logo.png" width="315" height="54" alt="CAIRS" /></p>
+
+</body>
+</html>

@@ -11,12 +11,46 @@
 <script type="text/javascript">/* <![CDATA[ */
     !window.jQuery && document.write('<script type="text/javascript" src="https://perltest.myadoptionportal.com/javascripts/jquery.js"><\/script>')
 /* ]]> */</script>
+<style type="text/css" media="screen"> 
 
+html, body {
+width: 100%;
+height: 100%;
+margin: 0px;
+background:#FFF;
+padding:0px;
+font-family:Arial, Helvetica, sans-serif;
+font-size:12px;
+background:#0D1D32;
+color:#ffffff;
+}
+input, textarea{
+border:solid 1px #69C;
+font-size:10px;
+}
+h1, h2, h3, p, a {
+	width:85%;
+	padding:4px;
+	margin:0px;
+	color:#FF9700;
+}
+h1{color:#FF9700;font-size:19px;}
+h2{font-size:17px;}
+h3{color:#FFB951;font-size:14px;}
+p{
+	color:#ffffff;
+	font-size:12px;
+}
+span{font-weight:bold; color:#FC0; font-size:13px; font-family:Tahoma, Geneva, sans-serif}
+.white{font-weight:bold; color:#fff; font-size:13px; font-family:Tahoma, Geneva, sans-serif}
+.whiteBig{font-weight:bold; color:#fff; font-size:20px; font-family:Tahoma, Geneva, sans-serif}
+
+</style>
 </head>
 <body>
 <% content %>
 <div id="footer">
-Powered by <a href="http://perldancer.org/">Dancer</a> <% dancer_version %>
+Powered by <a href="http://perldancer.org/">Dancer</a> <% dancer_version %> - <a href="http://perl.org/">Perl</a>  <% perl_version %>
 </div>
 </body>
 </html>

@@ -1,6 +1,8 @@
 package MAP::API;
 use Dancer ':syntax';
 
+use Template;
+
 use MAP::auth::Auth;
 
 use MAP::dataStores::ClientListing;
@@ -39,6 +41,7 @@ set 'log'         => 'debug';
 set 'show_errors' => 1;
 set 'access_log ' => 1;
 set 'warnings'    => 0;
+#set 'template'    => 'template_toolkit';
 
 
 sub options_header{
