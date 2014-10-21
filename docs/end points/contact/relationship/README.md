@@ -15,7 +15,7 @@ Return Values:
 	
 **Couple contact list**
 
-	GET		/contact/relationship/employer/list.json
+	GET		/contact/relationship/couple/list.json
 
 Calling Parameters: 		
 
@@ -28,12 +28,15 @@ Return Values:
 	
 **Employer list**
 
-	GET		/contact/relationship/couple/list.json
+	GET		/contact/relationship/employer/list.json
 	
-	GET		/contact/relationship/type/0000.json
-	POST		/contact/relationship/type.json
-	PUT		/contact/relationship/type/0000.json
-	DEL		/contact/relationship/type/0000.json
+Calling Parameters: 		
+
+	@EmployerConnId  varchar(50)    	,@SearchName varchar(500) = '' 	,@StrtRow INT =0 	,@Count INT =100
+
+Return Values:	
+	
+	TotalCount	RowID	FullName	ConnId 
 
 
 **Relationship Type end point**
