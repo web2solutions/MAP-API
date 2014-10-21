@@ -1,5 +1,41 @@
 #  Relationship end points
 
+**Relationship list**
+
+	GET		/contact/relationship.json
+
+Calling Parameters: 		
+
+	@ConnId int 		,@ConnectionId int  = 0 		,@RelationshipSubTypeIds varchar(500) = '' 		,@RelationsshipTypeIds varchar(500) = ''	
+
+Return Values:	
+	
+	PrimaryConnId	PrimaryName	RelConnId	RelName	RelationshipSubTypeId	RelationshipSubTypeText	ConnectionId1	RelTypeid1	RelTypeText1
+	
+	
+**Couple contact list**
+
+	GET		/contact/relationship/employer/list.json
+
+Calling Parameters: 		
+
+	@ConnId int 
+
+Return Values:	
+	
+	Connid	Name
+
+	
+**Employer list**
+
+	GET		/contact/relationship/couple/list.json
+	
+	GET		/contact/relationship/type/0000.json
+	POST		/contact/relationship/type.json
+	PUT		/contact/relationship/type/0000.json
+	DEL		/contact/relationship/type/0000.json
+
+
 **Relationship Type end point**
 
 	GET		/contact/relationship/type.json
