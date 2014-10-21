@@ -1,4 +1,4 @@
-package MAP::contact::Contact;
+package MAP::contact::relationship::Relationship;
 use Dancer ':syntax';
 use XML::Mini::Document;
 use Dancer::Plugin::REST;
@@ -7,44 +7,13 @@ use Encode qw( encode );
 use DBI;
 use Data::Dump qw(dump);
 
-use MAP::contact::address::Address;
-use MAP::contact::education::Education;
-use MAP::contact::email::Email;
-use MAP::contact::phone::Phone;
-
-use MAP::contact::culture::Culture;
-use MAP::contact::ethnicity::Ethnicity;
-use MAP::contact::language::Language;
-use MAP::contact::nationality::Nationality;
-use MAP::contact::race::Race;
-use MAP::contact::religion::Religion;
-
-use MAP::contact::DHTMLX::COMBO::FEED;
-
-use MAP::contact::lkp::States;
-use MAP::contact::lkp::County;
-use MAP::contact::lkp::Country;
-use MAP::contact::lkp::AddressType;
-use MAP::contact::lkp::AddressProvince;
-use MAP::contact::lkp::Religions;
-use MAP::contact::lkp::Nationality;
-use MAP::contact::lkp::Language;
-use MAP::contact::lkp::Culture;
-use MAP::contact::lkp::Ethnicity;
-use MAP::contact::lkp::Races;
-
-use MAP::contact::relationship::Relationship;
-use MAP::contact::relationship::RelationshipType;
-use MAP::contact::relationship::RelationshipSubType;
-use MAP::contact::relationship::ComponentConfiguration;
-
 
 
 our $VERSION = '0.1';
-my $collectionName = 'contact';
-my $primaryKey = 'ContactId';
-my $storedProcedureName= 'usp_ContactList';
-my $defaultColumns = 'ContactId,FName,MName,LName,Nickname,BirthName,BirthDate,Gender,SSN,PlaceOfBirthCity,PlaceOfBirthStateId,PlaceOfBirthCountryId,DateOfDeath,DoNotSendMail,BusName,ContactNotes,LicenceNumber,FEIDNumber,ContactTypeId';
+my $collectionName = 'relationship';
+my $primaryKey = 'PrimaryConnId';
+my $storedProcedureName= 'usp_RelationshipGridList';
+my $defaultColumns = 'PrimaryConnId,PrimaryName,RelConnId,RelName,RelationshipSubTypeId,RelationshipSubTypeText,ConnectionId1,RelTypeid1,RelTypeText1';
 my $root_path = '/var/www/html/userhome/MAP-API/'.$collectionName;
 
 my $relationalColumn = undef; # undef
@@ -60,14 +29,13 @@ options '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 	MAP::API->options_header();
 };
 
-options '/'.$collectionName.'/:'.$primaryKey.'/.:format' => sub {
+options '/'.$collectionName.'/couple/list.:format' => sub {
 	MAP::API->options_header();
 };
 
-
-#any '/'.$collectionName.'.:format' => sub {
-#    send_error("Hey Mark, it is not implemented yet", 501);
-#};
+options '/'.$collectionName.'/employer/list.:format' => sub {
+	MAP::API->options_header();
+};
 
 
 
@@ -86,53 +54,38 @@ get '/'.$collectionName.'.:format' => sub {
    $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
 
    
-   # ------ Filtering and Ordering -------------------
-   my $filterstr = params->{filter} || '{}';
-   my $orderstr = params->{order} || '{}';
-   my $filters =  from_json( $filterstr );
-   my $sql_filters = "";
-
-   my $filter_operator = params->{filter_operator} || 'and';
-   $filter_operator = $dbh->quote( $filter_operator );
-
-   my $newDoc = XML::Mini::Document->new();
-   my $newDocRoot = $newDoc->getRoot();
-   #my $xmlHeader = $newDocRoot->header('xml');
-   my $FilterNode = $newDocRoot->createChild('Filter');
-   my %filters = %{ $filters };
-   foreach my $key (%filters) {
-		if ( defined( $filters{$key} ) ) {
-			#$sql_filters = $sql_filters . " AND [" . $dbh->quote( $key ) . "] LIKE '%" . $dbh->quote( $filters{$key} ) . "%' ";
-				my $ValuesNode = $FilterNode->createChild('Values');
-						my $ColumnNameNode = $ValuesNode->createChild('ColumnName');
-						$ColumnNameNode->text( $key );
-						
-						my $ColumnValueNode = $ValuesNode->createChild('ColumnValue');
-						$ColumnValueNode->text( $filters{$key} );
-		}
+# 		@ConnId int 		,@ConnectionId int  = 0
+# ,@RelationshipSubTypeIds varchar(500) = '' 		,@RelationsshipTypeIds varchar(500) = ''
+   my @values;
+   my $strSQLappend = '';
+   my $ConnId = params->{ConnId} ;
+   if ( defined( $ConnId ) ) {
+		$strSQLappend = $strSQLappend . ' @ConnId = ?';
+		push @values, $ConnId;
    }
-   my $string_xml_filter =  $newDoc->toString();
-
-   debug $string_xml_filter;
-
-   my $sql_ordering = ' @order_by = \'' . $primaryKey . '\', @order_direction = \'ASC\', ';
-   my $order =  from_json( $orderstr );
-   if ( defined( $order->{orderby} ) && defined( $order->{direction} ) )
-   {
-		#$sql_ordering = ' ORDER BY [' . $order->{orderby} . '] '. $order->{direction};
-		$sql_ordering = ' @order_by = ' . $dbh->quote( $order->{orderby} ) . ', @order_direction = '. $dbh->quote( $order->{direction} ).', ';
+   
+   my $ConnectionId = params->{ConnectionId};
+   if ( defined( $ConnectionId ) ) {
+		$strSQLappend = $strSQLappend . ' @ConnectionId = ?';
+		push @values, $strSQLappend;
    }
-   # ------ Filtering and Ordering -------------------
-   
-   
-		
 
-# exec usp_ContactList '.$sql_ordering.' @filter_operator = \''. $filter_operator .'\', @columns = 'ContactId,FName,LName,SSN' ,@filter = '<Filter> <Values> <ColumnName>Fname</ColumnName> <ColumnValue>br</ColumnValue> </Values> <Values> <ColumnName>Lname</ColumnName> <ColumnValue>Smith</ColumnValue> </Values> </Filter>'
-   
-   my $strSQL = 'EXEC '.$storedProcedureName.' '.$sql_ordering.' @filter_operator = '. $filter_operator .', @filter= \''.$string_xml_filter.'\', @columns=  '. $strColumns .' ';
+   my $RelationsshipTypeIds = params->{RelationsshipTypeIds};
+   if ( defined( $RelationsshipTypeIds ) ) {
+		$strSQLappend = $strSQLappend . ' @RelationsshipTypeIds = ?';
+		push @values, $RelationsshipTypeIds;
+   }
+
+   my $RelationshipSubTypeIds = params->{RelationshipSubTypeIds};
+   if ( defined( $RelationshipSubTypeIds ) ) {
+		$strSQLappend = $strSQLappend . ' @RelationshipSubTypeIds = ?';
+		push @values, $RelationshipSubTypeIds;
+   }
+ 
+   my $strSQL = 'EXEC '.$storedProcedureName.' '.$strSQLappend.' ';
    
    my $sth = $dbh->prepare( $strSQL, );
-   $sth->execute() or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL );
+   $sth->execute( @values ) or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL );
    
    my @records;
    while ( my $record = $sth->fetchrow_hashref()) 
@@ -163,10 +116,136 @@ get '/'.$collectionName.'.:format' => sub {
 		   status => 'success',
 		   response => 'Succcess',
 		   ''.$collectionName.'' => [@records],
-		   sql =>  $strSQL,
-		   filter_operator =>  $filter_operator,
-		   xml_filters => $string_xml_filter,
-		   sql_ordering => $sql_ordering
+		   sql =>  $strSQL
+   };
+};
+
+
+get '/'.$collectionName.'/couple/list.:format' => sub {
+   
+   MAP::API->check_authorization( params->{token}, request->header("Origin") );
+
+   $defaultColumns = 'Connid,Name';
+
+   my $dbh = MAP::API->dbh();
+   
+   my $strColumns = params->{columns} || $defaultColumns;
+   my @columns = split(/,/, $strColumns);
+   $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
+
+   my $ConnId = params->{ConnId} ;   
+ 
+   my $strSQL = 'EXEC usp_CoupleList @Connid = ? ';
+   
+   my $sth = $dbh->prepare( $strSQL, );
+   $sth->execute( $ConnId ) or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL );
+   
+   my @records;
+   while ( my $record = $sth->fetchrow_hashref()) 
+   {
+		#push @records, $record;
+		my @values;
+		my $row = {
+			#id =>	$record->{$primaryKey},
+		};
+		foreach (@columns)
+		{
+			if (defined($record->{$_})) {
+				push @values, $record->{$_};
+				$row->{$_} = $record->{$_};
+			}
+			else
+			{
+				push @values, "";
+				$row->{$_} = "";
+			}
+		}
+		$row->{data} = [@values];
+		push @records, $row;
+   }
+	#$dbh->disconnect();
+   MAP::API->normal_header();
+   return {
+		   status => 'success',
+		   response => 'Succcess',
+		   ''.$collectionName.'' => [@records],
+		   sql =>  $strSQL
+   };
+};
+
+
+
+get '/'.$collectionName.'/employer/list.:format' => sub {
+   
+   MAP::API->check_authorization( params->{token}, request->header("Origin") );
+
+   $defaultColumns = 'RowID,FullName,ConnId';
+
+   my $dbh = MAP::API->dbh();
+   
+   my $strColumns = params->{columns} || $defaultColumns;
+   my @columns = split(/,/, $strColumns);
+   $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
+
+   my @values;
+   my $strSQLappend = '';
+   my $EmployerConnId = params->{EmployerConnId} ;
+   if ( defined( $EmployerConnId ) ) {
+		$strSQLappend = $strSQLappend . ' @EmployerConnId = ?';
+		push @values, $EmployerConnId;
+   }
+   
+   my $SearchName = params->{SearchName};
+   if ( defined( $SearchName ) ) {
+		$strSQLappend = $strSQLappend . ' @SearchName = ?';
+		push @values, $SearchName;
+   }
+
+   my $StrtRow = params->{StrtRow} || 0;
+   $strSQLappend = $strSQLappend . ' @StrtRow = ?';
+
+   my $Count = params->{Count} || 100;
+   $strSQLappend = $strSQLappend . ' @SearchName = ?';
+
+
+
+# 	@EmployerConnId  varchar(50)    	,@SearchName varchar(500) = '' 	,@StrtRow INT =0 	,@Count INT =100
+ 
+   my $strSQL = 'EXEC usp_EmployeeSearch @EmployerConnId = ? ';
+   
+   my $sth = $dbh->prepare( $strSQL, );
+   $sth->execute( $EmployerConnId ) or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL );
+   
+   my @records;
+   while ( my $record = $sth->fetchrow_hashref()) 
+   {
+		#push @records, $record;
+		my @values;
+		my $row = {
+			#id =>	$record->{$primaryKey},
+		};
+		foreach (@columns)
+		{
+			if (defined($record->{$_})) {
+				push @values, $record->{$_};
+				$row->{$_} = $record->{$_};
+			}
+			else
+			{
+				push @values, "";
+				$row->{$_} = "";
+			}
+		}
+		$row->{data} = [@values];
+		push @records, $row;
+   }
+	#$dbh->disconnect();
+   MAP::API->normal_header();
+   return {
+		   status => 'success',
+		   response => 'Succcess',
+		   ''.$collectionName.'' => [@records],
+		   sql =>  $strSQL
    };
 };
 
