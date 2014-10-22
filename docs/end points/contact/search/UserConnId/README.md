@@ -38,7 +38,7 @@ Examples
 			{
 				alert(json.contact);
 				console.log(json.contact);
-				alert(json.contact[0].FName);
+				alert(json.contact[0].FullName);
 			}
 	   }
 	   ,onFail : function(request)
