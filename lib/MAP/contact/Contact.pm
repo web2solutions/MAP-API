@@ -494,7 +494,7 @@ get '/'.$collectionName.'/types/person.:format' => sub {
 
 get '/'.$collectionName.'/search/:UserConnId.:format' => sub {
    
-   #MAP::API->check_authorization( params->{token}, request->header("Origin") );
+   MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
    $defaultColumns = 'RowID,FullName,IsBusiness,PhoneNumber,ConnId';
 
