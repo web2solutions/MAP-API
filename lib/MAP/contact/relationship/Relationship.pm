@@ -60,25 +60,25 @@ get '/'.$collectionName.'.:format' => sub {
    my $strSQLappend = '';
    my $ConnId = params->{ConnId} ;
    if ( defined( $ConnId ) ) {
-		$strSQLappend = $strSQLappend . ' @ConnId = ?';
+		$strSQLappend = $strSQLappend . ' @ConnId = ?, ';
 		push @values, $ConnId;
    }
    
    my $ConnectionId = params->{ConnectionId};
    if ( defined( $ConnectionId ) ) {
-		$strSQLappend = $strSQLappend . ' @ConnectionId = ?';
+		$strSQLappend = $strSQLappend . ' @ConnectionId = ?, ';
 		push @values, $strSQLappend;
    }
 
    my $RelationsshipTypeIds = params->{RelationsshipTypeIds};
    if ( defined( $RelationsshipTypeIds ) ) {
-		$strSQLappend = $strSQLappend . ' @RelationsshipTypeIds = ?';
+		$strSQLappend = $strSQLappend . ' @RelationsshipTypeIds = ?, ';
 		push @values, $RelationsshipTypeIds;
    }
 
    my $RelationshipSubTypeIds = params->{RelationshipSubTypeIds};
    if ( defined( $RelationshipSubTypeIds ) ) {
-		$strSQLappend = $strSQLappend . ' @RelationshipSubTypeIds = ?';
+		$strSQLappend = $strSQLappend . ' @RelationshipSubTypeIds = ? ';
 		push @values, $RelationshipSubTypeIds;
    }
  
@@ -191,30 +191,32 @@ get '/'.$collectionName.'/employer/list.:format' => sub {
    my $strSQLappend = '';
    my $EmployerConnId = params->{EmployerConnId} ;
    if ( defined( $EmployerConnId ) ) {
-		$strSQLappend = $strSQLappend . ' @EmployerConnId = ?';
+		$strSQLappend = $strSQLappend . ' @EmployerConnId = ?,';
 		push @values, $EmployerConnId;
    }
    
    my $SearchName = params->{SearchName};
    if ( defined( $SearchName ) ) {
-		$strSQLappend = $strSQLappend . ' @SearchName = ?';
+		$strSQLappend = $strSQLappend . ' @SearchName = ?, ';
 		push @values, $SearchName;
    }
 
    my $StrtRow = params->{StrtRow} || 0;
-   $strSQLappend = $strSQLappend . ' @StrtRow = ?';
+   $strSQLappend = $strSQLappend . ' @StrtRow = ?, ';
+   push @values, $StrtRow;
 
-   my $Count = params->{Count} || 100;
-   $strSQLappend = $strSQLappend . ' @SearchName = ?';
+   my $Count = params->{Count} || 300;
+   $strSQLappend = $strSQLappend . ' @Count = ?';
+   push @values, $Count;
 
 
 
 # 	@EmployerConnId  varchar(50)    	,@SearchName varchar(500) = '' 	,@StrtRow INT =0 	,@Count INT =100
  
-   my $strSQL = 'EXEC usp_EmployeeSearch @EmployerConnId = ? ';
+   my $strSQL = 'EXEC usp_EmployeeSearch '.$strSQLappend.' ';
    
    my $sth = $dbh->prepare( $strSQL, );
-   $sth->execute( $EmployerConnId ) or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL );
+   $sth->execute( @values ) or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL );
    
    my @records;
    while ( my $record = $sth->fetchrow_hashref()) 

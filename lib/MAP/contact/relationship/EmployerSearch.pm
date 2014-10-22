@@ -11,7 +11,7 @@ our $VERSION = '0.1';
 #our $root_path = '/var/www/html/userhome/MAP-API/forms';
 
 my $collectionName = 'employer';
-my $primaryKey = 'RowID';
+my $primaryKey = 'ConnId';
 my $storedProcedureName= 'usp_EmployeeSearch';
 my $defaultColumns = 'RowID,FullName,ConnId';
 
@@ -33,10 +33,10 @@ get '/'.$collectionName.'.xml' => sub {
    $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
 
 
-   my $count = params->{count} || 20;
-   my $posStart = params->{pos} || 0;
+   #my $count = params->{count} || 20;
+   #my $posStart = params->{pos} || 0;
 
-   my $mask = params->{mask} || '';
+   #my $mask = params->{mask} || '';
    #$mask =~ s/'//g;
 
    #my $column_to_search = params->{column_to_search}  || MAP::API->fail( 'column_to_search is missing' );
@@ -44,6 +44,29 @@ get '/'.$collectionName.'.xml' => sub {
    
    my $value_column = params->{value_column} || $primaryKey;
    $value_column =~ s/[^\w\d.-]+//;
+
+
+   my @values;
+   my $strSQLappend = '';
+   my $EmployerConnId = params->{EmployerConnId} ;
+   if ( defined( $EmployerConnId ) ) {
+		$strSQLappend = $strSQLappend . ' @EmployerConnId = ?,';
+		push @values, $EmployerConnId;
+   }
+   
+   my $SearchName = params->{mask};
+   if ( defined( $SearchName ) ) {
+		$strSQLappend = $strSQLappend . ' @SearchName = ?,';
+		push @values, $SearchName;
+   }
+
+   my $StrtRow = params->{pos} || 0;
+   $strSQLappend = $strSQLappend . ' @StrtRow = ?,';
+   push @values, $StrtRow;
+
+   my $Count = params->{count} || 20;
+   $strSQLappend = $strSQLappend . ' @Count = ?';
+   push @values, $Count;
 
 
 
@@ -93,7 +116,7 @@ get '/'.$collectionName.'.xml' => sub {
 
     my $completeNode = $newDocRoot->createChild('complete');
     
-    if ( $posStart != 0   ) {
+    if ( $StrtRow != 0   ) {
         $completeNode->attribute('add', "true");
     }
 
@@ -103,7 +126,7 @@ get '/'.$collectionName.'.xml' => sub {
    
 #EXEC usp_ContactSearchAll @SearchName = '$search_term'"
    
-   my $strSQL = 'EXEC '.$storedProcedureName.' @EmployerConnId = '. $dbh->quote( $mask );
+   my $strSQL = 'EXEC usp_EmployeeSearch '.$strSQLappend.' ';
    
    #my $strSQL = '; WITH results AS (
    #         SELECT 
@@ -116,21 +139,12 @@ get '/'.$collectionName.'.xml' => sub {
 
    my $sth = $dbh->prepare( $strSQL, );
    #$completeNode->attribute('sql', $strSQL);
-   $sth->execute( ) or MAP::API->fail( $sth->errstr . " " . $strSQL);
-   my $readed = 0;
+   $sth->execute( @values ) or MAP::API->fail( $sth->errstr . " " . $strSQL);
    while ( my $record = $sth->fetchrow_hashref())
    {
-		if( $readed >= $posStart )
-		{
-				if(  $readed <= (  $posStart + $count ) )
-				{
-						my $optionNode = $completeNode->createChild('option');
-						$optionNode->text( $record->{FullName} );
-						$optionNode->attribute('value', $record->{$value_column});
-				}
-		}
-		
-		$readed = $readed + 1;
+		my $optionNode = $completeNode->createChild('option');
+		$optionNode->text( $record->{FullName} );
+		$optionNode->attribute('value', $record->{$value_column});
     }
    
    #$dbh->disconnect();

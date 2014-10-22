@@ -33,7 +33,9 @@ use MAP::contact::lkp::Culture;
 use MAP::contact::lkp::Ethnicity;
 use MAP::contact::lkp::Races;
 
+
 use MAP::contact::relationship::Relationship;
+use MAP::contact::relationship::EmployerSearch;
 use MAP::contact::relationship::RelationshipType;
 use MAP::contact::relationship::RelationshipSubType;
 use MAP::contact::relationship::ComponentConfiguration;
@@ -486,5 +488,101 @@ get '/'.$collectionName.'/types/person.:format' => sub {
 		'types' => [@records],
 		sql =>  $strSQL
 	};
+};
+
+
+
+get '/'.$collectionName.'/search/:UserConnId.:format' => sub {
+   
+   #MAP::API->check_authorization( params->{token}, request->header("Origin") );
+
+   $defaultColumns = 'RowID,FullName,IsBusiness,PhoneNumber,ConnId';
+
+   my $dbh = MAP::API->dbh();
+   
+   my $strColumns = params->{columns} || $defaultColumns;
+   my @columns = split(/,/, $strColumns);
+   $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
+
+   my @values;
+   my $strSQLappend = '';
+   my $UserConnId = params->{UserConnId}  || MAP::API->fail( "UserConnId is missing on url" );
+   if ( defined( $UserConnId ) ) {
+		$strSQLappend = $strSQLappend . ' @UserConnId = ?, ';
+		push @values, $UserConnId;
+   }
+
+   my $SearchLName = params->{SearchLName} ;
+   if ( defined( $SearchLName ) ) {
+		$strSQLappend = $strSQLappend . ' @SearchLName = ?, ';
+		push @values, $SearchLName;
+   }
+
+   my $SearchMName= params->{SearchMName} ;
+   if ( defined( $SearchMName ) ) {
+		$strSQLappend = $strSQLappend . ' @SearchMName = ? ';
+		push @values, $SearchMName;
+   }
+
+   my $SearchFName = params->{SearchFName} ;
+   if ( defined( $SearchFName ) ) {
+		$strSQLappend = $strSQLappend . ' @SearchFName = ? ';
+		push @values, $SearchFName;
+   }
+   
+   my $SearchBusName = params->{SearchBusName} ;
+   if ( defined( $SearchBusName ) ) {
+		$strSQLappend = $strSQLappend . ' @SearchBusName = ? ';
+		push @values, $SearchBusName;
+   }
+   
+   
+   my $StrtRow = params->{StrtRow} || 0;
+   $strSQLappend = $strSQLappend . ' @StrtRow = ?, ';
+   push @values, $StrtRow;
+
+   my $Count = params->{Count} || 300;
+   $strSQLappend = $strSQLappend . ' @Count = ?';
+   push @values, $Count;
+
+
+
+   my $strSQL = 'EXEC usp_ContactDuplicateSearch ' . $strSQLappend;
+   
+   my $sth = $dbh->prepare( $strSQL, );
+   $sth->execute( @values ) or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL );
+   
+   
+   my @records;
+   while ( my $record = $sth->fetchrow_hashref()) 
+   {
+		#push @records, $record;
+		my @values;
+		my $row = {
+			#id =>	$record->{$primaryKey},
+		};
+		foreach (@columns)
+		{
+			if (defined($record->{$_})) {
+				push @values, $record->{$_};
+				$row->{$_} = $record->{$_};
+			}
+			else
+			{
+				push @values, "";
+				$row->{$_} = "";
+			}
+		}
+		$row->{data} = [@values];
+		push @records, $row;
+   }
+	#$dbh->disconnect();
+   MAP::API->normal_header();
+   return {
+		   status => 'success',
+		   response => 'Succcess',
+		   ''.$collectionName.'' => [@records],
+		   sql =>  $strSQL,
+   };
 };
 dance;
