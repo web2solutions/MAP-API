@@ -58,11 +58,11 @@ There are end points which provides specific support, like for example file uplo
 		
 **Deploy documentation**
 
-	[Please read the docs](https://github.com/web2solutions/MAP-API/tree/master/docs/deploy)
+https://github.com/web2solutions/MAP-API/tree/master/docs/deploy
 
 **End points documentation**
 
-	[Please read the docs](https://github.com/web2solutions/MAP-API/tree/master/docs/end%20points)
+https://github.com/web2solutions/MAP-API/tree/master/docs/end%20points
 
 ==================================
 
