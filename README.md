@@ -55,10 +55,14 @@ There are end points which provides specific support, like for example file uplo
 		dev: https://apidev.myadoptionportal.com
 		
 		test: https://perltest.myadoptionportal.com
+		
+**Deploy documentation**
+
+	[Please read the docs](https://github.com/web2solutions/MAP-API/tree/master/docs/deploy)
 
 **End points documentation**
 
-	http://cdmap01.myadoptionportal.com/modules/API_DOC/
+	[Please read the docs](https://github.com/web2solutions/MAP-API/tree/master/docs/end%20points)
 
 ==================================
 
