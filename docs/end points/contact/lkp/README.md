@@ -8,7 +8,7 @@ https://perltest.myadoptionportal.com/contact/lkp/countries/doc
 
 *online example*: 
 
-http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpCountry.html
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/lkpCountry.html
 
 
 ### **lkp Address Province end point**
@@ -20,7 +20,7 @@ https://perltest.myadoptionportal.com/contact/lkp/addressProvince/doc
 
 *online example*: 
 
-http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpAddressProvince.html
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/lkpAddressProvince.html
 
 
 
@@ -33,7 +33,7 @@ https://perltest.myadoptionportal.com/contact/lkp/addressType/doc
 
 **online example**: 
 
-http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpAddressType.html
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/lkpAddressType.html
 
 
 
@@ -45,7 +45,7 @@ https://perltest.myadoptionportal.com/contact/lkp/states/doc
 
 *online example*: 
 
-http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpState.html
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/lkpState.html
 
 
 
@@ -57,7 +57,7 @@ https://perltest.myadoptionportal.com/contact/lkp/religions/doc
 
 *online example*: 
 
-http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpReligion.html
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/lkpReligion.html
 
 
 ### **lkp Nationalities end point**
@@ -66,7 +66,7 @@ http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpReligion.html
 
 https://perltest.myadoptionportal.com/contact/lkp/nationalities/doc
 
-*online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpNationality.html
+*online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/lkpNationality.html
 
 
 
@@ -78,7 +78,7 @@ https://perltest.myadoptionportal.com/contact/lkp/languages/doc
 
 *online example*: 
 
-http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpLanguage.html
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/lkpLanguage.html
 
 
 
@@ -90,7 +90,7 @@ https://perltest.myadoptionportal.com/contact/lkp/ethnicities/doc
 
 *online example*: 
 
-http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpEthnicity.html
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/lkpEthnicity.html
 
 
 
@@ -102,7 +102,7 @@ https://perltest.myadoptionportal.com/contact/lkp/cultures/doc
 
 *online example*: 
 
-http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpCulture.html
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/lkpCulture.html
 
 
 
@@ -114,7 +114,7 @@ https://perltest.myadoptionportal.com/contact/lkp/counties/doc
 
 *online example*: 
 
-http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpCounty.html
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/lkpCounty.html
 
 
 ### **lkp Phone types**
