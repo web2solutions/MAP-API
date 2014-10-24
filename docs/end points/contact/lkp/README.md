@@ -94,11 +94,11 @@ http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/lkpEthnicity.html
 
 
 
-### **lkp Culture end point**
+### **lkp Cultures end point**
 
 *Online live doc:* 
 
-https://perltest.myadoptionportal.com/contact/lkp/culture/doc
+https://perltest.myadoptionportal.com/contact/lkp/cultures/doc
 
 *online example*: 
 
