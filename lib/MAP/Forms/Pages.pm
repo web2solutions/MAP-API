@@ -276,10 +276,11 @@ get '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
    
 	#$dbh->disconnect();
    MAP::API->normal_header();
+   use Data::Recursive::Encode;
    return {
 		   status => 'success',
 		   response => 'Succcess',
-		   hash => $sth->fetchrow_hashref(),
+		   hash => Data::Recursive::Encode->decode_utf8( $sth->fetchrow_hashref() ),
 		   sql =>  $strSQL
    };
 };
