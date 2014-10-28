@@ -14,7 +14,7 @@ options '/LibraryFields.:format' => sub {
 
 get '/LibraryFields.:format' => sub {
    
-   MAP::API->check_authorization( params->{token}, request->header("Origin") );
+   MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
    
    my $strColumns = params->{columns} || 'FieldType,FieldName,Description,RecordScope,MultiRecord';
    my $searchcriteria = params->{searchcriteria} || "1_Type1";

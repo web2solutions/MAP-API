@@ -1,7 +1,7 @@
 package MAP::contact::relationship::EmployerSearch;
 use Dancer ':syntax';
-use utf8;
-use Encode       qw( encode );
+
+use Encode       qw( encode decode );
 use DBI;
 
 use XML::Mini::Document;

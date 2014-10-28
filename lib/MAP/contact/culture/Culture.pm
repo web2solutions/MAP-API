@@ -1,8 +1,9 @@
 package MAP::contact::culture::Culture;
 use Dancer ':syntax';
 use Dancer::Plugin::REST;
-use utf8;
-use Encode qw( encode );
+
+use Encode qw( encode decode );
+use Deep::Encode;
 use DBI;
 use Data::Dump qw(dump);
 
@@ -32,8 +33,8 @@ options '/'.$collectionName.'/doc' => sub {
 };
 
 get '/'.$collectionName.'/doc' => sub {
-	my @defaultColumns = split(/,/, $defaultColumns);	
-	template 'doc', { 
+	my @defaultColumns = split(/,/, $defaultColumns);
+	template 'doc', {
 		'collectionName' => $collectionName,
 		'tableName' => $tableName,
 		'prefix' => '/contact/'. params->{$relationalColumn},
@@ -44,27 +45,27 @@ get '/'.$collectionName.'/doc' => sub {
 
 };
 
- 
+
 # routing OPTIONS header
 
 get '/'.$collectionName.'.:format' => sub {
-   
+
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
-   
+
    my $strColumns = params->{columns} || $defaultColumns;
    $strColumns=~ s/'//g;
    my @columns = split(/,/, $strColumns);
    $strColumns = MAP::API->normalizeColumnNames( $strColumns, $defaultColumns );
-   
+
 
 #  $value_column =~ s/[^\w\d.-]+//;
-   
+
    my $relational_id = undef;
    if ( defined(  $relationalColumn ) ) {
 		$relational_id = params->{$relationalColumn} || MAP::API->fail( $relationalColumn . '  is missing on url' );
 		$relational_id=~ s/'//g;
    }
-   
+
    # ------ Filtering and Ordering -------------------
    my $filterstr = params->{filter} || '{}';
    my $orderstr = params->{order} || '{}';
@@ -73,7 +74,7 @@ get '/'.$collectionName.'.:format' => sub {
 
    my $filter_operator = params->{filter_operator} || 'and';
    $filter_operator=~ s/[^\w\d.-]+//;
-   
+
    my %filters = %{ $filters };
    foreach my $key (%filters) {
 		if ( defined( $filters{$key} ) ) {
@@ -84,13 +85,13 @@ get '/'.$collectionName.'.:format' => sub {
 			$sql_filters = $sql_filters . " " . $column . " LIKE '%" . $string . "%'  ". $filter_operator ."  ";
 		}
    }
-	
+
 	if ( length($sql_filters) > 1 ) {
 		$sql_filters = ' AND ( '.  substr($sql_filters, 0, -5) . ' )';
 	}
-	
-	
-   
+
+
+
    my $sql_ordering = ' ORDER BY '.$primaryKey.' ASC';
    my $order =  from_json( $orderstr );
    if ( defined( $order->{orderby} ) && defined( $order->{direction} ) )
@@ -102,14 +103,14 @@ get '/'.$collectionName.'.:format' => sub {
 		$sql_ordering = ' ORDER BY ' . $column . ' '. $direction ;
    }
    # ------ Filtering and Ordering -------------------
-   
+
    my $dbh = MAP::API->dbh();
 
    my $strSQLstartWhere = ' 1 = 1 ';
    if ( defined(  $relationalColumn ) ) {
 		$strSQLstartWhere = '( ['.$relationalColumn.'] IN ('.$relational_id.') ) ';
    }
-   
+
 	my $strSQL = '';
 	if ( length($strSQLstartWhere) < 3 && length($sql_filters) < 3 ) {
 		$strSQL = 'SELECT '.$strColumns.' FROM '.$tableName.' '. $sql_ordering . '';
@@ -118,13 +119,13 @@ get '/'.$collectionName.'.:format' => sub {
 	{
 		$strSQL = 'SELECT '.$strColumns.' FROM '.$tableName.' WHERE '.$strSQLstartWhere.' ' . $sql_filters . ' '. $sql_ordering . '';
 	}
-	
-   
+
+
 	my $sth = $dbh->prepare( $strSQL, );
    $sth->execute() or MAP::API->fail( $sth->errstr . ' ----------- '.$strSQL);
-   
+
    my @records;
-   while ( my $record = $sth->fetchrow_hashref()) 
+   while ( my $record = $sth->fetchrow_hashref())
    {
 		#push @records, $record;
 		my @values;
@@ -134,8 +135,8 @@ get '/'.$collectionName.'.:format' => sub {
 		foreach (@columns)
 		{
 			if (defined($record->{$_})) {
-				push @values, $record->{$_};
-				$row->{$_} = $record->{$_};
+				push @values, decode('UTF-8', $record->{$_});
+				$row->{$_} = decode('UTF-8', $record->{$_});
 			}
 			else
 			{
@@ -162,11 +163,11 @@ get '/'.$collectionName.'.:format' => sub {
 
 # create form
 post '/'.$collectionName.'.:format' => sub {
-   
+
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
-	
+
 	#$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
-	
+
 	my $hashStr = params->{hash} || '{}';
 	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
 	my $json_bytes = encode('UTF-8', $hashStr);
@@ -175,13 +176,13 @@ post '/'.$collectionName.'.:format' => sub {
 	my $sql_columns = "";
 	my $sql_placeholders = "";
 	my @sql_values;
-    
+
 	my %hash = %{ $hash };
 
-	
+
 	my $dbh = MAP::API->dbh();
 
-	
+
 	foreach my $key (%hash)
 	{
 		if ( defined( $key ) )
@@ -202,20 +203,20 @@ post '/'.$collectionName.'.:format' => sub {
 			}
 		}
     }
-	
+
 	my $strSQL = 'INSERT INTO
-		'.$tableName.'(' . substr($sql_columns, 0, -2) . ') 
+		'.$tableName.'(' . substr($sql_columns, 0, -2) . ')
 		VALUES(' . substr($sql_placeholders, 0, -2) . ');
 		SELECT SCOPE_IDENTITY() AS '.$primaryKey.';
 	';
 	my $sth = $dbh->prepare( $strSQL, );
-	$sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL ); 
+	$sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL );
 	my $record_id = 0;
-	while ( my $record = $sth->fetchrow_hashref()) 
+	while ( my $record = $sth->fetchrow_hashref())
 	{
 		$record_id = $record->{$primaryKey};
 	}
-	
+
 
 	MAP::API->normal_header();
 	return {
@@ -229,14 +230,14 @@ post '/'.$collectionName.'.:format' => sub {
 
 # update form
 put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
-   
+
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
-   
+
     my $item_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
 	$item_id=~ s/'//g;
 	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
 	#$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
-	
+
 	my $hashStr = params->{hash} || '{}';
 	my $json_bytes = encode('UTF-8', $hashStr);
 	my $hash = JSON->new->utf8->decode($json_bytes) or MAP::API->fail( "unable to decode" );
@@ -244,7 +245,7 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 	my $sql_setcolumns = "";
 	my $sql_placeholders = "";
 	my @sql_values;
-    
+
 	my %hash = %{ $hash };
     foreach my $key (%hash)
 	{
@@ -262,12 +263,12 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 			}
 		}
     }
-   
+
     my $dbh = MAP::API->dbh();
 	my $strSQL = 'UPDATE '.$tableName.' SET ' . substr($sql_setcolumns, 0, -2) . ' WHERE ['.$primaryKey.'] IN ('.$item_id.')';
 	my $sth = $dbh->prepare( $strSQL, );
 	$sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL . " --- " . dump(@sql_values) . " ----- " . $item_id );
-	
+
 
 	MAP::API->normal_header();
 	return {
@@ -282,19 +283,19 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 
 del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
-	
+
     my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
 	$str_id=~ s/'//g;
 	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
 	my $dbh = MAP::API->dbh();
-	
-	
-	
+
+
+
 	my $strSQL = 'DELETE FROM '.$tableName.' WHERE ['.$primaryKey.'] IN ('.$str_id.')';
 	my $sth = $dbh->prepare( $strSQL, );
 	$sth->execute( ) or MAP::API->fail( $sth->errstr . "   ----   ". $strSQL );
-	
-	
+
+
 	MAP::API->normal_header();
 	return {
 		status => 'success',
@@ -306,21 +307,21 @@ del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 
 
 get '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
-   
+
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
-   
-   my $strColumns = params->{columns} || $defaultColumns;  
+
+   my $strColumns = params->{columns} || $defaultColumns;
    my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
 	$str_id=~ s/'//g;
    # ===== especific
    my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
-   
+
    my $dbh = MAP::API->dbh();
-	
+
 	my $strSQL = 'SELECT '.$strColumns.' FROM '.$tableName.' WHERE '.$primaryKey.' = ?';
 	my $sth = $dbh->prepare( $strSQL, );
 	$sth->execute( $str_id ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL );
-   
+
 	#$dbh->disconnect();
    MAP::API->normal_header();
    return {

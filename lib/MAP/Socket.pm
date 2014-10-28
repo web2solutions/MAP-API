@@ -3,7 +3,7 @@ package MAP::Socket;
 use Carp;
 use Dancer ':syntax';
 use utf8;
-use Encode       qw( encode );
+use Encode       qw( encode decode );
 use AnyMQ;
 use Plack;
 use Plack::Request;

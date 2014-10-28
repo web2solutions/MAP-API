@@ -1,8 +1,8 @@
 package MAP::Forms::FormViewer;
 use Dancer ':syntax';
 use Dancer::Plugin::REST;
-use utf8;
-use Encode       qw( encode );
+
+use Encode       qw( encode decode );
 use DBI;
 use Data::Dump qw(dump);
 use MAP::Forms::Fields;

@@ -14,7 +14,7 @@ options '/LibraryFields/category.:format' => sub {
 
 get '/LibraryFields/category.:format' => sub {
    
-   MAP::API->check_authorization( params->{token}, request->header("Origin") );
+   MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
    
    MAP::API->normal_header();
    

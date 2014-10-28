@@ -1,8 +1,9 @@
 package MAP::Forms::Entries;
 use Dancer ':syntax';
 use Dancer::Plugin::REST;
-use utf8;
-use Encode qw( encode );
+
+use Encode qw( encode decode );
+use Deep::Encode;
 use DBI;
 use JSON::Simple;
 use Data::Dump qw(dump);

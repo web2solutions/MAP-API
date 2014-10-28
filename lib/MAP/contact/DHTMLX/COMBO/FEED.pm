@@ -1,7 +1,7 @@
 package MAP::contact::DHTMLX::COMBO::FEED;
 use Dancer ':syntax';
-use utf8;
-use Encode       qw( encode );
+
+use Encode       qw( encode decode );
 use DBI;
 
 use XML::Mini::Document;
@@ -24,7 +24,7 @@ options '/feed.xml' => sub {
 
 get '/feed.xml' => sub {
    
-   MAP::API->check_authorization( params->{token}, request->header("Origin") );
+   MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
    
    my $dbh = MAP::API->dbh();
 

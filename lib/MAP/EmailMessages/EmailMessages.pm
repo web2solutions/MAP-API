@@ -1,8 +1,9 @@
 package MAP::EmailMessages::EmailMessages;
 use Dancer ':syntax';
 use Dancer::Plugin::REST;
-use utf8;
-use Encode qw( encode );
+
+use Encode qw( encode decode );
+use Deep::Encode;
 use DBI;
 use Data::Dump qw(dump);
 use MAP::EmailMessages::Templates;

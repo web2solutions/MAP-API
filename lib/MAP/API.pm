@@ -1,6 +1,5 @@
 package MAP::API;
 use Dancer ':syntax';
-
 use Template;
 
 use MAP::auth::Auth;
@@ -28,6 +27,7 @@ use MAP::contact::Contact;
 use MAP::LoadingAverage;
 #use MAP::Socket;
 
+use MIME::Base64;
 
 
 
@@ -46,37 +46,40 @@ set 'warnings'    => 0;
 
 sub options_header{
 	header('Access-Control-Allow-Origin' => request->header("Origin"));
+	#header('Access-Control-Allow-Credentials' => 'true');
 	header('Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS');
 	header('Access-Control-Allow-Headers' => request->header("Access-Control-Request-Headers"));
+	header('Access-Control-Max-Age' => 1728000);
+
+
 	header('Vary' => 'Accept-Encoding');
 	header('Keep-Alive' => 'timeout=2, max=100');
 	header('Connection' => 'Keep-Alive');
-	header('X-Server' => 'Starman');
+	header('X-Server' => 'Twiggy');
 	header('X-Server-Time' => time);
+
+##Access-Control-Allow-Credentials: true
+
 }
 
 
 sub normal_header{
 	header('Access-Control-Allow-Origin' => request->header("Origin"));
+	header('Access-Control-Max-Age' => 1728000);
+	#header('Access-Control-Allow-Credentials' => 'true');
 	header('Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS');
 	header('Keep-Alive' => 'timeout=2, max=100');
 	header('Connection' => 'Keep-Alive');
 	header('Cache-Control' => 'max-age=0, must-revalidate, no-cache, no-store');
-	header('Vary' => 'Accept-Encoding');
+	header('Vary' => 'Accept');
 	header('X-Server-Time' => time);
 	header('X-Server' => 'Twiggy');
 	header('Expires' => 'Thu, 01 Jan 1970 00:00:00');
 	header('X-FRAME-OPTIONS' => 'DENY');
 	header('X-XSS-Protection' => '1; mode=block');
+	header('X-Content-Type-Options' => 'nosniff');
 	
-	#header('Date' => 'Wed, 27 Nov 2013 03:29:25 GMT');
-	#header('Expires' => 'Thu, 01 Jan 1970 00:00:00');
-	#header('Strict-Transport-Security' => 'max-age=15768000');
-	#header('Access-Control-Allow-Headers' => 'X-Requested-With');
-	#header('Access-Control-Max-Age' => '1728000');
-	#header('X-FRAME-OPTIONS' => 'DENY');
-	
-	#header('X-XSS-Protection' => '1; mode=block');
+
 	if ( defined(params->{format}) ) {
 		if ( params->{format} eq "json" ) {
 			set serializer => 'JSON';
@@ -99,10 +102,10 @@ sub normal_header{
 }
 
 sub dbh{
-	my $database = params->{database} || "";
+	my $database = request->header("X-db") ? MIME::Base64::decode(request->header("X-db")) : "";#request->header("X-db") || "";
 	my $server = '192.168.1.19';
-	my $os = params->{os} || "linux";
-	
+	my $os = MIME::Base64::decode(request->header("X-os")) || "linux";
+	#debug $os;
 	my $dbh;
 	
 	if ( $os eq "linux") {
@@ -135,24 +138,72 @@ sub fail{
 
 
 sub unauthorized{
-	my($self, $err_msg) = @_;
-
-	normal_header();
-	
-	
-	halt({
-		status => 'err', response => $err_msg
+	my($self, $err_msg) = @_;	
+	my $wcontent = to_json({
+			status => 'err', response =>  'Unauthorized: '. $err_msg
 	});
+	halt(Dancer::Response->new(
+		status => 401,
+		content => $wcontent,
+		headers => [
+			'Content-Type' => 'application/json',
+			'Content-Length' => length($wcontent),
+			'WWW-Authenticate' => 'Basic realm="'.$err_msg.'"',
+			'Access-Control-Allow-Origin' => request->header("Origin")
+		]
+	));
 }
 
 sub check_authorization{
+	my($self, $token, $Origin) = @_;
+
+	my $auth = request->env->{HTTP_AUTHORIZATION} || MAP::API->unauthorized("malformed headers");
+	$auth =~ s/Digest //gi;
+
+	$token = MIME::Base64::decode( $auth );
+	
+	my $dbh = dbh();
+	
+	my $token_status = "";
+	$Origin = $Origin || MAP::API->unauthorized( "Please use MAP RESTFul client" );
+	$token = $token || MAP::API->unauthorized( "token can not be empty" );
+	my $origin_status = "";
+	
+	my $strSQLcheckOrigin = "SELECT origin FROM tbl_api_allowed_origin WHERE origin = ?";
+	my $sth = $dbh->prepare( $strSQLcheckOrigin, );
+	$sth->execute( $Origin ) or MAP::API->fail( $sth->errstr );
+	while ( my $record = $sth->fetchrow_hashref()) 
+	{
+		$origin_status = "ok";
+	}
+	
+	if ( $origin_status eq "" )
+	{
+		MAP::API->unauthorized("Origin not allowed");
+	}
+
+	my $strSQLtoken = 'SELECT * FROM tbl_api_access_token WHERE token = ? AND active_status = 1 AND date_expiration > '.time.'';
+	$sth = $dbh->prepare( $strSQLtoken, );
+	$sth->execute( $token ) or MAP::API->fail( $sth->errstr );
+	while ( my $record = $sth->fetchrow_hashref()) 
+	{
+		$token_status = "ok";
+	}
+	
+	
+	if ( $token_status eq "" ) {
+		MAP::API->unauthorized("token not authorized");
+	}
+}
+
+sub check_authorization_simple{
 	my($self, $token, $Origin) = @_;
 	
 	my $dbh = dbh();
 	
 	my $token_status = "";
-	$Origin = $Origin || MAP::API->fail( "you can't fetch without a browser" );
-	$token = $token || MAP::API->fail( "token can not be empty" );
+	$Origin = $Origin || MAP::API->unauthorized( "Please use MAP RESTFul client" );
+	$token = $token || MAP::API->unauthorized( "token can not be empty" );
 	my $origin_status = "";
 	
 	my $strSQLcheckOrigin = "SELECT origin FROM tbl_api_allowed_origin WHERE origin = ?";

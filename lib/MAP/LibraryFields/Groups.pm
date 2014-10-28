@@ -27,7 +27,7 @@ options '/LibraryFields/groups/fields/:id.:format' => sub {
 get '/LibraryFields/groups.:format' => sub {
 	
 	
-	MAP::API->check_authorization( params->{token}, request->header("Origin") );
+	MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
 	
 	my $strColumns = params->{columns} || 'GroupName,Tip,Label';
 	my @columns = split(/,/, $strColumns);

@@ -1,8 +1,8 @@
 package MAP::Agency::Caseworkers;
 use Dancer ':syntax';
 use Dancer::Plugin::REST;
-use utf8;
-use Encode       qw( encode );
+
+use Encode       qw( encode decode );
 use DBI;
 use Data::Dump qw(dump);
 
@@ -87,8 +87,8 @@ get '/'.$collectionName.'.:format' => sub {
 		foreach (@columns)
 		{
 			if (defined($record->{$_})) {
-				push @values, $record->{$_};
-				$row->{$_} = $record->{$_};
+				push @values, decode('UTF-8', $record->{$_});
+				$row->{$_} = decode('UTF-8', $record->{$_});
 			}
 			else
 			{

@@ -15,7 +15,7 @@ options '/LibraryFields/options.:format' => sub {
 get '/LibraryFields/options.:format' => sub {
 	
 	
-	MAP::API->check_authorization( params->{token}, request->header("Origin") );
+	MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
 	
    
    my $fieldId = params->{FieldID} || MAP::API->fail( "Type can not be empty" );
