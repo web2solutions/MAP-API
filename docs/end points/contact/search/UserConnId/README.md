@@ -19,7 +19,7 @@ Returned columns
 	FullName
 	IsBusiness
 	PhoneNumber
-	ConnId
+	ContactId
 
 Examples
 
