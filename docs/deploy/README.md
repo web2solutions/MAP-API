@@ -135,6 +135,21 @@ install Linux SysInfo support
 	$ cpanm Linux::SysInfo
 
 
+install Data Recursive Encode
+
+	$ cpanm Data::Recursive::Encode
+	
+install Template system
+
+	$ cpanm Template
+
+Install XML support
+
+	$ cpanm XML::Mini::Document
+
+
+
+
 ## Support SQL Server
 
 - Complete doc	
