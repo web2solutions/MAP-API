@@ -2,10 +2,7 @@ package MAP::contact::relationship::Relationship;
 use Dancer ':syntax';
 use XML::Mini::Document;
 use Dancer::Plugin::REST;
-
 use Encode qw( encode decode );
-use Deep::Encode;
-use DBI;
 use Data::Dump qw(dump);
 
 
@@ -40,21 +37,21 @@ options '/'.$collectionName.'/employer/list.:format' => sub {
 
 
 
- 
+
 # routing OPTIONS header
 
 
 get '/'.$collectionName.'.:format' => sub {
-   
+
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
    my $dbh = MAP::API->dbh();
-   
+
    my $strColumns = params->{columns} || $defaultColumns;
    my @columns = split(/,/, $strColumns);
    $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
 
-   
+
 # 		@ConnId int 		,@ConnectionId int  = 0
 # ,@RelationshipSubTypeIds varchar(500) = '' 		,@RelationsshipTypeIds varchar(500) = ''
    my @values;
@@ -64,7 +61,7 @@ get '/'.$collectionName.'.:format' => sub {
 		$strSQLappend = $strSQLappend . ' @ConnId = ?, ';
 		push @values, $ConnId;
    }
-   
+
    my $ConnectionId = params->{ConnectionId};
    if ( defined( $ConnectionId ) ) {
 		$strSQLappend = $strSQLappend . ' @ConnectionId = ?, ';
@@ -82,14 +79,14 @@ get '/'.$collectionName.'.:format' => sub {
 		$strSQLappend = $strSQLappend . ' @RelationshipSubTypeIds = ? ';
 		push @values, $RelationshipSubTypeIds;
    }
- 
+
    my $strSQL = 'EXEC '.$storedProcedureName.' '.$strSQLappend.' ';
-   
+
    my $sth = $dbh->prepare( $strSQL, );
    $sth->execute( @values ) or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL );
-   
+
    my @records;
-   while ( my $record = $sth->fetchrow_hashref()) 
+   while ( my $record = $sth->fetchrow_hashref())
    {
 		#push @records, $record;
 		my @values;
@@ -123,26 +120,26 @@ get '/'.$collectionName.'.:format' => sub {
 
 
 get '/'.$collectionName.'/couple/list.:format' => sub {
-   
+
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
    $defaultColumns = 'Connid,Name';
 
    my $dbh = MAP::API->dbh();
-   
+
    my $strColumns = params->{columns} || $defaultColumns;
    my @columns = split(/,/, $strColumns);
    $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
 
-   my $ConnId = params->{ConnId} ;   
- 
+   my $ConnId = params->{ConnId} ;
+
    my $strSQL = 'EXEC usp_CoupleList @Connid = ? ';
-   
+
    my $sth = $dbh->prepare( $strSQL, );
    $sth->execute( $ConnId ) or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL );
-   
+
    my @records;
-   while ( my $record = $sth->fetchrow_hashref()) 
+   while ( my $record = $sth->fetchrow_hashref())
    {
 		#push @records, $record;
 		my @values;
@@ -177,13 +174,13 @@ get '/'.$collectionName.'/couple/list.:format' => sub {
 
 
 get '/'.$collectionName.'/employer/list.:format' => sub {
-   
+
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
    $defaultColumns = 'RowID,FullName,ConnId';
 
    my $dbh = MAP::API->dbh();
-   
+
    my $strColumns = params->{columns} || $defaultColumns;
    my @columns = split(/,/, $strColumns);
    $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
@@ -195,7 +192,7 @@ get '/'.$collectionName.'/employer/list.:format' => sub {
 		$strSQLappend = $strSQLappend . ' @EmployerConnId = ?,';
 		push @values, $EmployerConnId;
    }
-   
+
    my $SearchName = params->{SearchName};
    if ( defined( $SearchName ) ) {
 		$strSQLappend = $strSQLappend . ' @SearchName = ?, ';
@@ -213,14 +210,14 @@ get '/'.$collectionName.'/employer/list.:format' => sub {
 
 
 # 	@EmployerConnId  varchar(50)    	,@SearchName varchar(500) = '' 	,@StrtRow INT =0 	,@Count INT =100
- 
+
    my $strSQL = 'EXEC usp_EmployeeSearch '.$strSQLappend.' ';
-   
+
    my $sth = $dbh->prepare( $strSQL, );
    $sth->execute( @values ) or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL );
-   
+
    my @records;
-   while ( my $record = $sth->fetchrow_hashref()) 
+   while ( my $record = $sth->fetchrow_hashref())
    {
 		#push @records, $record;
 		my @values;
@@ -254,11 +251,11 @@ get '/'.$collectionName.'/employer/list.:format' => sub {
 
 # create form
 post '/'.$collectionName.'.:format' => sub {
-   
+
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
-	
+
 	#$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
-	
+
 	my $hashStr = params->{hash} || '{}';
 	my $json_bytes = encode('UTF-8', $hashStr);
 	my $hash = JSON->new->utf8->decode($json_bytes) or MAP::API->fail( "unable to decode" );
@@ -267,8 +264,8 @@ post '/'.$collectionName.'.:format' => sub {
 	my $sql_placeholders = "";
 	my @sql_values;
 
-     
-    
+
+
 	my %hash = %{ $hash };
     foreach my $key (%hash)
 	{
@@ -280,7 +277,7 @@ post '/'.$collectionName.'.:format' => sub {
 				if ( index($defaultColumns, $key) != -1 )
 				{
 					if ( $key ne $primaryKey) {
-						
+
 						if ( index($sql_columns, '@'.$key.' =') < 0 )
 						{
 							$sql_columns = $sql_columns .' @'.$key.' = ?, ';
@@ -292,22 +289,22 @@ post '/'.$collectionName.'.:format' => sub {
 			}
 		}
     }
-   
+
     my $dbh = MAP::API->dbh();
-	
-    # 
+
+    #
     my $strSQL = 'exec usp_ContactInsert '.substr($sql_columns, 0, -2).'';
 
     #my $strSQL = 'INSERT INTO
-	#	'.$storedProcedureName.'(' . substr($sql_columns, 0, -2) . ') 
+	#	'.$storedProcedureName.'(' . substr($sql_columns, 0, -2) . ')
 	#	VALUES(' . substr($sql_placeholders, 0, -2) . ');
 	#	SELECT SCOPE_IDENTITY() AS '.$primaryKey.';
 	#';
 
 	my $sth = $dbh->prepare( $strSQL, );
-	$sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL ); 
+	$sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL );
 	my $record_id = 0;
-	while ( my $record = $sth->fetchrow_hashref()) 
+	while ( my $record = $sth->fetchrow_hashref())
 	{
 		$record_id = $record->{$primaryKey};
 	}
@@ -324,13 +321,13 @@ post '/'.$collectionName.'.:format' => sub {
 
 # update form
 put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
-   
+
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
-   
+
     my $item_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
-	
+
 	#$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
-	
+
 	my $hashStr = params->{hash} || '{}';
 	my $json_bytes = encode('UTF-8', $hashStr);
 	my $hash = JSON->new->utf8->decode($json_bytes) or MAP::API->fail( "unable to decode" );
@@ -338,7 +335,7 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 	my $sql_setcolumns = "";
 	my $sql_placeholders = "";
 	my @sql_values;
-    
+
 	my %hash = %{ $hash };
     foreach my $key (%hash)
 	{
@@ -357,16 +354,16 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 			}
 		}
     }
-   
+
     my $dbh = MAP::API->dbh();
-	
+
 
 
     my $strSQL = 'exec usp_ContactUpdate '.substr($sql_setcolumns, 0, -2).'';
 
     #my $strSQL = 'UPDATE '.$storedProcedureName.' SET ' . substr($sql_setcolumns, 0, -2) . ' WHERE ['.$primaryKey.'] IN ('.$item_id.')';
 	my $sth = $dbh->prepare( $strSQL, );
-	$sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL . " --- " . dump(@sql_values) . " ----- " . $item_id ); 
+	$sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL . " --- " . dump(@sql_values) . " ----- " . $item_id );
 
 	MAP::API->normal_header();
 	return {
@@ -380,13 +377,13 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 
 del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
-    my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );	
+    my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
 	my $dbh = MAP::API->dbh();
 	my $strSQL = 'exec usp_ContactDelete  @ContactId = '. $dbh->quote( $str_id ).'';
 	my $sth = $dbh->prepare( $strSQL, );
 	$sth->execute( ) or MAP::API->fail( $sth->errstr . "   ----   ". $strSQL );
 
-	
+
 	MAP::API->normal_header();
 	return {
 		status => 'success', response => 'Item(s) '.$str_id.' deleted from '.$collectionName.'',
@@ -396,11 +393,11 @@ del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 };
 
 get '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
-   
+
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
    my $dbh = MAP::API->dbh();
-   
+
    my $strColumns = params->{columns} || $defaultColumns;
    $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
 
@@ -410,10 +407,10 @@ get '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
    my $newDocRoot = $newDoc->getRoot();
    #my $xmlHeader = $newDocRoot->header('xml');
    my $FilterNode = $newDocRoot->createChild('Filter');
-   
+
    my $ValuesNode = $FilterNode->createChild('Values');
 		my $ColumnNameNode = $ValuesNode->createChild('ColumnName');
-		$ColumnNameNode->text( 'ContactId');	
+		$ColumnNameNode->text( 'ContactId');
 		my $ColumnValueNode = $ValuesNode->createChild('ColumnValue');
 		$ColumnValueNode->text( $str_id );
 
@@ -424,7 +421,7 @@ get '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
    #my $strSQL = 'SELECT '.$strColumns.' FROM '.$storedProcedureName.' WHERE '.$primaryKey.' = ?';
    my $sth = $dbh->prepare( $strSQL, );
    $sth->execute(  ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL );
-   
+
 	#$dbh->disconnect();
    MAP::API->normal_header();
    return {
@@ -438,7 +435,7 @@ get '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 
 get '/'.$collectionName.'/types/all.:format' => sub {
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
-	
+
 	my $dbh = MAP::API->dbh();
     my $IsBusiness = params->{IsBusiness} || 0;
     $IsBusiness=~ s/'//g;
@@ -449,7 +446,7 @@ get '/'.$collectionName.'/types/all.:format' => sub {
    my @columns =  split(/,/, 'RelationshipTypeId,RelationshipTypeText');
 
    my @records;
-   while ( my $record = $sth->fetchrow_hashref()) 
+   while ( my $record = $sth->fetchrow_hashref())
    {
 		#push @records, $record;
 		my @values;
@@ -472,7 +469,7 @@ get '/'.$collectionName.'/types/all.:format' => sub {
 		push @records, $row;
    }
 
-	
+
 	MAP::API->normal_header();
 	return {
 		status => 'success',
@@ -484,7 +481,7 @@ get '/'.$collectionName.'/types/all.:format' => sub {
 
 get '/'.$collectionName.'/types/business.:format' => sub {
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
-	
+
 	my $dbh = MAP::API->dbh();
 	my $strSQL = 'EXEC usp_ContactTypeList @IsBusiness = 1;';
 	my $sth = $dbh->prepare( $strSQL, );
@@ -493,7 +490,7 @@ get '/'.$collectionName.'/types/business.:format' => sub {
    my @columns = split(/,/, 'RelationshipTypeId,RelationshipTypeText');
 
    my @records;
-   while ( my $record = $sth->fetchrow_hashref()) 
+   while ( my $record = $sth->fetchrow_hashref())
    {
 		#push @records, $record;
 		my @values;
@@ -516,7 +513,7 @@ get '/'.$collectionName.'/types/business.:format' => sub {
 		push @records, $row;
    }
 
-	
+
 	MAP::API->normal_header();
 	return {
 		status => 'success',
@@ -528,7 +525,7 @@ get '/'.$collectionName.'/types/business.:format' => sub {
 
 get '/'.$collectionName.'/types/person.:format' => sub {
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
-	
+
 	my $dbh = MAP::API->dbh();
 	my $strSQL = 'EXEC usp_ContactTypeList @IsBusiness = 0;';
 	my $sth = $dbh->prepare( $strSQL, );
@@ -537,7 +534,7 @@ get '/'.$collectionName.'/types/person.:format' => sub {
    my @columns = split(/,/, 'RelationshipTypeId,RelationshipTypeText');
 
    my @records;
-   while ( my $record = $sth->fetchrow_hashref()) 
+   while ( my $record = $sth->fetchrow_hashref())
    {
 		#push @records, $record;
 		my @values;
@@ -560,7 +557,7 @@ get '/'.$collectionName.'/types/person.:format' => sub {
 		push @records, $row;
    }
 
-	
+
 	MAP::API->normal_header();
 	return {
 		status => 'success',

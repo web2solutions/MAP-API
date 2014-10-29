@@ -13,7 +13,7 @@ sub Subs {
 
 	  use Dancer ':syntax';
 	  use Encode qw( encode decode );
-	  use Deep::Encode;
+	  use Data::Recursive::Encode;
 	  use Data::Dump qw(dump);
 
 
@@ -105,7 +105,7 @@ sub Subs {
 			  $column=~ s/[^\w\d.-]+//;
 			  my $direction = $order->{direction};
 			  $direction=~ s/[^\w\d.-]+//;
-			  $sql_ordering = ' ORDER BY ' . $column . ' '. $direction ;
+			  $sql_ordering = ' ORDER BY [' . $column . '] '. $direction ;
 		 }
 		 # ------ Filtering and Ordering -------------------
 
@@ -329,7 +329,7 @@ sub Subs {
 
 		  #$dbh->disconnect();
 		 MAP::API->normal_header();
-		 use Data::Recursive::Encode;
+
 		 return {
 				 status => 'success',
 				 response => 'Succcess',

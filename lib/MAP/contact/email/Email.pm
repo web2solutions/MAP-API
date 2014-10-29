@@ -14,6 +14,8 @@ my $root_path = '/var/www/html/userhome/MAP-API/'.$collectionName;
 
 my $relationalColumn = 'ContactId'; # undef
 
+prefix '/contact/:'. $relationalColumn; # | undef
+
 # end point default routes
 use MAP::DefaultRoute;
 &MAP::DefaultRoute::Subs( $collectionName, $primaryKey, $tableName, $defaultColumns, $root_path, $relationalColumn );
