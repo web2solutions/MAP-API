@@ -502,11 +502,9 @@ get '/'.$collectionName.'/search/:UserConnId.:format' => sub {
 
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
-   $defaultColumns = 'RowID,FullName,IsBusiness,PhoneNumber,ContactId';
-
    my $dbh = MAP::API->dbh();
 
-   my $strColumns = params->{columns} || $defaultColumns;
+   my $strColumns = params->{columns} || 'RowID,FullName,IsBusiness,PhoneNumber,ContactId';
    my @columns = split(/,/, $strColumns);
    $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
 
@@ -601,11 +599,11 @@ get '/'.$collectionName.'/search/couple/:CoupleConnId.:format' => sub {
 
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
-   $defaultColumns = 'ContactId1,ContactId2';
+   #$defaultColumns = 'ContactId1,ContactId2';
 
    my $dbh = MAP::API->dbh();
 
-   my $strColumns = params->{columns} || $defaultColumns;
+   my $strColumns = params->{columns} || 'ContactId1,ContactId2';
    my @columns = split(/,/, $strColumns);
    $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
 
