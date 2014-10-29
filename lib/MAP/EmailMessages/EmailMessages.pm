@@ -2,10 +2,6 @@ package MAP::EmailMessages::EmailMessages;
 use Dancer ':syntax';
 use Dancer::Plugin::REST;
 
-use Encode qw( encode decode );
-use Deep::Encode;
-use DBI;
-use Data::Dump qw(dump);
 use MAP::EmailMessages::Templates;
 
 

@@ -10,12 +10,12 @@ use MAP::Forms::Fields;
 
 
 our $VERSION = '0.1';
-our $collectionName = '';
-our $primaryKey = '';
-our $tableName = '';
-our $defaultColumns = '';
+my $collectionName = '';
+my $primaryKey = '';
+my $tableName = '';
+my $defaultColumns = '';
 
-our $relationalColumn = ''; # undef
+my $relationalColumn = ''; # undef
 
 prefix '/forms/formviewer'; # | undef
 

@@ -9,12 +9,12 @@ use JSON::Simple;
 use Data::Dump qw(dump);
 
 our $VERSION = '0.1';
-our $collectionName = 'entries';
-our $tableName = 'formmaker_properties';
-our $primaryKey = 'form_id';
-our $defaultColumns = 'data_id,user_id,key_id,connId,connectionId';
+my $collectionName = 'entries';
+my $tableName = 'formmaker_properties';
+my $primaryKey = 'form_id';
+my $defaultColumns = 'data_id,user_id,key_id,connId,connectionId';
 
-our $relationalColumn = undef; # undef
+my $relationalColumn = undef; # undef
 
 prefix '/forms'; # | undef
 
