@@ -494,13 +494,15 @@ get '/'.$collectionName.'/types/person.:format' => sub {
 	};
 };
 
-
+options '/'.$collectionName.'/search/:UserConnId.:format' => sub {
+	MAP::API->options_header();
+};
 
 get '/'.$collectionName.'/search/:UserConnId.:format' => sub {
 
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
-   $defaultColumns = 'RowID,FullName,IsBusiness,PhoneNumber,ConnId';
+   $defaultColumns = 'RowID,FullName,IsBusiness,PhoneNumber,ContactId';
 
    my $dbh = MAP::API->dbh();
 
@@ -552,6 +554,74 @@ get '/'.$collectionName.'/search/:UserConnId.:format' => sub {
 
 
    my $strSQL = 'EXEC usp_ContactDuplicateSearch ' . $strSQLappend;
+
+   my $sth = $dbh->prepare( $strSQL, );
+   $sth->execute( @values ) or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL );
+
+
+   my @records;
+   while ( my $record = $sth->fetchrow_hashref())
+   {
+		#push @records, $record;
+		my @values;
+		my $row = {
+			#id =>	$record->{$primaryKey},
+		};
+		foreach (@columns)
+		{
+			if (defined($record->{$_})) {
+				push @values, decode('UTF-8', $record->{$_});
+				$row->{$_} = decode('UTF-8', $record->{$_});
+			}
+			else
+			{
+				push @values, "";
+				$row->{$_} = "";
+			}
+		}
+		$row->{data} = [@values];
+		push @records, $row;
+   }
+	#$dbh->disconnect();
+   MAP::API->normal_header();
+   return {
+		   status => 'success',
+		   response => 'Succcess',
+		   ''.$collectionName.'' => [@records],
+		   sql =>  $strSQL,
+   };
+};
+
+
+options '/'.$collectionName.'/search/couple/:CoupleConnId.:format' => sub {
+	MAP::API->options_header();
+};
+
+get '/'.$collectionName.'/search/couple/:CoupleConnId.:format' => sub {
+
+   MAP::API->check_authorization( params->{token}, request->header("Origin") );
+
+   $defaultColumns = 'ContactId1,ContactId2';
+
+   my $dbh = MAP::API->dbh();
+
+   my $strColumns = params->{columns} || $defaultColumns;
+   my @columns = split(/,/, $strColumns);
+   $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
+
+   my @values;
+   my $strSQLappend = '';
+   my $CoupleConnId= params->{CoupleConnId}  || MAP::API->fail( "CoupleConnId is missing on url" );
+   if ( defined( $CoupleConnId ) ) {
+		$strSQLappend = $strSQLappend . ' @CoupleConnId = ?, ';
+		push @values, $CoupleConnId;
+   }
+
+
+
+
+
+   my $strSQL = 'EXEC usp_CoupleContactIds ' . $strSQLappend;
 
    my $sth = $dbh->prepare( $strSQL, );
    $sth->execute( @values ) or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL );
