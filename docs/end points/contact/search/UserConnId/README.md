@@ -19,7 +19,7 @@ Returned columns
 	FullName
 	IsBusiness
 	PhoneNumber
-	ConnId
+	ContactId
 
 Examples
 
@@ -39,6 +39,41 @@ Examples
 				alert(json.contact);
 				console.log(json.contact);
 				alert(json.contact[0].FullName);
+			}
+	   }
+	   ,onFail : function(request)
+	   {
+			var json = JSON.parse( request.response );
+	   }
+	});
+
+
+# Search contactId's of a couple connid
+
+	GET		/contact/search/couple/0000.json
+
+	where 0000 is a user couple connid
+	
+
+
+Returned columns
+
+	ContactId1
+	ContactId2
+
+Examples
+
+	CAIRS.MAP.API.get({
+	   resource : 	"/contact/search/couple/0000" 
+	   ,format : "json" 
+	   ,onSuccess : function(request)
+	   { 
+			var json = JSON.parse( request.response );
+			if( json.status == "success" )	
+			{
+				alert(json.contact);
+				console.log(json.contact);
+				alert(json.contact[0].ContactId1);
 			}
 	   }
 	   ,onFail : function(request)
