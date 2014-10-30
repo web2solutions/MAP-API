@@ -4,14 +4,12 @@ use Dancer::Plugin::REST;
 
 use MAP::contact::email::EmailType;
 
-
 our $VERSION = '0.1';
 my $collectionName = 'emails';
 my $primaryKey = 'ContactEMailID';
 my $tableName = 'ContactEMail';
 my $defaultColumns = 'ContactEMailID,ContactID,EMailTypeID,ContactEMail,PrimaryEMail';
 my $root_path = '/var/www/html/userhome/MAP-API/'.$collectionName;
-
 my $relationalColumn = 'ContactId'; # undef
 
 prefix '/contact/:'. $relationalColumn; # | undef

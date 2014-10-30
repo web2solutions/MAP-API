@@ -40,6 +40,7 @@ get '/'.$collectionName.'.xml' => sub {
    #my $column_to_search = params->{column_to_search}  || MAP::API->fail( 'column_to_search is missing' );
    #$column_to_search =~ s/[^\w\d.-]+//;
 
+
    my $value_column = params->{value_column} || $primaryKey;
    $value_column =~ s/[^\w\d.-]+//;
 
