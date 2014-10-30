@@ -81,3 +81,40 @@ Examples
 			var json = JSON.parse( request.response );
 	   }
 	});
+
+
+
+# Search contactId's of a couple contact id
+
+send back the other person of the current couple of the contactid sent in
+
+	GET		/contact/search/couple/another/0000.json
+
+	where 0000 is a user contact_id
+	
+
+
+Returned columns
+
+	OtherContactId
+
+Examples
+
+	CAIRS.MAP.API.get({
+	   resource : 	"/contact/search/couple/another/0000" 
+	   ,format : "json" 
+	   ,onSuccess : function(request)
+	   { 
+			var json = JSON.parse( request.response );
+			if( json.status == "success" )	
+			{
+				alert(json.contact);
+				console.log(json.contact);
+				alert(json.contact[0].ContactId1);
+			}
+	   }
+	   ,onFail : function(request)
+	   {
+			var json = JSON.parse( request.response );
+	   }
+	});
