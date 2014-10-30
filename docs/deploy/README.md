@@ -138,6 +138,10 @@ install Linux SysInfo support
 install Data Recursive Encode
 
 	$ cpanm Data::Recursive::Encode
+
+install deep encode
+
+	$  cpanm Deep::Encode
 	
 install Template system
 
