@@ -110,7 +110,7 @@ Examples
 			{
 				alert(json.contact);
 				console.log(json.contact);
-				alert(json.contact[0].ContactId1);
+				alert(json.contact[0].OtherContactId);
 			}
 	   }
 	   ,onFail : function(request)
