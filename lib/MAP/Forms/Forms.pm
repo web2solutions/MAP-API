@@ -129,7 +129,7 @@ get '/'.$collectionName.'/:'.$primaryKey.'/metadata.:format' => sub {
     #MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
 	my $item_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
-	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+	my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 
 	# path of files json
 	my $path = $root_path . '/' .$agency_id . '/dhtmlx_form_' . $item_id . '.json';
@@ -155,7 +155,7 @@ post '/'.$collectionName.'.:format' => sub {
 	#$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
 
 	my $hashStr = params->{hash} || '{}';
-	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+	my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 	my $json_bytes = encode('UTF-8', $hashStr);
 	my $hash = JSON->new->utf8->decode($json_bytes) or MAP::API->fail( "unable to decode" );
 	#my $hash =  from_json( $hashStr );
@@ -255,7 +255,7 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
     my $item_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
-	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+	my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 	#$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
 
 	my $hashStr = params->{hash} || '{}';
@@ -351,7 +351,7 @@ put '/'.$collectionName.'/:'.$primaryKey.'/metadata.:format' => sub {
 	$tableName = 'formmaker_properties';
 
 	my $item_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
-	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+	my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 	my $template = params->{template} || MAP::API->fail( "please provide template" );
 
 
@@ -404,7 +404,7 @@ del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
     MAP::API->check_authorization( params->{token}, request->header("Origin") );
 	$tableName = 'formmaker_properties';
     my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
-	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+	my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 	my $dbh = MAP::API->dbh();
 
 	# ===== especific
@@ -477,7 +477,7 @@ get '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
    my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
 
    # ===== especific
-   my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+   my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 
    my $dbh = MAP::API->dbh();
 

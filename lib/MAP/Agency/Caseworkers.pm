@@ -11,16 +11,26 @@ my $defaultColumns = 'user_id,username,password,first_name,last_name,email,photo
 
 my $relationalColumn = 'agency_id'; # undef
 
-prefix '/agency/:'. $relationalColumn; # | undef
-
 my $root_path = '/var/www/html/userhome/MAP-API/'.$collectionName;
 
 my $specific_append_sql_logic_select = " AND [user_type] = 'agency_user' AND [status] = 'Active' ";
 
+
+my $prefix = '/agency/:'. $relationalColumn;
+
+prefix $prefix; # | undef
+
 # end point default routes
 use MAP::DefaultRoute;
-&MAP::DefaultRoute::Subs( $collectionName, $primaryKey, $tableName, $defaultColumns, $root_path, $relationalColumn, $specific_append_sql_logic_select );
+&MAP::DefaultRoute::Subs(
+	$collectionName,
+	$primaryKey,
+	$tableName,
+	$defaultColumns,
+	$root_path,
+	$relationalColumn,
+	$specific_append_sql_logic_select,
+	$prefix
+);
 # end point default routes
-
-
 dance;

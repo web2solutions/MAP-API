@@ -102,8 +102,10 @@ sub normal_header{
 
 sub dbh{
 	my $database = request->header("X-db") ? MIME::Base64::decode(request->header("X-db")) : "";#request->header("X-db") || "";
-	my $server = '192.168.1.19';
-	my $os = MIME::Base64::decode( request->header("X-os") ) || "linux";
+	#debug $database;
+    #debug request->header("X-db");
+    my $server = '192.168.1.19';
+	my $os = request->header("X-os") ? MIME::Base64::decode( request->header("X-os") ) : "linux";
 	#debug $os;
 	my $dbh = undef;
 
@@ -314,5 +316,28 @@ sub regex_alnum
 	$value =~ s/\W//g;
 	return $value;
 }
+
+
+
+options qr{.*} => sub {
+		MAP::API->options_header();
+};
+
+any qr{.*} => sub {
+
+		my $wcontent = to_json({
+			status => 'err', response =>  'end point not found'
+		});
+		halt(Dancer::Response->new(
+		status => 404,
+		content => $wcontent,
+		headers => [
+			'Content-Type' => 'application/json',
+			'Content-Length' => length($wcontent),
+			#'WWW-Authenticate' => 'Basic realm="'.$err_msg.'"',
+			'Access-Control-Allow-Origin' => request->header("Origin")
+		]
+	));
+};
 
 dance;

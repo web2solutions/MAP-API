@@ -126,7 +126,7 @@ post '/'.$collectionName.'.:format' => sub {
 
 	# ===== especific
 	my $form_id  = params->{id} || MAP::API->fail( "id is missing on url" );
-	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+	my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 	# ===== especific
 
 	my $hashStr = params->{hash} || '{}';
@@ -225,7 +225,7 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 
 	# ===== especific
 	my $form_id  = params->{id} || MAP::API->fail( "id is missing on url" );
-	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+	my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 	# ===== especific
 
 	my $hashStr = params->{hash} || '{}';
@@ -280,7 +280,7 @@ del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 
 	# ===== especific
 	my $form_id  = params->{id} || MAP::API->fail( "id is missing on url" );
-	my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+	my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 	# ===== especific
 
 	my $str_id  = params->{$primaryKey} || MAP::API->fail( $primaryKey . " is missing on url" );

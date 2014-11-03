@@ -32,7 +32,7 @@ get '/'.$collectionName.'/:'.$primaryKey.'/:type.:format' => sub {
                                        WHERE form_id = ?",
                                        $item_id) || MAP::API->fail( "formname not exist" );
     
-    my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+    my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
     
     my $strSQLtable = '
         IF OBJECT_ID(\'dbo.formmaker_'.$agency_id .'_'.$formname.'\', \'U\') IS NULL

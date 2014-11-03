@@ -11,38 +11,22 @@ my $root_path = '/var/www/html/userhome/MAP-API/'.$collectionName;
 
 my $relationalColumn = undef; # undef
 
-prefix '/contact/lkp'; # | undef
+my $specific_append_sql_logic_select = '';
+my $prefix = '/contact/lkp';
 
-# routing OPTIONS header
-options '/'.$collectionName.'.:format' => sub {
-	MAP::API->options_header();
-};
+prefix $prefix; # | undef
 
-options '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
-	MAP::API->options_header();
-};
-
-options '/'.$collectionName.'/doc' => sub {
-	MAP::API->options_header();
-};
-
-get '/'.$collectionName.'/doc' => sub {
-	my @defaultColumns = split(/,/, $defaultColumns);
-	template 'doc', {
-		'collectionName' => $collectionName,
-		'tableName' => $tableName,
-		'prefix' => '/contact/lkp',
-		'defaultColumns' => [@defaultColumns],
-		'defaultColumnsStr' => $defaultColumns,
-		'primaryKey' => $primaryKey
-  };
-
-};
-
-
-# routing OPTIONS header
-
+# end point default routes
 use MAP::DefaultRoute;
-&MAP::DefaultRoute::Subs( $collectionName, $primaryKey, $tableName, $defaultColumns, $root_path, $relationalColumn );
-
+&MAP::DefaultRoute::Subs(
+	$collectionName,
+	$primaryKey,
+	$tableName,
+	$defaultColumns,
+	$root_path,
+	$relationalColumn,
+	$specific_append_sql_logic_select,
+	$prefix
+);
+# end point default routes
 dance;

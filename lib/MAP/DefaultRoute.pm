@@ -11,10 +11,13 @@ sub Subs {
 
 	  my $specific_append_sql_logic_select = shift;
 
+	  my $prefix = shift || '';
+
 	  use Dancer ':syntax';
 	  use Encode qw( encode decode );
 	  use Data::Recursive::Encode;
 	  use Data::Dump qw(dump);
+	  use MIME::Base64;
 
 
 	  # routing OPTIONS header
@@ -37,11 +40,27 @@ sub Subs {
 
 	  # end point docs
 	  get '/'.$collectionName.'/doc' => sub {
-		  my @defaultColumns = split(/,/, $defaultColumns);
+
+		 my $auth = request->env->{HTTP_AUTHORIZATION} || MAP::API->unauthorized("please login");
+		 $auth =~ s/Basic //gi;
+
+		 my ($salt_api_user, $salt_api_secret) = split(/:/, (MIME::Base64::decode($auth) || ":"));
+
+		 my $user =  $salt_api_user;
+		 my $pass =  $salt_api_secret;
+
+		 #return  $pass;
+
+		 if ( $user ne 'CAIRS' &&  $pass ne 'CAIRS') {
+			MAP::API->unauthorized("wrong user or password");
+		 }
+
+
+		 my @defaultColumns = split(/,/, $defaultColumns);
 		  template 'doc', {
 			  'collectionName' => $collectionName,
 			  'tableName' => $tableName,
-			  'prefix' => '/contact/lkp',
+			  'prefix' => $prefix,
 			  'defaultColumns' => [@defaultColumns],
 			  'defaultColumnsStr' => $defaultColumns,
 			  'primaryKey' => $primaryKey
@@ -174,7 +193,7 @@ sub Subs {
 		  #$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
 
 		  my $hashStr = params->{hash} || '{}';
-		  my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+		  my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 		  my $json_bytes = encode('UTF-8', $hashStr);
 		  my $hash = JSON->new->utf8->decode($json_bytes) or MAP::API->fail( "unable to decode" );
 		  #my $hash =  from_json( $hashStr );
@@ -240,7 +259,7 @@ sub Subs {
 
 		  my $item_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
 		  $item_id=~ s/'//g;
-		  my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+		  my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 		  #$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
 
 		  my $hashStr = params->{hash} || '{}';
@@ -291,7 +310,7 @@ sub Subs {
 
 		  my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
 		  $str_id=~ s/'//g;
-		  my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+		  my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 		  my $dbh = MAP::API->dbh();
 
 
@@ -319,7 +338,7 @@ sub Subs {
 		 my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
 		  $str_id=~ s/'//g;
 		 # ===== especific
-		 my $agency_id = params->{agency_id} || MAP::API->fail( "please provide agency_id" );
+		 my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 
 		 my $dbh = MAP::API->dbh();
 

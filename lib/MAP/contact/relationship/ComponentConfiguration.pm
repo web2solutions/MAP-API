@@ -11,10 +11,22 @@ my $root_path = '/var/www/html/userhome/MAP-API/'.$collectionName;
 
 my $relationalColumn = "field_id"; # undef
 
-prefix '/contact/relationship/component/:' . $relationalColumn . ''; # | undef
+my $specific_append_sql_logic_select = '';
+my $prefix = '/contact/relationship/component/:' . $relationalColumn . '';
+
+prefix $prefix; # | undef
 
 # end point default routes
 use MAP::DefaultRoute;
-&MAP::DefaultRoute::Subs( $collectionName, $primaryKey, $tableName, $defaultColumns, $root_path, $relationalColumn );
+&MAP::DefaultRoute::Subs(
+	$collectionName,
+	$primaryKey,
+	$tableName,
+	$defaultColumns,
+	$root_path,
+	$relationalColumn,
+	$specific_append_sql_logic_select,
+	$prefix
+);
 # end point default routes
 dance;
