@@ -1,142 +1,69 @@
 # MAP-API
 
+Descrition
 
-MAP API RESTFul psgi application
+	MAP API RESTFul psgi application
 
 Language: Perl
+
 Framework: Dancer
 
+Application server: Centos 5.9
 
-## Environment deploy
+Database driver on Application server: DBD Sybase
 
-Application server -> Centos 5.9
+Database Server: SQL Server
 
-The Centos 5.9 OS uses the Perl 5.8 distribution, we will install standalone perl distributions and use it avoiding to use the OS perl distribution.
 
+**What is RESTful?**
 
-install perlbrew
+We could shortly describe it as AJAX on steroids. It defines standards for HTTP requests and responses but also implements advanced features in terms of communication between client and server.
 
-	$ curl -L http://xrl.us/perlbrewinstall | bash
+>" Representational state transfer (REST) is an abstraction of the architecture of the World Wide Web; more precisely, REST is an architectural style consisting of a coordinated set of architectural constraints applied to components, connectors, and data elements, within a distributed hypermedia system. "
 
+>" REST ignores the details of component implementation and protocol syntax in order to focus on the roles of components, the constraints upon their interaction with other components, and their interpretation of significant data elements. "
 
-Add content to .bashrc
+*source http://en.wikipedia.org/wiki/Representational_state_transfer*
 
- 	$ echo "source ~/perl5/perlbrew/etc/bashrc" >> ~/.bashrc
 
-run .bashrc
+**What is MAP API?**
 
-	$ . ~/.bashrc
+The MAP API is a distributed server stack which provides a set of RESTful *end points*.
 
+It runs on your box and process, it means it does not lives inside Apache.
 
-install perl distro
+The application stack looks like following:
 
-   	$ perlbrew install perl-5.10.1
+	Perl psgi application (Dancer) -> Plack middleware -> Starman (private web server) -> Apache (public proxy server)
 
-See log installation
+**What are RESTful end points?**
 
-	$ tail -f ~/perl5/perlbrew/build.log
+Each end points may looks like a web service.
 
-Switch Perl version on terminal
+End points provides standardized interface for consuming a service.
 
-	$ perlbrew switch perl-5.10.1
+End points tries always to be generic solutions and provide support to be consumed by every type of client (ex: web, mobile)
 
+MAP API end points are *CRUD focused end points*. It means that, *by default*, it provides support to Create, Read, Update and Delete operations on a specified dataset/table.
 
+There are end points which provides specific support, like for example file upload, and others.
 
+**API Branches**
 
+		production: https://api.myadoptionportal.com
+		
+		dev: https://apidev.myadoptionportal.com
+		
+		test: https://perltest.myadoptionportal.com
+		
+**Deploy documentation**
 
-install cpan minus -> cpanm tool
-	
-	#   % curl -L http://cpanmin.us | perl - App::cpanminus
+https://github.com/web2solutions/MAP-API/tree/master/docs/deploy
 
+**End points documentation**
 
-Install Dancer framework
+https://github.com/web2solutions/MAP-API/tree/master/docs/end%20points
 
-	curl -L http://cpanmin.us | perl - --sudo Dancer
+==================================
 
-	OR
-
-	cpanm Dancer
-	
-	OR, if you are facing issues when install, try:
-	
-	cpanm --force Dancer
-
-
-Install Dancer RESTful plugin
-
-	cpanm Dancer::Plugin::REST
-
-Install sha256 crypt support
-
-	cpanm Crypt::Digest::SHA256
-
-
-install DBI
-
-	cpanm DBI
-
-install Encode
-
-	cpanm Encode
-
-install Data::Dump
-
-	cpanm Data::Dump
-
-
-install YAML suport
-
-	cpanm YAML
-	
-install  Any::Moose
-
-	cpanm Any::Moose
-	
-install Mouse
-
-	cpanm Mouse
-
-install AnyMQ
-
-	cpanm --force AnyMQ
-
-
-install Web::Hippie
-
-	cpanm --force Web::Hippie
-	
-install MooseX Traits
-
-	cpanm MooseX::Traits
-	
-
-install Twiggy
-
-	cpanm Twiggy
-	
-
-install Twiggy  Plack Handler
-
-	 cpanm --force Plack::Handler::Twiggy
-
-install Starman
-
-	cpanm Starman
-
-
-install Server Starter
-
-	cpanm Server::Starter
-	
-install Unix Uptime checker support
-
-	cpanm Unix::Uptime
-
-install Linux SysInfo support
-
-	cpanm Linux::SysInfo
-
-
-Support SQL Server
-
-	http://www.idevelopment.info/data/SQLServer/DBA_tips/Programming/PROG_4.shtml
+#

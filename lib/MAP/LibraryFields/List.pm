@@ -2,7 +2,8 @@ package MAP::DHTMLX::GRID::FEED;
 use Dancer ':syntax';
 use Dancer::Plugin::REST;
 use DBI;
-#use JSON;
+use Encode qw( encode decode );
+use Data::Recursive::Encode;
 
 
 our $VERSION = '0.1';
@@ -13,16 +14,16 @@ options '/LibraryFields.:format' => sub {
 };
 
 get '/LibraryFields.:format' => sub {
-   
-   MAP::API->check_authorization( params->{token}, request->header("Origin") );
-   
+
+   MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
+
    my $strColumns = params->{columns} || 'FieldType,FieldName,Description,RecordScope,MultiRecord';
    my $searchcriteria = params->{searchcriteria} || "1_Type1";
-   
+
    # Field Type,Name,Description,Record Scope,Multi-Record
-   
+
    #FieldType,FieldName,FormName,FORM_ID,PAGE_ID,library_field_name,text_size'
-   
+
    #my $primaryKey = params->{primary_key};
    #my $tableName = params->{table_name};
    my $count = params->{count} || 100;
@@ -31,25 +32,25 @@ get '/LibraryFields.:format' => sub {
    $posStart = $posStart + 1;
    my @rows;
    my @columns = split(/,/, $strColumns);
-   
+
    my $dbh = MAP::API->dbh();
    my $totalCount = 1;
-   
+
    #my $sth = $dbh->prepare( "SELECT COUNT(".$primaryKey.") as total_count FROM ".$tableName." WHERE 1=1;", );
    #$sth->execute();
-   
+
    #while ( my $record = $sth->fetchrow_hashref())
    #{
 	#	$totalCount = 52; #$record->{"total_count"}
 #}
-   
-   my $strSQL = "EXEC usp_GetLibraryFieldLIst '".$searchcriteria."',".$posStart.",".$count.""; 
-   
+
+   my $strSQL = "EXEC usp_GetLibraryFieldLIst '".$searchcriteria."',".$posStart.",".$count."";
+
    #my $strSQL = 'EXEC USP_ListAllLibraryFields 2217,'.$posStart.','.$count.''; #'EXEC USP_ListAllLibraryFields @form_id = 2217, @StRow = '.$posStart.', @EndRow = '.$count; # @PosStart = '.$posStart.', @Count = '.$count.'
 
    my $sth = $dbh->prepare( $strSQL, );
    $sth->execute();
-   
+
    my $idfake = 1;
    while ( my $record = $sth->fetchrow_hashref())
    {
@@ -57,20 +58,20 @@ get '/LibraryFields.:format' => sub {
 		foreach (@columns) {
 			#print $_;
 			if (defined($record->{$_})) {
-				push @values, $record->{$_};
+				push @values, decode( 'UTF-8',$record->{$_});
 			}
 			else
 			{
 				push @values, "";
 			}
-			
-			
+
+
 		}
-		
+
 		$totalCount = $record->{"TotalCount"};
-		
-		
-		
+
+
+
 		my $row = {
 			id =>	$record->{"FieldID"},
 			data => [@values]
@@ -78,11 +79,11 @@ get '/LibraryFields.:format' => sub {
 		push @rows, $row;
 	$idfake = $idfake + 1;
     }
-   
+
    $totalCount = $totalCount - 1;
-   
+
    #$dbh->disconnect();
-   
+
    if( $posStart == 0 )
 	{
 		$posStart = "";
@@ -91,9 +92,9 @@ get '/LibraryFields.:format' => sub {
 	{
 		$posStart = $posStart - 1;
 	}
-   
+
 	MAP::API->normal_header();
-	
+
 
 	return {
 		total_count => $totalCount,
@@ -104,12 +105,12 @@ get '/LibraryFields.:format' => sub {
 };
 
 post '/LibraryFields.:format' => sub {
-   
+
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
-   
-   
+
+
 	my $PageID 	= params->{PageID} || -20;
-	my $Type   	= params->{Type} || MAP::API->fail( "Type can not be empty" );	
+	my $Type   	= params->{Type} || MAP::API->fail( "Type can not be empty" );
 	my $label  	= params->{label} || MAP::API->fail( "label can not be empty" );
 	my $caption	= params->{caption} || MAP::API->fail( "caption can not be empty" );
 	my $Fieldname = params->{Fieldname} || MAP::API->fail( "Fieldname can not be empty" );
@@ -123,21 +124,21 @@ post '/LibraryFields.:format' => sub {
 	my $RelationshipSubTypeID = params->{columns} || 0;
 	my $RelationshipTypeID = params->{columns} || 0;
 	my $Flg = params->{columns} || 1;
-	
-	#my $json = new JSON;
-	my $optionString = params->{options} || {};	
-	my $objJSON =  from_json( $optionString ) || MAP::API->fail( "Can not decode the optionString json string" );
-	
 
-	
+	#my $json = new JSON;
+	my $optionString = params->{options} || {};
+	my $objJSON =  from_json( $optionString ) || MAP::API->fail( "Can not decode the optionString json string" );
+
+
+
 	my $dbh = MAP::API->dbh();
 
 	my $strSQL = 'EXEC  usp_Formmaker_LibFieldAddEdit
 		@PageID 	= '.$PageID.',
-		@Type   	= \''.$Type.'\',	
+		@Type   	= \''.$Type.'\',
 		@label  	= \''.$label.'\',
 		@caption	= \''.$caption.'\',
-		@Fieldname 	= \''.$Fieldname.'\' , 
+		@Fieldname 	= \''.$Fieldname.'\' ,
 		@tips 		= \''.$tips.'\',
 		@size 		= '.$size.',
 		@textareacolumn = '.$textareacolumn.',
@@ -148,21 +149,21 @@ post '/LibraryFields.:format' => sub {
 		@RelationshipSubTypeID = '.$RelationshipSubTypeID.',
 		@RelationshipTypeID = '.$RelationshipTypeID.',
 		@Flg 		= '.$Flg.' ';
-	
+
 	my $sth = $dbh->prepare( $strSQL, );
-	
+
 	$sth->execute() or MAP::API->fail( $sth->errstr );
-   
+
 	my $library_field_id = 0;
-	while ( my $record = $sth->fetchrow_hashref()) 
+	while ( my $record = $sth->fetchrow_hashref())
 	{
 		$library_field_id = $record->{"library_field_id"};
 	}
-	
+
 	my $ttoptions = 0;
 	for(@$objJSON)
 	{
-			
+
 		$sth = $dbh->prepare( 'EXEC usp_Form_FieldOptionAddEdit
 			@optionId = 0,
 			@DeleteYN = 0,
@@ -172,13 +173,13 @@ post '/LibraryFields.:format' => sub {
 			@empty = NULL,
 			@key_id = 0,
 			@FieldOptionSeq = ?', );
-	
+
 		$sth->execute( $library_field_id, $_->{optionname}, $_->{asdefault}, $_->{FieldOptionSeq} ) or MAP::API->fail( "Field saved but: " . $sth->errstr );
-		
+
 		$ttoptions = $ttoptions + 1;
 	}
-	
-   
+
+
 	MAP::API->normal_header();
 
 	return {
@@ -188,12 +189,12 @@ post '/LibraryFields.:format' => sub {
 
 
 put '/LibraryFields.:format' => sub {
-   
+
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
-   
-   
+
+
 	my $PageID 	= params->{PageID} || -20;
-	my $Type   	= params->{Type} || MAP::API->fail( "Type can not be empty" );	
+	my $Type   	= params->{Type} || MAP::API->fail( "Type can not be empty" );
 	my $label  	= params->{label} || MAP::API->fail( "label can not be empty" );
 	my $caption	= params->{caption} || MAP::API->fail( "caption can not be empty" );
 	my $Fieldname = params->{Fieldname} || MAP::API->fail( "Fieldname can not be empty" );
@@ -208,21 +209,21 @@ put '/LibraryFields.:format' => sub {
 	my $RelationshipTypeID = params->{columns} || 0;
 	my $Flg = params->{columns} || 1;
 	my $FieldID = params->{FieldID} || MAP::API->fail( "FieldID can not be empty" );
-	
-	my $json = new JSON;
-	my $optionString = params->{options} || {};	
-	my $objJSON = $json->decode($optionString) || MAP::API->fail( "Can not decode the optionString json string" );
-	
 
-	
+	my $json = new JSON;
+	my $optionString = params->{options} || {};
+	my $objJSON = $json->decode($optionString) || MAP::API->fail( "Can not decode the optionString json string" );
+
+
+
 	my $dbh = MAP::API->dbh();
 
 	my $strSQL = 'EXEC  usp_Formmaker_LibFieldAddEdit
 		@PageID 	= '.$PageID.',
-		@Type   	= \''.$Type.'\',	
+		@Type   	= \''.$Type.'\',
 		@label  	= \''.$label.'\',
 		@caption	= \''.$caption.'\',
-		@Fieldname 	= \''.$Fieldname.'\' , 
+		@Fieldname 	= \''.$Fieldname.'\' ,
 		@tips 		= \''.$tips.'\',
 		@size 		= '.$size.',
 		@textareacolumn = '.$textareacolumn.',
@@ -234,21 +235,21 @@ put '/LibraryFields.:format' => sub {
 		@RelationshipTypeID = '.$RelationshipTypeID.',
 		@Flg 		= '.$Flg.',
 		,@FieldID  = '.$FieldID.' ';
-	
+
 	my $sth = $dbh->prepare( $strSQL, );
-	
+
 	$sth->execute() or MAP::API->fail( $sth->errstr );
-   
+
 	my $library_field_id = 0;
-	while ( my $record = $sth->fetchrow_hashref()) 
+	while ( my $record = $sth->fetchrow_hashref())
 	{
 		$library_field_id = $record->{"library_field_id"};
 	}
-	
+
 	my $ttoptions = 0;
 	for(@$objJSON)
 	{
-			
+
 		$sth = $dbh->prepare( 'EXEC usp_Form_FieldOptionAddEdit
 			@optionId = 0,
 			@DeleteYN = 0,
@@ -258,13 +259,13 @@ put '/LibraryFields.:format' => sub {
 			@empty = NULL,
 			@key_id = 0,
 			@FieldOptionSeq = 1', );
-	
+
 		$sth->execute( $library_field_id, $_->{optionname} ) or MAP::API->fail( "Field saved but: " . $sth->errstr );
-		
+
 		$ttoptions = $ttoptions + 1;
 	}
-	
-   
+
+
 	MAP::API->normal_header();
 
 	return {

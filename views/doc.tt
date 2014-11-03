@@ -1,0 +1,326 @@
+<link type="text/css" rel="stylesheet" href="https://perltest.myadoptionportal.com/docs/styles/shCoreDefault.css"/>
+<link href='https://perltest.myadoptionportal.com/docs/styles/shCore.css' rel='stylesheet' type='text/css' />
+<link href='https://perltest.myadoptionportal.com/docs/styles/shThemeDefault.css' rel='stylesheet' type='text/css' />
+<link type="text/css" rel="Stylesheet" href="https://perltest.myadoptionportal.com/docs/styles/shThemeMidnight.css"/>
+<link type="text/css" rel="Stylesheet" href="https://perltest.myadoptionportal.com/docs/styles/shThemeRDark.css"/>
+<link type="text/css" rel="Stylesheet" href="https://perltest.myadoptionportal.com/docs/styles/shThemeFadeToGrey.css"/>
+<script type="text/javascript" src="https://perltest.myadoptionportal.com/docs/scripts/shCore.js"></script>
+<script type="text/javascript" src="https://perltest.myadoptionportal.com/docs/scripts/shBrushPerl.js"></script>
+<script type="text/javascript" src="https://perltest.myadoptionportal.com/docs/scripts/shBrushPhp.js"></script>
+<script type="text/javascript" src="https://perltest.myadoptionportal.com/docs/scripts/shBrushJScript.js"></script>
+<script type="text/javascript" src="https://perltest.myadoptionportal.com/docs/scripts/shBrushPlain.js"></script>
+
+<script src='https://perltest.myadoptionportal.com/docs/scripts/shAutoloader.js' type='text/javascript'></script>
+<script src='https://perltest.myadoptionportal.com/docs/scripts/shBrushXml.js' type='text/javascript'></script>
+<script src='https://perltest.myadoptionportal.com/docs/scripts/shBrushCss.js' type='text/javascript'></script>
+<script type="text/javascript">SyntaxHighlighter.all();</script>
+<h1><img src="https://perltest.myadoptionportal.com/images/cairs_logo.png" width="315" height="54" alt="CAIRS" /></h1>
+<h1>End point documentation</h1>
+<p><em><strong><span>This documentation presumes that you already have DHTMLX Suite PRO version and CAIRS fw  installed on your system</span></strong></em><strong>.</strong></p>
+<p>&nbsp;</p>
+
+<h2>Summary</h2>
+<p>This end point provides CRUD support for the table <span><% tableName %></span></p>
+
+<p>&nbsp;</p>
+<h2>End point information</h2>
+<p>address: <span><% prefix %>/<% collectionName %></span></p>
+<p>collection name: <span><% collectionName %></span></p>
+<p>default columns: <span><% defaultColumnsStr %></span></p>
+<p>primaryKey: <span><% primaryKey %></span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+
+<h2>Implemented HTTP verbs and routes</h2>
+<h3><span>GET</span> <b><% prefix %>/<% collectionName %></b></h3>
+<h3><span>POST</span> <b><% prefix %>/<% collectionName %></b></h3>
+<h3><span>PUT</span> <b><% prefix %>/<% collectionName %>/:<% primaryKey %></b></h3>
+<h3><span>DEL</span> <b><% prefix %>/<% collectionName %>/:<% primaryKey %></b></h3>
+<h3><span>GET</span> <b><% prefix %>/<% collectionName %>/:<% primaryKey %></b></h3>
+
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+
+<h2>Params per route</h2>
+<h3><span>GET</span> <b><% prefix %>/<% collectionName %></b></h3>
+<p>
+<span>columns</span> - use this to pass a list of columns to be returned by the end point.<br>
+This is very useful when you need to order the columns position on returned data.<br>
+default: <% defaultColumnsStr %>
+<br> <span>not mandatory</span>
+</p>
+<p>
+<span>filter</span> - use this to pass A JSON object containing pairs of key/values. Key are column names and values
+    are string which will be used to search foron that column.<br>
+default: none
+<br> <span>not mandatory</span>
+</p>
+<p>
+<span>filter_operator</span> - use this to pass the boolean operation to make comparison between filters. Values: AND or OR.<br>
+default: AND
+<br> <span>not mandatory</span>
+</p>
+<p>
+<span>order</span> - A JSON object containing two properties: orderby and direction. <br>
+orderby: is the name of the column to be used as ordering criteria <br>
+direction: is a valid SQL keyword that defines the direction of the ordering<br>
+default: <% primaryKey %> ASC
+<br> <span>not mandatory</span>
+</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3><span>POST</span> <b><% prefix %>/<% collectionName %></b></h3>
+<p>
+<span>hash</span> - hash is a JSON object 100% compatible with form.getFormData() hash. <br>
+It holds pairs of key/values, where key is the column name from a table and value is the properly value for that column when creating the record<br>
+<span>mandatory</span><br> 
+</p>            
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3><span>PUT</span> <b><% prefix %>/<% collectionName %>/:<% primaryKey %></b></h3>
+<p>
+<span>hash</span> - hash is a JSON object 100% compatible with form.getFormData() hash. <br>
+It holds pairs of key/values, where key is the column name from a table and value is the properly value for that column when updating the record<br>
+<span>mandatory</span><br> 
+</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3><span>DEL</span> <b><% prefix %>/<% collectionName %>/:<% primaryKey %></b></h3>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3><span>GET</span> <b><% prefix %>/<% collectionName %>/:<% primaryKey %></b></h3>
+<p>
+<span>columns</span> - use this to pass a list of columns to be returned by the end point.<br>
+This is very useful when you need to order the columns position on returned data.<br>
+default: <% defaultColumnsStr %>
+<br> <span>not mandatory</span>
+</p>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+<h2>Client-side example calls using MAP RESTful client</h2>
+<h3>list all records with all default columns</h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+CAIRS.MAP.API.get({
+    resource :  "<% prefix %>/<% collectionName %>" 
+    ,format : "json" // not mandatory, default json
+    ,onSuccess : function( request ) 
+    { 
+        var json = JSON.parse( request.response );
+        console.log(request);
+        alert("Id of the first record: " + json.<% collectionName %>[0].<% primaryKey %>);
+		
+		json.<% collectionName %>.forEach( function (row, index, array)
+		{
+			<% FOREACH variable IN defaultColumns %>
+			console.log( row.<% variable %> )
+			<% END %>
+		});
+		
+    }
+    ,onFail : function( request )
+    { 
+        var json = JSON.parse( request.response );
+    }
+});
+</pre>
+<p></p>
+<h3>list all records, but returning only specified columns</h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+CAIRS.MAP.API.get({
+    resource :  "<% prefix %>/<% collectionName %>" 
+    ,format : "json" // not mandatory, default json
+    ,payload : "columns=<% defaultColumns.1 %>,<% defaultColumns.0 %>"
+    ,onSuccess : function( request ) 
+    { 
+        var json = JSON.parse( request.response );
+        console.log(request);
+        alert("specified column of the first record: " + json.<% collectionName %>[0].<% defaultColumns.0 %>);
+		
+		json.<% collectionName %>.forEach( function (row, index, array)
+		{
+			console.log( row.<% defaultColumns.1 %> );
+			console.log( row.<% defaultColumns.0 %> );
+		});
+    }
+    ,onFail : function( request )
+    { 
+        var json = JSON.parse( request.response );
+    }
+});
+</pre>
+<p></p>
+<p></p>
+<h3>list filtered data</h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+CAIRS.MAP.API.get({
+    resource :  "<% prefix %>/<% collectionName %>" 
+    ,format : "json" // not mandatory, default json
+    ,payload : "filter_operator=AND&filter={ '<% defaultColumns.last %>' : 'some value'}"
+    ,onSuccess : function( request ) 
+    { 
+        var json = JSON.parse( request.response );
+        console.log(request);
+        alert("specified column of the first record: " + json.<% collectionName %>[0].<% defaultColumns.0 %>);
+    }
+    ,onFail : function( request )
+    { 
+        var json = JSON.parse( request.response );
+    }
+});
+</pre>
+<p></p>
+<p></p>
+<h3>list ordered data</h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+CAIRS.MAP.API.get({
+    resource :  "<% prefix %>/<% collectionName %>" 
+    ,format : "json" // not mandatory, default json
+    ,payload : "order={direction: 'DESC', orderby: '<% defaultColumns.last %>'}"
+    ,onSuccess : function( request ) 
+    { 
+        var json = JSON.parse( request.response );
+        console.log(request);
+        alert("specified column of the first record: " + json.<% collectionName %>[0].<% defaultColumns.0 %>);
+    }
+    ,onFail : function( request )
+    { 
+        var json = JSON.parse( request.response );
+    }
+});
+</pre>
+<p></p>
+<p>&nbsp;</p>
+<h3>Insert <% collectionName %></h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+var hash = {
+	<% FOREACH variable IN defaultColumns %><% IF variable == defaultColumns.first %><% ELSE %>'<% variable %>' : '',<% END %><% END %>
+};
+
+CAIRS.MAP.API.post({
+    resource :  "<% prefix %>/<% collectionName %>" 
+    ,format : "json" // not mandatory, default json
+    ,payload : "hash=" + JSON.stringify( hash )
+    ,onSuccess : function( request ) 
+    { 
+        var json = JSON.parse( request.response );
+        console.log(request);
+        alert("Id of the new record: " + json.<% primaryKey %>);
+    }
+    ,onFail : function( request )
+    { 
+        var json = JSON.parse( request.response );
+    }
+});
+</pre>
+<p></p>
+<p>&nbsp;</p>
+<h3>Update <% collectionName %></h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+var hash = {
+	<% FOREACH variable IN defaultColumns %><% IF variable == defaultColumns.first %><% ELSE %>'<% variable %>' : '',<% END %><% END %>
+};
+
+CAIRS.MAP.API.put({
+    resource :  "<% prefix %>/<% collectionName %>/:<% primaryKey %>" 
+    ,format : "json" // not mandatory, default json
+    ,payload : "hash=" + JSON.stringify( hash )
+    ,onSuccess : function( request ) 
+    { 
+        var json = JSON.parse( request.response );
+        console.log(request);
+        alert("Id of the record: " + json.<% primaryKey %>);
+    }
+    ,onFail : function( request )
+    { 
+        var json = JSON.parse( request.response );
+    }
+});
+</pre>
+<p></p>
+<p>&nbsp;</p>
+<h3>Delete <% collectionName %></h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+CAIRS.MAP.API.del({
+    resource :  "<% prefix %>/<% collectionName %>/:<% primaryKey %>" 
+    ,format : "json" // not mandatory, default json
+    ,onSuccess : function( request ) 
+    { 
+        var json = JSON.parse( request.response );
+        console.log(request);
+        alert("Id of the deleted record: " + json.<% primaryKey %>);
+    }
+    ,onFail : function( request )
+    { 
+        var json = JSON.parse( request.response );
+    }
+});
+</pre>
+<p></p>
+<p>&nbsp;</p>
+<h3>Get <% collectionName %></h3>
+<pre class="brush: js;ruler: true; first-line: 1;">
+CAIRS.MAP.API.get({
+    resource :  "<% prefix %>/<% collectionName %>/:<% primaryKey %>" 
+    ,format : "json" // not mandatory, default json
+    ,onSuccess : function( request ) 
+    { 
+        var json = JSON.parse( request.response );
+        console.log(request);
+		<% FOREACH variable IN defaultColumns %>
+		console.log( json.hash.<% variable %> )
+		<% END %>
+    }
+    ,onFail : function( request )
+    { 
+        var json = JSON.parse( request.response );
+    }
+});
+</pre>
+<p></p>
+<p></p>
+<p></p>
+<h2>Client-side example using jDBd datastore</h2>
+<h3>create dataset <% tableName %></h3>
+<h4>Facade style</h4>
+<pre class="brush: js;ruler: true; first-line: 1;">
+CAIRS.jDBd.create({
+	data_set_name: "<% tableName %>"
+	,primary_key: "<% primaryKey %>"
+	,overwrite: true
+	,api_service: {
+	    end_point: "<% prefix %>/<% collectionName %>"
+	    ,collection_name: "<% collectionName %>"
+	    ,api_payload: "columns=<% defaultColumnsStr %>"
+	}
+	,onSuccess: function( dataset ) {}
+	,onFail: function( request ) {}
+});
+</pre>
+<h4>Constructor style</h4>
+<pre class="brush: js;ruler: true; first-line: 1;">
+var dt = new CAIRS.dataStore({
+	data_set_name: "<% tableName %>"
+	,primary_key: "<% primaryKey %>"
+	,overwrite: true
+	,api_service: {
+	    end_point: "<% prefix %>/<% collectionName %>"
+	    ,collection_name: "<% collectionName %>"
+	    ,api_payload: "columns=<% defaultColumns.1 %>,<% defaultColumns.0 %>"
+	}
+	,onSuccess: function( dataset ) {}
+	,onFail: function( request ) {}
+});
+</pre>
+<p></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><img src="https://perltest.myadoptionportal.com/images/cairs_logo.png" width="315" height="54" alt="CAIRS" /></p>

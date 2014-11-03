@@ -2,7 +2,8 @@ package MAP::LibraryFields::SubCategory;
 use Dancer ':syntax';
 use Dancer::Plugin::REST;
 use DBI;
-
+use Encode qw( encode decode );
+use Data::Recursive::Encode;
 
 our $VERSION = '0.1';
 
@@ -13,27 +14,27 @@ options '/LibraryFields/subcategory.:format' => sub {
 
 
 get '/LibraryFields/subcategory.:format' => sub {
-	
-	MAP::API->check_authorization( params->{token}, request->header("Origin") );
+
+	MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
    my $dbh = MAP::API->dbh();
-   
+
    my $sql = 'EXEC usp_GetFieldCategory 1';
 
    my $sth = $dbh->prepare(
         $sql ,
    );
    $sth->execute();
-   
+
    my @records;
-   while ( my $record = $sth->fetchrow_hashref()) 
+   while ( my $record = $sth->fetchrow_hashref())
 	{
-		push @records, $record;
+		push @records, Data::Recursive::Encode->decode_utf8( $record );
 	}
-	
+
 	#$dbh->disconnect();
-	
+
 	MAP::API->normal_header();
-	
+
 	if ( params->{format} eq "json" ) {
 		set serializer => 'JSON';
 	}

@@ -1,0 +1,39 @@
+@charset "utf-8";
+/* CSS Document */
+
+html, body{
+	width:100%;height:100%;margin:0px;padding:0px;
+}
+input, textarea{
+     border:solid 1px #69C;
+}
+.container{
+	width:500px;height:auto;float:left;font-family:Tahoma, Geneva, sans-serif;font-size:12px;padding:0px;margin:0px;list-style:none;
+}
+.container li{
+	margin-bottom:1px;
+}
+.elementogrande{
+	width:500px;height:22px;float:left;padding:0px;margin:0px;list-style:none;
+}
+.elementogrande label{
+	width:78px;height:20px;float:left;background:url(../imagens/bg_field_form.jpg);padding:1px;text-align:right;font-weight:bold;
+}
+.elementogrande select{
+	width:418px;height:22px;float:right;
+}
+.elementogrande input{
+	width:416px;height:18px;float:right;
+}
+.elementopequeno{
+	width:250px;height:22px;float:left;padding:0px;margin:0px;list-style:none;
+}
+.elementopequeno label{
+	width:78px;height:20px;float:left;background:url(../imagens/bg_field_form.jpg);padding:1px;text-align:right;font-weight:bold;
+}
+.elementopequeno select{
+	width:168px;height:22px;float:right;
+}
+.elementopequeno input{
+	width:166px;height:18px;float:right;
+}

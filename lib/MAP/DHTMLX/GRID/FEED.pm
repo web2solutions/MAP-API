@@ -1,7 +1,6 @@
 package MAP::DHTMLX::GRID::FEED;
 use Dancer ':syntax';
-use utf8;
-use Encode       qw( encode );
+use Encode       qw( encode decode );
 use DBI;
 
 
@@ -17,7 +16,7 @@ options '/feed.:format' => sub {
 
 get '/feed.:format' => sub {
    
-   MAP::API->check_authorization( params->{token}, request->header("Origin") );
+   MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
    
    
    
@@ -78,7 +77,7 @@ get '/feed.:format' => sub {
 		foreach (@columns) {
 			#print $_;
 			if (defined($record->{$_})) {
-				push @values, $record->{$_};
+				push @values, decode('UTF-8', $record->{$_} );
 				#debug $record->{$_};
 			}
 			else
