@@ -424,8 +424,8 @@ var dt = new CAIRS.dataStore({
 &lt;script type="text/javascript" src="//cdmap01.myadoptionportal.com/modules/codebase3.6/dhtmlx.js"&gt;&lt;/script&gt;
 &lt;script type="text/javascript" src="//cdmap01.myadoptionportal.com/modules/CAIRS_Framework/CAIRS_fw.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-/* ---------- app settings ---------- */
-var settings = {
+/* ---------- <% tableName %>_app settings ---------- */
+var <% tableName %>_settings = {
     /* ---------- form configuration ---------- */
 	conf_form: {
         "template": [
@@ -472,6 +472,39 @@ var settings = {
         "coltypes": "<% FOREACH variable IN defaultColumns %><% IF variable == defaultColumns.first %><% ELSIF variable == defaultColumns.last %>ro<% ELSE %>ro,<% END %><% END %>",
 		"colaligns": "<% FOREACH variable IN defaultColumns %><% IF variable == defaultColumns.first %><% ELSIF variable == defaultColumns.last %>left<% ELSE %>left,<% END %><% END %>"
     } // end grid settings
+	, conf_window: {
+        "image_path": "http://cdmap01.myadoptionportal.com/modules/codebase3.6/imgs/",
+        "viewport": "body",
+        "left": 100,
+        "top": 5,
+        "width": 300,
+        "height": 300,
+        "enableAutoViewport": true,
+        "icon": "dock.gif",
+        "icon_dis": "dock.gif"
+    }
+	
+	,"conf_toolbar": {
+        "icon_path": "http://cdmap01.myadoptionportal.com/modules/codebase3.6/imgs/",
+        "items": [
+            {
+                "type": "button",
+                "id": "edit",
+                "text": "edit",
+                "img": "dock.gif",
+                "img_disabled": "dock.gif"
+				,disabled : true
+            }
+			,{
+                "type": "button",
+                "id": "delete",
+                "text": "delete",
+                "img": "dock.gif",
+                "img_disabled": "dock.gif"
+				,disabled : true
+            }
+        ]
+    }
 }; // end settings
 // global vars
 
@@ -488,117 +521,254 @@ CAIRS.cookie.set("YXBpX2NyZWRlbnRpYWw=", user_credential, CAIRS.MAP.API.date_exp
 // dont use it on production ^^
 // CAUTION
 
-// global variables
-var form, grid;
+
+// application singleton
+var <% tableName %>_app = {
+    grid: null
+    ,form: null
+	,window_manager : null
+	,window : null
+    ,layout: null
+	,toolbar: null
+    ,datastore: null
+	,view : {
+		
+		start_window_manager: function () {
+			var self = <% tableName %>_app;
+			self.window_manager = new dhtmlXWindows();
+			self.window_manager.setImagePath(<% tableName %>_settings.conf_window.image_path);
+		}
+		,
+		window :
+        {
+            render: function()
+			{
+				var self = <% tableName %>_app;
+				
+				if (self.window_manager === null)
+					self.view.start_window_manager();
+		
+				if (self.window_manager.isWindow("window_<% tableName %>_app_edit"))
+				{
+					self.window.show();
+					self.window.bringToTop();
+					return;
+				}
+				
+				self.window = self.window_manager.createWindow(
+					"window_<% tableName %>_app_edit", 
+					<% tableName %>_settings.conf_window.left + 10,
+					<% tableName %>_settings.conf_window.top + 10, 
+					<% tableName %>_settings.conf_window.width, 
+					<% tableName %>_settings.conf_window.height
+				);
+				
+				self.window.setText('Save/Update window');
+				self.window.setIcon(
+					<% tableName %>_settings.conf_window.icon, 
+					<% tableName %>_settings.conf_window.icon_dis
+				);
+				
+				self.view.form.render();
+		
+				self.window.attachEvent("onClose", function (win) {
+					return true;
+				});
+			}
+		}
+		,layout :
+		{
+			render: function () {
+				var self = <% tableName %>_app;
+				self.layout = new dhtmlXLayoutObject(document.body, '1C');
+				var a = self.layout.cells('a');
+				//a.setWidth(158);
+				a.hideHeader();
+				//a.fixSize(true, true);
+			}
+		}
+		,toolbar :
+		{
+			render: function () {
+				var self = <% tableName %>_app;
+				self.toolbar = self.layout.cells("a").attachToolbar(<% tableName %>_settings.conf_toolbar);
+				self.toolbar.attachEvent("onClick", function (id) {
+					if(id == 'edit')
+					{
+						self.view.window.render();
+					}
+					else if(id == 'delete')
+					{
+						dhtmlx.message({
+							title: "delete data",
+							type: "confirm",
+							text: "Do you really want to delete the selected record?",
+							ok: "delete",
+							cancel: "cancel",
+							callback: function (ok) {
+								if (ok) {
+									self.datastore.deleteCurrentRecord();
+								}
+							}
+						});
+					}
+				});
+			}
+		}
+		,grid :
+		{
+			render: function () {
+				var self = <% tableName %>_app;
+				// begin grid code
+				// create dhtmlx grid
+				self.grid = self.layout.cells("a").attachGrid();
+				// configure dhtmlx grid
+				self.grid.setHeader(<% tableName %>_settings.conf_grid.headers);
+				self.grid.setColumnIds(<% tableName %>_settings.conf_grid.ids);
+				self.grid.setInitWidths(<% tableName %>_settings.conf_grid.widths);
+				self.grid.setColTypes(<% tableName %>_settings.conf_grid.coltypes);
+				self.grid.setColAlign(<% tableName %>_settings.conf_grid.colaligns);
+				self.grid.init();
+				self.grid.attachEvent("onRowSelect", function (id, ind) {
+					// set cursor position to the selected grid row
+					self.datastore.setCursor({
+						position: id
+					});
+					
+					self.toolbar.enableItem("edit");
+					self.toolbar.enableItem("delete");
+				});
+				
+				// enable live saving after editing a cell
+				self.grid.saveOnEdit = true;
+				
+				// end grid code
+			}
+		}
+		,form : 
+		{
+			render: function () {
+				var self = <% tableName %>_app;
+				// create dhtmlx form
+        		self.form = self.window.attachForm(<% tableName %>_settings.conf_form.template);
+				self.datasystem.bind_form();
+			}
+		}
+	}
+	,datasystem : {
+	
+		start : function (){
+			var self = <% tableName %>_app;
+			
+			CAIRS.showDirections("creating dataset ");
+			
+			// create main the dataset. 
+			self.datastore = new CAIRS.dataStore({
+				// For best conventions, use the same name of the table on the database
+				data_set_name: "<% tableName %>"
+				
+				// primary key name of the table
+				,primary_key: "<% primaryKey %>"
+				
+				// provide an static array containing the data for filling the dataset
+				//,data : []
+				
+				// should overwrite this dataset on the memory if it already exists?
+				,overwrite: true
+				
+				// provide API informations for fetching data from server 
+				// use it when creating the dataset with server data, instead providing an static array
+				// not mandatory default false
+				,api_service: {
+					
+					// default API end point, use it when all end points are equal
+					end_point: "<% prefix %>/<% collectionName %>"
+					
+					// API data collection name -&gt; MANDATORY
+					,collection_name: "<% collectionName %>"
+					
+					// request payload. not mandatory
+					,api_payload: "columns=" + <% tableName %>_settings.conf_grid.ids + ",<% defaultColumns.first %>"
+				}
+				,
+				onSuccess: function () {
+					self.datasystem.sync_grid();
+				}
+				,
+				onFail: function (request) {
+					console.log("cant create dataset");
+				}
+			}); // end create dataset
+		}
+		,sync_grid : function(){
+			var self = <% tableName %>_app;
+			// sync grid
+			self.datastore.sync({
+				component: self.grid // mandatory
+				,component_id: "grid" // mandatory
+				,onSuccess: function () {
+					// if grid was successful synced, then
+					
+					// select the first record on the grid
+					self.grid.selectRow(0, true, false, false);
+					
+					CAIRS.hideDirections();
+				},
+				onFail: function (reason) {
+					console.log(reason);
+					CAIRS.hideDirections();
+				}
+			});
+		}
+		
+		,bind_form : function(){
+			var self = <% tableName %>_app;
+			// bind form
+			self.datastore.bind({
+				component: self.form // mandatory
+				,component_id: "form" // mandatory
+			});
+		}
+	}
+    ,start: function () {
+        var self = this;
+        
+		CAIRS.hideDirections();
+        
+		// set global dhtmlx img path
+        window.dhx_globalImgPath = "http://cdmap01.myadoptionportal.com/modules/codebase3.6/imgs/";
+        
+		
+		
+		self.view.layout.render();
+        self.view.toolbar.render();
+		self.view.grid.render();
+		self.datasystem.start(); 
+    }
+};
+
 
 // start application when DOM is loaded
 window.onload = function (e) {
-    CAIRS.showDirections("authorizing application ");
-	// application singleton
-	var my_app = {
+    
+	CAIRS.showDirections("authorizing application ");
+	
+	// authorize application and execute
+    CAIRS.MAP.API.authorize( {
         database: "MAPTEST",
         agency_id: 25,
         onSuccess: function (request) {
-            CAIRS.hideDirections();
-			// set global dhtmlx img path
-    		window.dhx_globalImgPath = "http://cdmap01.myadoptionportal.com/modules/codebase3.6/imgs/";
-			
-			// create dhtmlx form
-			form = new dhtmlXForm("form", settings.conf_form.template);
-			// begin grid code
-			// create dhtmlx grid
-			grid = new dhtmlXGridObject('grid');
-			// configure dhtmlx grid
-			grid.setHeader(settings.conf_grid.headers);
-			grid.setColumnIds(settings.conf_grid.ids);
-			grid.setInitWidths(settings.conf_grid.widths);
-			grid.setColTypes(settings.conf_grid.coltypes);
-			grid.setColAlign(settings.conf_grid.colaligns);
-			grid.init();
-			grid.attachEvent("onRowSelect", function (id, ind) {
-				// set cursor position to the selected grid row
-				CAIRS.jDBd.setCursor({
-					data_set_name: "<% tableName %>",
-					position: id
-				});
-			});
-			// end grid code
-			/* END RENDERIZE THE APPLICATION SCREEN */
-			
-			CAIRS.showDirections("creating dataset ");
-            // create main the dataset. 
-            var datastore = new CAIRS.dataStore({
-                // For best conventions, use the same name of the table on the database
-                data_set_name: "<% tableName %>"
-                
-				// primary key name of the table
-                ,primary_key: "<% primaryKey %>"
-                
-				// provide an static array containing the data for filling the dataset
-                //,data : []
-                
-				// should overwrite this dataset on the memory if it already exists?
-                ,overwrite: true
-                
-				// provide API informations for fetching data from server 
-                // use it when creating the dataset with server data, instead providing an static array
-				// not mandatory default false
-                ,api_service: {
-                    // default API end point, use it when all end points are equal
-                    end_point: "<% prefix %>/<% collectionName %>"
-					// API data collection name -&gt; MANDATORY
-                    ,collection_name: "<% collectionName %>"
-					// request payload. not mandatory
-                    ,api_payload: "columns=" + settings.conf_grid.ids + ",<% defaultColumns.first %>"
-                } 
-                
-				,onSuccess: function () {
-                    // sync grid
-                    datastore.sync({
-                        component: grid // mandatory
-                        ,component_id: "grid" // mandatory
-                        ,onSuccess: function () {
-                            // if grid was successful synced, then
-                            
-							// select the first record on the grid
-                            grid.selectRow(0, true, false, false);
-                            
-							// bind form
-                            datastore.bind({
-                                component: form // mandatory
-                                ,component_id: "form" // mandatory
-                            });
-                            
-							CAIRS.hideDirections();
-                        }
-						,onFail: function (reason) {
-                            console.log(reason);
-                            CAIRS.hideDirections();
-                        }
-                    });
-                }
-				
-				,onFail: function (request) {
-					console.log("cant create dataset");
-				}
-            }); // end create dataset 
+            <% tableName %>_app.start();
         },
         onFail: function (request) {
 			console.log("not authorized");
         }
-    };
-	
-	
-	// authorize application and execute
-    CAIRS.MAP.API.authorize( my_app );
+    } );
 }
 &lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
-	&lt;div class="wrapper"&gt;
-    	&lt;div class="form" id="form"&gt;&lt;/div&gt;
-        &lt;div class="grid" id="grid"&gt;&lt;/div&gt;
-    &lt;/div&gt;
+
 &lt;/body&gt;
 &lt;/html&gt;
 </pre>
