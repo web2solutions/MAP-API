@@ -398,27 +398,6 @@ var dt = new CAIRS.dataStore({
 &lt;html&gt;
 &lt;head&gt;
 &lt;meta charset="UTF-8"&gt;
-&lt;style&gt;
-    .wrapper {
-        width: 800px;
-        margin: auto;
-    }
-    .form {
-        float: left;
-        width: 350px;
-        height: 150px;
-    }
-    .combo_container {
-        float: right;
-        width: 350px;
-        height: 150px;
-    }
-    .grid {
-        float: left;
-        width: 800px;
-        height: 300px;
-    }
-&lt;/style&gt;
 &lt;link  rel="stylesheet" type="text/css" href="//cdmap01.myadoptionportal.com/modules/codebase3.6/dhtmlx.css" /&gt;
 &lt;link rel="stylesheet" type="text/css" href="//cdmap01.myadoptionportal.com/modules/codebase3.6/dhtmlxForm/codebase/skins/dhtmlxform_dhx_skyblue.css"&gt;
 &lt;script type="text/javascript" src="//cdmap01.myadoptionportal.com/modules/codebase3.6/dhtmlx.js"&gt;&lt;/script&gt;
@@ -557,8 +536,8 @@ var <% tableName %>_app = {
 				
 				self.window = self.window_manager.createWindow(
 					"window_<% tableName %>_app_edit", 
-					<% tableName %>_settings.conf_window.left + 10,
-					<% tableName %>_settings.conf_window.top + 10, 
+					<% tableName %>_settings.conf_window.left,
+					<% tableName %>_settings.conf_window.top, 
 					<% tableName %>_settings.conf_window.width, 
 					<% tableName %>_settings.conf_window.height
 				);
@@ -607,7 +586,7 @@ var <% tableName %>_app = {
 							cancel: "cancel",
 							callback: function (ok) {
 								if (ok) {
-									self.datastore.deleteCurrentRecord();
+									<% tableName %>_app.datastore.deleteCurrentRecord();
 								}
 							}
 						});
@@ -681,7 +660,7 @@ var <% tableName %>_app = {
 				// not mandatory default false
 				,api_service: {
 					
-					// default API end point, use it when all end points are equal
+					// API end point (before running look for :variables and replace by a valid record id (number)
 					end_point: "<% prefix %>/<% collectionName %>"
 					
 					// API data collection name -&gt; MANDATORY
@@ -690,11 +669,11 @@ var <% tableName %>_app = {
 					// request payload. not mandatory
 					,api_payload: "columns=" + <% tableName %>_settings.conf_grid.ids + ",<% defaultColumns.first %>"
 				}
-				,
+				,// not mandatory default no call
 				onSuccess: function () {
 					self.datasystem.sync_grid();
 				}
-				,
+				,// not mandatory default no call
 				onFail: function (request) {
 					console.log("cant create dataset");
 				}
