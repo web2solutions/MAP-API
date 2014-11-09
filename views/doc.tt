@@ -730,14 +730,18 @@ var <% tableName %>_app = {
 // start application when DOM is loaded
 window.onload = function (e) {
     
+	// lets init CAIRS fw (necessary for log and some other features)
+	CAIRS.init();
+	
 	CAIRS.showDirections("authorizing application ");
 	
-	// authorize application and execute
+	// authorize application
     CAIRS.MAP.API.authorize( {
         database: "MAPTEST",
         agency_id: 25,
         onSuccess: function (request) {
-            <% tableName %>_app.start();
+            // call app controller
+			<% tableName %>_app.start();
         },
         onFail: function (request) {
 			console.log("not authorized");

@@ -1,6 +1,80 @@
 package MAP::API;
 use Dancer ':syntax';
 use Template;
+use MIME::Base64;
+
+our $VERSION = '0.1';
+
+#set logger => 'file';
+
+#set envdir => '/path/to/environments'
+
+set 'session'     => 'Simple';
+
+set logger => 'file';
+#logger_format: %h %m %{%H:%M}t [%{accept_type}h]
+setting log_path => '/opt/MAP-API/public/logs';
+
+set 'log'         => 'debug';
+set 'show_errors' => 1;
+set 'access_log' => 1;
+set 'warnings'    => 0;
+#set 'template'    => 'template_toolkit';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+hook after => sub {
+		my $response = shift;
+		my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
+		my $template = '';
+
+		my $client_ip = Dancer::request->header("X-Forwarded-For"); # client IP
+		#debug Dancer::request->header("X-Forwarded-Host");
+		#debug Dancer::request->header("X-Forwarded-Server");
+
+		$template = $template . '
+		-----ACCES REQUEST INIT-----' . '
+		';
+		$template = $template . 'TIME:	'. $mon . '/' . $mday . '/' . $year . '  -  '. $hour . ':' . $min . ':' . $sec . '
+		';
+		$template = $template . 'IP:	' . $client_ip . '
+		';
+		#debug 'Forwarded-Host: ' . Dancer::request->header("X-Forwarded-Host");
+		#debug 'X-Forwarded-Server: ' . Dancer::request->header("X-Forwarded-Server");
+		$template = $template . 'Client: '. ( request->header("X-Requested-With")  ? request->header("X-Requested-With") . '
+		'  : 'unknown' . '
+		' );
+
+		$template = $template . 'Request METHOD:	' . request->method() . '
+		';
+
+		$template = $template . 'Request URL:	' . request->request_uri() . '
+		';
+
+		$template = $template . 'Response TIME:	'. $mon . ':' . $mday . '/' . $year . ' '. $hour . ':' . $min . ':' . $sec . '
+		';
+		$template = $template . 'Response STATUS:	' . $response->status . '
+		';
+		$template = $template .  'Response TYPE:	' . $response->content_type . '
+		';
+		$template = $template .  '-----ACCES REQUEST END------' . '
+		';
+		$template = $template . '
+		';
+		debug $template;
+};
+
 
 use MAP::auth::Auth;
 
@@ -26,21 +100,10 @@ use MAP::contact::Contact;
 use MAP::LoadingAverage;
 #use MAP::Socket;
 
-use MIME::Base64;
 
 
 
-our $VERSION = '0.1';
 
-set 'session'     => 'Simple';
-
-set logger => 'console';
-
-set 'log'         => 'debug';
-set 'show_errors' => 1;
-set 'access_log ' => 1;
-set 'warnings'    => 0;
-#set 'template'    => 'template_toolkit';
 
 
 sub options_header{
@@ -49,14 +112,11 @@ sub options_header{
 	header('Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS');
 	header('Access-Control-Allow-Headers' => request->header("Access-Control-Request-Headers"));
 	header('Access-Control-Max-Age' => 1728000);
-
-
 	header('Vary' => 'Accept-Encoding');
 	header('Keep-Alive' => 'timeout=2, max=100');
 	header('Connection' => 'Keep-Alive');
 	header('X-Server' => 'Twiggy');
 	header('X-Server-Time' => time);
-
 ##Access-Control-Allow-Credentials: true
 
 }
@@ -67,9 +127,11 @@ sub normal_header{
 	header('Access-Control-Max-Age' => 1728000);
 	#header('Access-Control-Allow-Credentials' => 'true');
 	header('Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS');
-	header('Keep-Alive' => 'timeout=2, max=100');
-	header('Connection' => 'Keep-Alive');
-	header('Cache-Control' => 'max-age=0, must-revalidate, no-cache, no-store');
+	header('Access-Control-Allow-Headers' => request->header("Access-Control-Request-Headers"));
+	header('Access-Control-Max-Age' => 1728000);
+	#header('Keep-Alive' => 'timeout=2, max=100');
+	header('Connection' => 'close');
+	#header('Cache-Control' => 'max-age=0, must-revalidate, no-cache, no-store');
 	header('Vary' => 'Accept');
 	header('X-Server-Time' => time);
 	header('X-Server' => 'Twiggy');
@@ -129,12 +191,18 @@ sub dbh{
 
 sub fail{
 	my($self, $err_msg) = @_;
-
-	normal_header();
-
-	halt({
-		status => 'err', response =>  $err_msg
+    my $wcontent = to_json({
+			status => 'err', response =>  'Server error: '. $err_msg
 	});
+	halt(Dancer::Response->new(
+		status =>500,
+		content => $wcontent,
+		headers => [
+			'Content-Type' => 'application/json',
+			'Content-Length' => length($wcontent),
+			'Access-Control-Allow-Origin' => request->header("Origin")
+		]
+	));
 }
 
 
@@ -324,7 +392,6 @@ options qr{.*} => sub {
 };
 
 any qr{.*} => sub {
-
 		my $wcontent = to_json({
 			status => 'err', response =>  'end point not found'
 		});
@@ -334,7 +401,6 @@ any qr{.*} => sub {
 		headers => [
 			'Content-Type' => 'application/json',
 			'Content-Length' => length($wcontent),
-			#'WWW-Authenticate' => 'Basic realm="'.$err_msg.'"',
 			'Access-Control-Allow-Origin' => request->header("Origin")
 		]
 	));

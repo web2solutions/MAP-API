@@ -15,7 +15,7 @@ options '/LibraryFields/subcategory.:format' => sub {
 
 get '/LibraryFields/subcategory.:format' => sub {
 
-	MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
+	MAP::API->check_authorization( params->{token}, request->header("Origin") );
    my $dbh = MAP::API->dbh();
 
    my $sql = 'EXEC usp_GetFieldCategory 1';

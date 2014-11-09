@@ -19,10 +19,10 @@ post '/auth.:format' => sub {
 
 	my $ip = request->address();
 	my $host = request->remote_host();
-	debug $ip;
-	debug Dancer::request->header("X-Forwarded-For");
-	debug Dancer::request->header("X-Forwarded-Host");
-	debug Dancer::request->header("X-Forwarded-Server");
+	#debug $ip;
+	#debug Dancer::request->header("X-Forwarded-For"); # client IP
+	#debug Dancer::request->header("X-Forwarded-Host");
+	#debug Dancer::request->header("X-Forwarded-Server");
 
 	$auth = MIME::Base64::decode($auth) || &MAP::API->unauthorized("unable decode secret");
 
