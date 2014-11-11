@@ -5,13 +5,18 @@ use MIME::Base64;
 
 our $VERSION = '0.1';
 
+my $branch = ''; # default test
+#my $apiURL = "https://api.myadoptionportal.com";
+#my $apiURLdev = "https://apidev.myadoptionportal.com";
+#my $apiURLtest = "https://perltest.myadoptionportal.com";
+
 #set logger => 'file';
 
 #set envdir => '/path/to/environments'
 
 set 'session'     => 'Simple';
 
-set logger => 'file';
+set logger => 'console';
 #logger_format: %h %m %{%H:%M}t [%{accept_type}h]
 setting log_path => '/opt/MAP-API/public/logs';
 
@@ -23,56 +28,53 @@ set 'warnings'    => 0;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 hook after => sub {
 		my $response = shift;
-		my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
-		my $template = '';
 
-		my $client_ip = Dancer::request->header("X-Forwarded-For"); # client IP
-		#debug Dancer::request->header("X-Forwarded-Host");
-		#debug Dancer::request->header("X-Forwarded-Server");
+		if ( request->method() ne 'OPTIONS' ) {
+				if ( request->request_uri() ne '/logs' && request->request_uri() ne '/getloadavg' && request->request_uri() ne '/getfreeram' && request->request_uri() ne '/freeram' && request->request_uri() ne '/'  ) {
 
-		$template = $template . '
-		-----ACCES REQUEST INIT-----' . '
-		';
-		$template = $template . 'TIME:	'. $mon . '/' . $mday . '/' . $year . '  -  '. $hour . ':' . $min . ':' . $sec . '
-		';
-		$template = $template . 'IP:	' . $client_ip . '
-		';
-		#debug 'Forwarded-Host: ' . Dancer::request->header("X-Forwarded-Host");
-		#debug 'X-Forwarded-Server: ' . Dancer::request->header("X-Forwarded-Server");
-		$template = $template . 'Client: '. ( request->header("X-Requested-With")  ? request->header("X-Requested-With") . '
-		'  : 'unknown' . '
-		' );
+						my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
+						my $branch = Dancer::request->header("X-branch") || 'test';
+						my $template = '';
 
-		$template = $template . 'Request METHOD:	' . request->method() . '
-		';
+						my $client_ip = Dancer::request->header("X-Forwarded-For"); # client IP
+						my $client_vendor = ( request->header("X-Requested-With")  ? request->header("X-Requested-With") . ''  : 'unknown' . '' );
+						my $client_user_agent = request->header("User-Agent");
 
-		$template = $template . 'Request URL:	' . request->request_uri() . '
-		';
+						my $rdate = ( $year + 1900 ). '-' . ( $mon + 1 ) . '-' . $mday;
+						my $rtime = $hour . ':' . $min . ':' . $sec;
 
-		$template = $template . 'Response TIME:	'. $mon . ':' . $mday . '/' . $year . ' '. $hour . ':' . $min . ':' . $sec . '
-		';
-		$template = $template . 'Response STATUS:	' . $response->status . '
-		';
-		$template = $template .  'Response TYPE:	' . $response->content_type . '
-		';
-		$template = $template .  '-----ACCES REQUEST END------' . '
-		';
-		$template = $template . '
-		';
-		debug $template;
+						my $json_document = to_json({
+								request_date => $rdate, request_time => $rtime, client_ip => $client_ip, client_vendor => $client_vendor,
+								request_method => request->method(), request_url => request->request_uri(), client_user_agent => $client_user_agent,
+								response_status => $response->status, response_type => $response->content_type
+						});
+
+						my $dbh = MAP::API->dbh_pg();
+
+						my $strSQL = 'INSERT INTO access_log( request_date, request_time, client_ip, jdoc )
+								VALUES ( ?, ?, ?, ? )
+								RETURNING access_log_id;
+						  ';
+						  my $sth = $dbh->prepare( $strSQL );
+						  $sth->execute(
+								$rdate,
+								$rtime,
+								$client_ip,
+								$json_document
+						) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL );
+						  #my $access_log_id = 0;
+						  #while ( my $record = $sth->fetchrow_hashref())
+						  #{
+							#  $access_log_id = $record->{access_log_id};
+						  #}
+						#debug $access_log_id;
+						debug request->request_uri();
+				}
+
+		}
+
 };
 
 
@@ -94,6 +96,7 @@ use MAP::Agencies::Agencies;
 
 use MAP::contact::Contact;
 
+use MAP::address::ZipSearch;
 
 ## in test
 #use MAP::Clients;
@@ -101,8 +104,14 @@ use MAP::LoadingAverage;
 #use MAP::Socket;
 
 
+sub set_branch{
+		my $selected_branch = shift;
+		$branch = $selected_branch;
+};
 
-
+sub get_branch{
+		return $branch;
+};
 
 
 
@@ -162,6 +171,12 @@ sub normal_header{
 	}
 }
 
+sub dbh_pg{
+    #debug config->{x_db_server};
+    my $dbh = DBI->connect("DBI:Pg:dbname=cairsapi;host=".( config->{x_db_server} || '192.168.1.33').";port=5432;", "cairsapi", "FishB8",  {'RaiseError' => 1}) ||  MAP::API->fail( 'pgsql error ' .   $DBI::errstr );
+	return $dbh;
+}
+
 sub dbh{
 	my $database = request->header("X-db") ? MIME::Base64::decode(request->header("X-db")) : "";#request->header("X-db") || "";
 	#debug $database;
@@ -176,7 +191,7 @@ sub dbh{
 		$dbh = DBI->connect('DBI:Sybase:database='.$database.';scriptName=MAP_API;', "ESCairs", "FishB8", {
 				PrintError => 0#,
 				#syb_enable_utf8 => 1
-		}) or return "Can't connect to sql server: $DBI::errstr";
+		}) or  MAP::API->fail("Can't connect to sql server: $DBI::errstr");
 
 		#$dbh->{syb_enable_utf8} = 1 ;
 		$dbh->do('use '. $database);
@@ -194,6 +209,7 @@ sub fail{
     my $wcontent = to_json({
 			status => 'err', response =>  'Server error: '. $err_msg
 	});
+    debug $err_msg;
 	halt(Dancer::Response->new(
 		status =>500,
 		content => $wcontent,
@@ -384,6 +400,74 @@ sub regex_alnum
 	$value =~ s/\W//g;
 	return $value;
 }
+
+
+options '/logs' => sub {
+		MAP::API->options_header();
+};
+
+get '/logs' => sub {
+		my $primaryKey = 'access_log_id';
+		my @columns = 'jdoc';
+		my $sql_count = '';
+
+
+		my $count =  params->{count} || 100;
+		my $posStart = params->{posStart}  || 0;
+
+		my $dbh = MAP::API->dbh_pg();
+
+		my $sqlcount = "SELECT COUNT(access_log_id) as total FROM access_log WHERE 1=1 $sql_count;";
+
+		my $sth = $dbh->prepare( $sqlcount, );
+		$sth->execute() or MAP::API->fail( $sth->errstr . ' ----------- '.$sqlcount);
+		my $total = 0;
+		while ( my $record = $sth->fetchrow_hashref())
+		{
+				$total = $record->{total};
+		}
+
+		my $strSQL = 'SELECT * FROM access_log ORDER BY access_log_id DESC LIMIT '.$count.' OFFSET ' . $posStart;
+		$sth = $dbh->prepare( $strSQL, );
+		$sth->execute() or MAP::API->fail( $sth->errstr . ' ----------- '.$strSQL);
+
+		 my @records;
+		 while ( my $record = $sth->fetchrow_hashref())
+		 {
+			  #push @records, $record;
+			  my @values;
+			  my $row = {
+				  id =>	$record->{$primaryKey},
+			  };
+			  foreach (@columns)
+			  {
+				  #if (defined($record->{$_})) {
+					  push @values, from_json($record->{$_});
+				#	  $row->{$_} = decode('UTF-8', $record->{$_});
+				#  }
+				#  else
+				#  {
+				#	  push @values, "";
+				#	  $row->{$_} = "";
+				#  }
+			  }
+			  $row->{data} = [@values];
+			  push @records, $row;
+		 }
+		  #$dbh->disconnect();
+		 MAP::API->normal_header();
+		 return {
+				'status' => 'success',
+				'response' => 'Succcess',
+				'rows' => [@records],
+				'pos' => $posStart,
+				'total_count' => $total,
+				'sql' =>  $strSQL,
+				 #sql_filters => $sql_filters,
+				 #sql_ordering => $sql_ordering
+		 };
+
+};
 
 
 
