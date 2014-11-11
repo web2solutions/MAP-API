@@ -17,7 +17,7 @@ Returned columns
 
 Examples
 
-*get all contacts*
+*search by zip*
 
 	GET        /contact/search/0000.json
 	
