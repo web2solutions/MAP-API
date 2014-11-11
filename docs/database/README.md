@@ -23,6 +23,6 @@ http://yum.pgrpms.org/reporpms/
 http://opensourcedbms.com/dbms/installing-postgresql-9-2-on-cent-os-6-3-redhat-el6-fedora/
 
 
-	CREATE role cairsapi LOGIN PASSWORD ‘FishB8’ SUPERUSER;
+	CREATE role cairsapi LOGIN PASSWORD â€˜FishB8â€™ SUPERUSER;
 	
-	shost    all             all             0.0.0.0/0            md5
+	host    all             all             0.0.0.0/0            md5
