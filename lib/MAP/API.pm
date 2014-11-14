@@ -1,7 +1,9 @@
 package MAP::API;
 use Dancer ':syntax';
+use Dancer::App;
 use Template;
 use MIME::Base64;
+use Data::Dump qw(dump);
 
 our $VERSION = '0.1';
 
@@ -10,11 +12,10 @@ my $branch = ''; # default test
 #my $apiURLdev = "https://apidev.myadoptionportal.com";
 #my $apiURLtest = "https://perltest.myadoptionportal.com";
 
-#set logger => 'file';
 
 #set envdir => '/path/to/environments'
 
-set 'session'     => 'Simple';
+#set 'session'     => 'Simple';
 
 set logger => 'console';
 #logger_format: %h %m %{%H:%M}t [%{accept_type}h]
@@ -22,7 +23,6 @@ setting log_path => '/opt/MAP-API/public/logs';
 
 set 'log'         => 'debug';
 set 'show_errors' => 1;
-set 'access_log' => 1;
 set 'warnings'    => 0;
 #set 'template'    => 'template_toolkit';
 
@@ -38,41 +38,73 @@ hook after => sub {
 						my $branch = Dancer::request->header("X-branch") || 'test';
 						my $template = '';
 
-						my $client_ip = Dancer::request->header("X-Forwarded-For"); # client IP
+						my $client_ip = Dancer::request->header("X-Forwarded-For") || Dancer::request->header("REMOTE_ADDR"); # client IP
 						my $client_vendor = ( request->header("X-Requested-With")  ? request->header("X-Requested-With") . ''  : 'unknown' . '' );
 						my $client_user_agent = request->header("User-Agent");
+
+						my $browser_name = Dancer::request->header("X-browser-name") || 'unknown';
+						my $browser_os = Dancer::request->header("X-browser-os") || 'unknown';
+						my $browser_version = Dancer::request->header("X-browser-version") || 'unknown';
+
+						my $screen_width = Dancer::request->header("X-browser-screen-width") || 'unknown';
+						my $screen_height = Dancer::request->header("X-browser-screen-height") || 'unknown';
 
 						my $rdate = ( $year + 1900 ). '-' . ( $mon + 1 ) . '-' . $mday;
 						my $rtime = $hour . ':' . $min . ':' . $sec;
 
+						my $host = Dancer::request->header("X-Forwarded-Host") || Dancer::request->header("Host");
+						my $origin = Dancer::request->header("Origin") || 'unknown';
+						my $referer = Dancer::request->header("Referer") || 'unknown';
+
+						my $agency_id = Dancer::request->header("X-AId") || 0;
+
+						my $token = request->env->{HTTP_AUTHORIZATION} || 'not authorized';
+
 						my $json_document = to_json({
-								request_date => $rdate, request_time => $rtime, client_ip => $client_ip, client_vendor => $client_vendor,
-								request_method => request->method(), request_url => request->request_uri(), client_user_agent => $client_user_agent,
-								response_status => $response->status, response_type => $response->content_type
+								request_date => $rdate,
+								request_time => $rtime,
+								branch =>  $branch,
+								api_host => $host,
+								origin_domain => $origin,
+								referer => $referer,
+								agency_id => $agency_id,
+								agency_database => MIME::Base64::decode( Dancer::request->header("X-db") ),
+								token => $token,
+								client_ip => $client_ip,
+								client_vendor => $client_vendor,
+								client_user_agent => $client_user_agent,
+								'browser_name' => $browser_name,
+								'browser_os' => $browser_os,
+								'browser_version' => $browser_version,
+								'screen_width' => $screen_width,
+								'screen_height' => $screen_height,
+								request_method => request->method(),
+								request_url => request->request_uri(),
+								response_status => $response->status,
+								response_type => $response->content_type
+
 						});
+
+						#debug dump($json_document);
 
 						my $dbh = MAP::API->dbh_pg();
 
-						my $strSQL = 'INSERT INTO access_log( request_date, request_time, client_ip, jdoc )
-								VALUES ( ?, ?, ?, ? )
+						my $strSQL = 'INSERT INTO access_log( jdoc )
+								VALUES ( ? )
 								RETURNING access_log_id;
-						  ';
-						  my $sth = $dbh->prepare( $strSQL );
-						  $sth->execute(
-								$rdate,
-								$rtime,
-								$client_ip,
-								$json_document
-						) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL );
-						  #my $access_log_id = 0;
-						  #while ( my $record = $sth->fetchrow_hashref())
-						  #{
-							#  $access_log_id = $record->{access_log_id};
-						  #}
-						#debug $access_log_id;
-						debug request->request_uri();
+						';
+						my $sth = $dbh->prepare( $strSQL );
+						$sth->execute( $json_document ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL );
+						#debug request->request_uri();
 				}
+				#my $r = Dancer::App->current->registry->routes;
+				#foreach my $g (@{$r->{get}}) {
+				#	debug "[+] Registered route: '$g->{pattern}'";
+				#};
+				#debug dump( Dancer::App->current->registry->routes );
 
+				#use Dancer::Session;
+				#debug dump( Dancer::Session->get_current_session()->{id} );
 		}
 
 };
@@ -100,7 +132,7 @@ use MAP::address::ZipSearch;
 
 ## in test
 #use MAP::Clients;
-use MAP::LoadingAverage;
+#use MAP::LoadingAverage;
 #use MAP::Socket;
 
 
@@ -124,7 +156,7 @@ sub options_header{
 	header('Vary' => 'Accept-Encoding');
 	header('Keep-Alive' => 'timeout=2, max=100');
 	header('Connection' => 'Keep-Alive');
-	header('X-Server' => 'Twiggy');
+	header('X-Server' => (config->{environment} eq 'development' ? 'Twiggy' : 'Starman' ));
 	header('X-Server-Time' => time);
 ##Access-Control-Allow-Credentials: true
 
@@ -143,7 +175,7 @@ sub normal_header{
 	#header('Cache-Control' => 'max-age=0, must-revalidate, no-cache, no-store');
 	header('Vary' => 'Accept');
 	header('X-Server-Time' => time);
-	header('X-Server' => 'Twiggy');
+	header('X-Server' => (config->{environment} eq 'development' ? 'Twiggy' : 'Starman' ));
 	header('Expires' => 'Thu, 01 Jan 1970 00:00:00');
 	header('X-FRAME-OPTIONS' => 'DENY');
 	header('X-XSS-Protection' => '1; mode=block');
@@ -173,7 +205,7 @@ sub normal_header{
 
 sub dbh_pg{
     #debug config->{x_db_server};
-    my $dbh = DBI->connect("DBI:Pg:dbname=cairsapi;host=".( config->{x_db_server} || '192.168.1.33').";port=5432;", "cairsapi", "FishB8",  {'RaiseError' => 1}) ||  MAP::API->fail( 'pgsql error ' .   $DBI::errstr );
+    my $dbh = DBI->connect("DBI:Pg:dbname=cairsapi;host=".(config->{environment} eq 'development' ? '192.168.1.33' : '192.168.1.34' ).";port=5432;", "cairsapi", "FishB8",  {'RaiseError' => 1}) ||  MAP::API->fail( 'pgsql error ' .   $DBI::errstr );
 	return $dbh;
 }
 
@@ -240,14 +272,16 @@ sub unauthorized{
 }
 
 sub check_authorization{
-	my($self, $token, $Origin) = @_;
+	my($self) = @_;
+
 
 	my $auth = request->env->{HTTP_AUTHORIZATION} || MAP::API->unauthorized("malformed headers");
 	$auth =~ s/Digest //gi;
 
-	$token = MIME::Base64::decode( $auth );
+	my $token = MIME::Base64::decode( $auth );
+    my $Origin = request->header("Origin");
 
-	my $dbh = dbh();
+    my $dbh = dbh();
 
 	my $token_status = "";
 	$Origin = $Origin || MAP::API->unauthorized( "Please use MAP RESTFul client" );

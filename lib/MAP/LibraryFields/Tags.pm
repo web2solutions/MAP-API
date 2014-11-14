@@ -21,7 +21,7 @@ options '/LibraryFields/tags/:id.:format' => sub {
 
 get '/LibraryFields/tags.:format' => sub {
 
-	MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
+	MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
 	my $field_tagid = 0;
 	my $strColumns = params->{columns} || 'field_tagText';
