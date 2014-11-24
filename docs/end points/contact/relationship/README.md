@@ -48,7 +48,7 @@ Return Values:
 	DEL		/contact/relationship/type/0000.json
 
 
-*online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/Rel_lkp_RelationshipType.html
+*online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/Rel_lkp_RelationshipType.html
 
 
 **Relationship Sub Type end point**
@@ -60,7 +60,7 @@ Return Values:
 	DEL		/contact/relationship/subtype/0000.json
 
 
-*online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/Rel_lkp_RelationshipSubType.html
+*online example*: http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/Rel_lkp_RelationshipSubType.html
 
 
 **Relationship Components configuration**
