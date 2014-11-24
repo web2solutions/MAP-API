@@ -174,4 +174,4 @@ then you don't need to manually pass any parameter
 
 Online example:
 
-http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/contact_dhtmlx_combo_end_point.html
+http://cdmap01.myadoptionportal.com/modules/CAIRS_Framework/examples/contact_dhtmlx_combo_end_point.html
