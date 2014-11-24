@@ -208,57 +208,51 @@ sub normal_header{
 
 sub dbh_pg{
     #debug config->{x_db_server};
-    my $dbh = DBI->connect("DBI:Pg:dbname=cairsapi;host=".(config->{environment} eq 'development' ? '192.168.1.33' : '192.168.1.34' ).";port=5432;", "cairsapi", "FishB8",  {'RaiseError' => 1}) ||  MAP::API->fail( 'pgsql error ' .   $DBI::errstr );
+    my $dbh = DBI->connect("DBI:Pg:dbname=cairsapi;host=".(config->{environment} eq 'production' ? '192.168.1.34' : '192.168.1.33' ).";port=5432;", "cairsapi", "FishB8",  {'RaiseError' => 1}) ||  MAP::API->fail( 'pgsql error ' .   $DBI::errstr );
 	return $dbh;
 }
 
 my $dbh = undef;
 
 sub dbh{
-
-	my $database = '';#request->header("X-db") ? MIME::Base64::decode(request->header("X-db")) : "";#request->header("X-db") || "";
-
-
+	my $database = 'MAPTEST';#request->header("X-db") ? MIME::Base64::decode(request->header("X-db")) : "";#request->header("X-db") || "";
     my $server = '192.168.1.19';
-	$ENV{DSQUERY} = $server;
+    my $agency_id = request->header("X-AId") ? request->header("X-AId") : ( params->{agency_id} ? params->{agency_id} : 0 );
 	my $os = request->header("X-os") ? MIME::Base64::decode( request->header("X-os") ) : "linux";
 
-	$dbh = DBI->connect('DBI:Sybase:database=IRRISCentral;scriptName=MAP_API;', "ESCairs", "FishB8", {
-				PrintError => 0#,
-				#syb_enable_utf8 => 1
-	}) or  MAP::API->fail("Can't connect to sql server: $DBI::errstr");
-    $dbh->do('use IRRISCentral');
+    if ( $os eq "linux") {
+		$ENV{DSQUERY} = $server;
+		$dbh = DBI->connect('DBI:Sybase:database=IRRISCentral;scriptName=MAP_API;', "ESCairs", "FishB8") or  MAP::API->fail("Can't connect to sql server: $DBI::errstr");
+		$dbh->do('use IRRISCentral');
 
-	my $strSQL = "SELECT MAPDBName FROM dbo.lutPrimaryAgency WHERE map_agency_id = ?";
-	my $sth = $dbh->prepare( $strSQL, );
-	$sth->execute( request->header("X-AId") ) or MAP::API->fail( $sth->errstr );
-	while ( my $record = $sth->fetchrow_hashref())
-	{
-		$database = $record->{MAPDBName};
-	}
-	$dbh->disconnect;
-	debug $strSQL;
-	debug request->header("X-AId");
-    debug $database;
-    #debug request->header("X-db");
+		my $strSQL = "SELECT MAPDBName FROM dbo.lutPrimaryAgency WHERE map_agency_id = ?";
+		my $sth = $dbh->prepare( $strSQL, );
+		$sth->execute( $agency_id ) or MAP::API->fail( $sth->errstr );
+		while ( my $record = $sth->fetchrow_hashref())
+		{
+			$database = $record->{MAPDBName};
+		}
+		$dbh->disconnect;
 
-	#debug $os;
-
-
-	if ( $os eq "linux") {
-		$ENV{DSQUERY} = '192.168.1.19';
-		$dbh = DBI->connect('DBI:Sybase:database='.$database.';scriptName=MAP_API;', "ESCairs", "FishB8", {
-				PrintError => 0#,
-				#syb_enable_utf8 => 1
-		}) or  MAP::API->fail("Can't connect to sql server: $DBI::errstr");
-
-		#$dbh->{syb_enable_utf8} = 1 ;
+		$dbh = DBI->connect('DBI:Sybase:database='.$database.';scriptName=MAP_API;', "ESCairs", "FishB8") or  MAP::API->fail("Can't connect to sql server: $DBI::errstr");
 		$dbh->do('use '. $database);
 	}
 	else
 	{
+		$dbh = DBI->connect("DBI:ODBC:Driver={SQL Server};Server=$server;Database=IRRISCentral;UID=ESCairs;PWD=FishB8")  or return "Can't connect to sql server: $DBI::errstr";
+		my $strSQL = "SELECT MAPDBName FROM dbo.lutPrimaryAgency WHERE map_agency_id = ?";
+		my $sth = $dbh->prepare( $strSQL, );
+		$sth->execute( $agency_id ) or MAP::API->fail( $sth->errstr );
+		while ( my $record = $sth->fetchrow_hashref())
+		{
+			$database = $record->{MAPDBName};
+		}
+		$dbh->disconnect;
+
 		$dbh = DBI->connect("DBI:ODBC:Driver={SQL Server};Server=$server;Database=$database;UID=ESCairs;PWD=FishB8")  or return "Can't connect to sql server: $DBI::errstr";
 	}
+	#debug $agency_id;
+    #debug $database;
 	return $dbh;
 }
 

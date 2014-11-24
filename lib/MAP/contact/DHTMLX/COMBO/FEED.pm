@@ -23,9 +23,9 @@ options '/feed.xml' => sub {
 
 
 get '/feed.xml' => sub {
-   
+
    MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
-   
+
    my $dbh = MAP::API->dbh();
 
    my $strColumns = $defaultColumns;
@@ -41,7 +41,7 @@ get '/feed.xml' => sub {
 
    #my $column_to_search = params->{column_to_search}  || MAP::API->fail( 'column_to_search is missing' );
    #$column_to_search =~ s/[^\w\d.-]+//;
-   
+
    my $value_column = params->{value_column} || $primaryKey;
    $value_column =~ s/[^\w\d.-]+//;
 
@@ -66,7 +66,7 @@ get '/feed.xml' => sub {
 #				my $ValuesNode = $FilterNode->createChild('Values');
 #						my $ColumnNameNode = $ValuesNode->createChild('ColumnName');
 #						$ColumnNameNode->text( $key );
-#						
+#
 #						my $ColumnValueNode = $ValuesNode->createChild('ColumnValue');
 #						$ColumnValueNode->text( $filters{$key} );
 #		}
@@ -81,7 +81,7 @@ get '/feed.xml' => sub {
 #		$sql_ordering = ' @order_by = \'' . $dbh->quote( $order->{orderby} ) . '\', @order_direction = \''. $dbh->quote( $order->{direction} ).'\', ';
 #   }
 #   # ------ Filtering and Ordering -------------------
-   
+
 
     my $newDoc = XML::Mini::Document->new();
     my $newDocRoot = $newDoc->getRoot();
@@ -92,7 +92,7 @@ get '/feed.xml' => sub {
 
 
     my $completeNode = $newDocRoot->createChild('complete');
-    
+
     if ( $posStart != 0   ) {
         $completeNode->attribute('add', "true");
     }
@@ -100,17 +100,17 @@ get '/feed.xml' => sub {
 
    #$count = $count + 1;
    #$posStart = $posStart + 1;
-   
+
 #EXEC usp_ContactSearchAll @SearchName = '$search_term'"
-   
+
    my $strSQL = 'EXEC '.$storedProcedureName.' @SearchName= '. $dbh->quote( $mask );
-   
+
    #my $strSQL = '; WITH results AS (
-   #         SELECT 
+   #         SELECT
    #             rowNo = ROW_NUMBER() OVER( '.$sql_ordering.' ), *
    #         FROM '.$tableName.' WHERE 1=1 '.$sql_filters.'
-   # ) 
-   # SELECT * 
+   # )
+   # SELECT *
    #     FROM results
    #     WHERE rowNo BETWEEN '.$posStart.' AND '. $posStart. ' + '.$count.'';
 
@@ -129,14 +129,14 @@ get '/feed.xml' => sub {
 						$optionNode->attribute('value', $record->{$value_column});
 				}
 		}
-		
+
 		$readed = $readed + 1;
     }
-   
-   #$dbh->disconnect();
-   
 
-   
+   #$dbh->disconnect();
+
+
+
     header('Access-Control-Allow-Origin' => request->header("Origin"));
 	header('Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS');
 	header('Keep-Alive' => 'timeout=2, max=100');
@@ -149,7 +149,7 @@ get '/feed.xml' => sub {
 	header('X-FRAME-OPTIONS' => 'DENY');
 	header('X-XSS-Protection' => '1; mode=block');
     header('Content-Type' => 'text/xml');
-    
+
     return $newDoc->toString();
 };
 

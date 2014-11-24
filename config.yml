@@ -44,8 +44,4 @@ plugins:
         log_queries: 1
         #dsn: 'DBI:Sybase:server=192.168.1.15'
 
-environment: production
-
-
-show_errors: 0
-warnings: 0
+environment: deployment

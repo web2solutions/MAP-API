@@ -43,7 +43,7 @@ options '/'.$collectionName.'/employer/list.:format' => sub {
 
 get '/'.$collectionName.'.:format' => sub {
 
-   #MAP::API->check_authorization( params->{token}, request->header("Origin") );
+   MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
    my $dbh = MAP::API->dbh();
 
