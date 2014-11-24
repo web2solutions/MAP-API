@@ -133,14 +133,15 @@ post '/auth.:format' => sub {
 	}
 	else
 	{
-
+		#my $reverse_username = reverse $username;
 		my $auth_data = {
 			first_name =>	$first_name,
 			username => $username,
 			token => $token,
 			date_expiration => $date_expiration,
 			auth_status => $auth_status,
-			origin => $Origin
+			origin => $Origin,
+			client_session_id => $user_id
 		};
 
 		return {

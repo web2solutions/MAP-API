@@ -16,7 +16,7 @@ my $root_path = '/var/www/html/userhome/MAP-API/'.$collectionName;
 
 my $relationalColumn = undef; # undef
 
-prefix undef;
+prefix '/contact';
 
 # routing OPTIONS header
 options '/'.$collectionName.'.:format' => sub {
@@ -43,7 +43,7 @@ options '/'.$collectionName.'/employer/list.:format' => sub {
 
 get '/'.$collectionName.'.:format' => sub {
 
-   MAP::API->check_authorization( params->{token}, request->header("Origin") );
+   #MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
    my $dbh = MAP::API->dbh();
 
@@ -65,25 +65,27 @@ get '/'.$collectionName.'.:format' => sub {
    my $ConnectionId = params->{ConnectionId};
    if ( defined( $ConnectionId ) ) {
 		$strSQLappend = $strSQLappend . ' @ConnectionId = ?, ';
-		push @values, $strSQLappend;
+		push @values, $ConnectionId;
    }
 
    my $RelationsshipTypeIds = params->{RelationsshipTypeIds};
    if ( defined( $RelationsshipTypeIds ) ) {
-		$strSQLappend = $strSQLappend . ' @RelationsshipTypeIds = ?, ';
+		$strSQLappend = $strSQLappend . ' @RelationsshipTypeIds = '.$RelationsshipTypeIds.', ';
 		push @values, $RelationsshipTypeIds;
    }
 
    my $RelationshipSubTypeIds = params->{RelationshipSubTypeIds};
    if ( defined( $RelationshipSubTypeIds ) ) {
-		$strSQLappend = $strSQLappend . ' @RelationshipSubTypeIds = ? ';
+		$strSQLappend = $strSQLappend . ' @RelationshipSubTypeIds = '.$RelationshipSubTypeIds.', ';
 		push @values, $RelationshipSubTypeIds;
    }
+
+   $strSQLappend = substr($strSQLappend, 0, -2);
 
    my $strSQL = 'EXEC '.$storedProcedureName.' '.$strSQLappend.' ';
 
    my $sth = $dbh->prepare( $strSQL, );
-   $sth->execute( @values ) or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL );
+   $sth->execute( @values ) or MAP::API->fail( $sth->errstr . "   ---   " . $strSQL . "   ---   " . dump(@values) );
 
    my @records;
    while ( my $record = $sth->fetchrow_hashref())
@@ -114,7 +116,8 @@ get '/'.$collectionName.'.:format' => sub {
 		   status => 'success',
 		   response => 'Succcess',
 		   ''.$collectionName.'' => [@records],
-		   sql =>  $strSQL
+		   sql =>  $strSQL,
+		   values =>  dump(@values)
    };
 };
 

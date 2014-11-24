@@ -40,7 +40,7 @@ hook after => sub {
 
 						my $client_ip = Dancer::request->header("X-Forwarded-For") || Dancer::request->header("REMOTE_ADDR"); # client IP
 						my $client_vendor = ( request->header("X-Requested-With")  ? request->header("X-Requested-With") . ''  : 'unknown' . '' );
-						my $client_user_agent = request->header("User-Agent");
+						my $client_user_agent = request->header("User-Agent") || 'unknown';
 
 						my $browser_name = Dancer::request->header("X-browser-name") || 'unknown';
 						my $browser_os = Dancer::request->header("X-browser-os") || 'unknown';
@@ -60,9 +60,12 @@ hook after => sub {
 
 						my $token = request->env->{HTTP_AUTHORIZATION} || 'not authorized';
 
+						my $client_session_id = Dancer::request->header("X-client-session-id") || 0;
+
 						my $json_document = to_json({
 								request_date => $rdate,
 								request_time => $rtime,
+								client_session_id => $client_session_id,
 								branch =>  $branch,
 								api_host => $host,
 								origin_domain => $origin,
@@ -209,14 +212,38 @@ sub dbh_pg{
 	return $dbh;
 }
 
+my $dbh = undef;
+
 sub dbh{
-	my $database = request->header("X-db") ? MIME::Base64::decode(request->header("X-db")) : "";#request->header("X-db") || "";
-	#debug $database;
-    #debug request->header("X-db");
+
+	my $database = '';#request->header("X-db") ? MIME::Base64::decode(request->header("X-db")) : "";#request->header("X-db") || "";
+
+
     my $server = '192.168.1.19';
+	$ENV{DSQUERY} = $server;
 	my $os = request->header("X-os") ? MIME::Base64::decode( request->header("X-os") ) : "linux";
+
+	$dbh = DBI->connect('DBI:Sybase:database=IRRISCentral;scriptName=MAP_API;', "ESCairs", "FishB8", {
+				PrintError => 0#,
+				#syb_enable_utf8 => 1
+	}) or  MAP::API->fail("Can't connect to sql server: $DBI::errstr");
+    $dbh->do('use IRRISCentral');
+
+	my $strSQL = "SELECT MAPDBName FROM dbo.lutPrimaryAgency WHERE map_agency_id = ?";
+	my $sth = $dbh->prepare( $strSQL, );
+	$sth->execute( request->header("X-AId") ) or MAP::API->fail( $sth->errstr );
+	while ( my $record = $sth->fetchrow_hashref())
+	{
+		$database = $record->{MAPDBName};
+	}
+	$dbh->disconnect;
+	debug $strSQL;
+	debug request->header("X-AId");
+    debug $database;
+    #debug request->header("X-db");
+
 	#debug $os;
-	my $dbh = undef;
+
 
 	if ( $os eq "linux") {
 		$ENV{DSQUERY} = '192.168.1.19';
@@ -235,7 +262,9 @@ sub dbh{
 	return $dbh;
 }
 
-
+sub disconnect{
+		$dbh->disconnect  or MAP::API->fail($dbh->errstr);
+}
 sub fail{
 	my($self, $err_msg) = @_;
     my $wcontent = to_json({
@@ -434,75 +463,6 @@ sub regex_alnum
 	$value =~ s/\W//g;
 	return $value;
 }
-
-
-options '/logs' => sub {
-		MAP::API->options_header();
-};
-
-get '/logs' => sub {
-		my $primaryKey = 'access_log_id';
-		my @columns = 'jdoc';
-		my $sql_count = '';
-
-
-		my $count =  params->{count} || 100;
-		my $posStart = params->{posStart}  || 0;
-
-		my $dbh = MAP::API->dbh_pg();
-
-		my $sqlcount = "SELECT COUNT(access_log_id) as total FROM access_log WHERE 1=1 $sql_count;";
-
-		my $sth = $dbh->prepare( $sqlcount, );
-		$sth->execute() or MAP::API->fail( $sth->errstr . ' ----------- '.$sqlcount);
-		my $total = 0;
-		while ( my $record = $sth->fetchrow_hashref())
-		{
-				$total = $record->{total};
-		}
-
-		my $strSQL = 'SELECT * FROM access_log ORDER BY access_log_id DESC LIMIT '.$count.' OFFSET ' . $posStart;
-		$sth = $dbh->prepare( $strSQL, );
-		$sth->execute() or MAP::API->fail( $sth->errstr . ' ----------- '.$strSQL);
-
-		 my @records;
-		 while ( my $record = $sth->fetchrow_hashref())
-		 {
-			  #push @records, $record;
-			  my @values;
-			  my $row = {
-				  id =>	$record->{$primaryKey},
-			  };
-			  foreach (@columns)
-			  {
-				  #if (defined($record->{$_})) {
-					  push @values, from_json($record->{$_});
-				#	  $row->{$_} = decode('UTF-8', $record->{$_});
-				#  }
-				#  else
-				#  {
-				#	  push @values, "";
-				#	  $row->{$_} = "";
-				#  }
-			  }
-			  $row->{data} = [@values];
-			  push @records, $row;
-		 }
-		  #$dbh->disconnect();
-		 MAP::API->normal_header();
-		 return {
-				'status' => 'success',
-				'response' => 'Succcess',
-				'rows' => [@records],
-				'pos' => $posStart,
-				'total_count' => $total,
-				'sql' =>  $strSQL,
-				 #sql_filters => $sql_filters,
-				 #sql_ordering => $sql_ordering
-		 };
-
-};
-
 
 
 options qr{.*} => sub {
