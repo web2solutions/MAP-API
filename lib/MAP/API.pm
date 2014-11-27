@@ -1,5 +1,5 @@
 package MAP::API;
-use Dancer ':syntax';
+use Dancer qw(:syntax :moose);
 use Dancer::App;
 use Template;
 use MIME::Base64;
@@ -125,18 +125,12 @@ use MAP::LibraryFields::Tags;
 use MAP::Forms::Forms;
 use MAP::EmailMessages::EmailMessages;
 use MAP::Agency::Agency;
-
 use MAP::DHTMLX;
 use MAP::Agencies::Agencies;
-
 use MAP::contact::Contact;
-
 use MAP::address::ZipSearch;
+use MAP::Users;
 
-## in test
-#use MAP::Clients;
-#use MAP::LoadingAverage;
-#use MAP::Socket;
 
 
 sub set_branch{
@@ -217,7 +211,7 @@ my $dbh = undef;
 sub dbh{
 	my $database = 'MAPTEST';#request->header("X-db") ? MIME::Base64::decode(request->header("X-db")) : "";#request->header("X-db") || "";
     my $server = '192.168.1.19';
-    my $agency_id = request->header("X-AId") ? request->header("X-AId") : ( params->{agency_id} ? params->{agency_id} : 0 );
+    my $agency_id = request->header("X-AId") ? request->header("X-AId") : ( params->{agency_id} ? params->{agency_id} : -1 );
 	my $os = request->header("X-os") ? MIME::Base64::decode( request->header("X-os") ) : "linux";
 
     if ( $os eq "linux") {
@@ -264,7 +258,7 @@ sub fail{
     my $wcontent = to_json({
 			status => 'err', response =>  'Server error: '. $err_msg
 	});
-    debug $err_msg;
+    #debug $err_msg;
 	halt(Dancer::Response->new(
 		status =>500,
 		content => $wcontent,
@@ -373,6 +367,46 @@ sub check_authorization_simple{
 	if ( $token_status eq "" ) {
 		MAP::API->unauthorized("token not authorized");
 	}
+}
+
+
+sub get_table_MS_schema{
+	my($self, $table) = @_;
+
+	my $dbh = dbh();
+	my $schema = {};
+
+    my @columns;
+	$table = $table || MAP::API->fail( "please provide a table name" );
+
+	my $strSQL = "select * from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME=? ORDER BY ORDINAL_POSITION";
+	my $sth = $dbh->prepare( $strSQL, );
+	$sth->execute( $table ) or MAP::API->fail( $sth->errstr );
+	while ( my $record = $sth->fetchrow_hashref())
+	{
+		my $type = '';
+		if( $record->{ORDINAL_POSITION} == 1 )
+		{
+				$type = 'primary_key';
+				$schema->{primary_key} = $record->{COLUMN_NAME};
+		}else
+		{
+				$type = $record->{DATA_TYPE};
+		}
+		my $column = {
+				name => $record->{COLUMN_NAME},
+				type => $type,
+				maxlenght => $record->{CHARACTER_MAXIMUM_LENGTH},
+				position => $record->{ORDINAL_POSITION}
+		};
+		push @columns, $column;
+	}
+
+    $schema->{columns} = [@columns];
+
+	debug $schema->{primary_key};
+
+	return $schema;
 }
 
 

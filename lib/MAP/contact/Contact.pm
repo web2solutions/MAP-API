@@ -22,6 +22,8 @@ use MAP::contact::religion::Religion;
 
 use MAP::contact::DHTMLX::COMBO::FEED;
 
+use MAP::contact::marital::History;
+
 use MAP::contact::lkp::States;
 use MAP::contact::lkp::County;
 use MAP::contact::lkp::Country;

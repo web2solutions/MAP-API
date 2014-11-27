@@ -56,6 +56,17 @@ sub Subs {
 		 }
 
 
+		 my $table_schema = MAP::API->get_table_MS_schema( $tableName );
+		 $primaryKey = $table_schema->{primary_key};
+		 $defaultColumns = '';
+		 for( @{$table_schema->{columns}} )
+		 {
+
+			$defaultColumns = $defaultColumns . $_->{name} . ',' if $_->{name} ne $primaryKey;
+		 }
+
+		 $defaultColumns = $defaultColumns . $primaryKey;
+
 		 my @defaultColumns = split(/,/, $defaultColumns);
 		  template 'doc', {
 			  'collectionName' => $collectionName,
@@ -70,7 +81,19 @@ sub Subs {
 
 	  get '/'.$collectionName.'.:format' => sub {
 
-		 MAP::API->check_authorization( params->{token}, request->header("Origin") );
+		 #MAP::API->check_authorization( params->{token}, request->header("Origin") );
+
+
+		 my $table_schema = MAP::API->get_table_MS_schema( $tableName );
+		 #$primaryKey = $table_schema->{primary_key};
+		 $defaultColumns = '';
+		 for( @{$table_schema->{columns}} )
+		 {
+
+			$defaultColumns = $defaultColumns . $_->{name} . ',' if $_->{name} ne $primaryKey;
+		 }
+
+		 $defaultColumns = $defaultColumns . $primaryKey;
 
 		 my $strColumns = params->{columns} || $defaultColumns;
 		 $strColumns=~ s/'//g;
@@ -190,10 +213,21 @@ sub Subs {
 
 		  MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
+		 my $table_schema = MAP::API->get_table_MS_schema( $tableName );
+		 #$primaryKey = $table_schema->{primary_key};
+		 $defaultColumns = '';
+		 for( @{$table_schema->{columns}} )
+		 {
+
+			$defaultColumns = $defaultColumns . $_->{name} . ',' if $_->{name} ne $primaryKey;
+		 }
+
+		 $defaultColumns = $defaultColumns . $primaryKey;
+
 		  #$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
 
 		  my $hashStr = params->{hash} || '{}';
-		  my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
+		  #my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 		  my $json_bytes = encode('UTF-8', $hashStr);
 		  my $hash = JSON->new->utf8->decode($json_bytes) or MAP::API->fail( "unable to decode" );
 		  #my $hash =  from_json( $hashStr );
@@ -257,9 +291,20 @@ sub Subs {
 
 		  MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
+		 my $table_schema = MAP::API->get_table_MS_schema( $tableName );
+		 #$primaryKey = $table_schema->{primary_key};
+		 $defaultColumns = '';
+		 for( @{$table_schema->{columns}} )
+		 {
+
+			$defaultColumns = $defaultColumns . $_->{name} . ',' if $_->{name} ne $primaryKey;
+		 }
+
+		 $defaultColumns = $defaultColumns . $primaryKey;
+
 		  my $item_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
 		  $item_id=~ s/'//g;
-		  my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
+		  #my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 		  #$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
 
 		  my $hashStr = params->{hash} || '{}';
@@ -308,9 +353,20 @@ sub Subs {
 	  del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 		  MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
+		 my $table_schema = MAP::API->get_table_MS_schema( $tableName );
+		 #$primaryKey = $table_schema->{primary_key};
+		 $defaultColumns = '';
+		 for( @{$table_schema->{columns}} )
+		 {
+
+			$defaultColumns = $defaultColumns . $_->{name} . ',' if $_->{name} ne $primaryKey;
+		 }
+
+		 $defaultColumns = $defaultColumns . $primaryKey;
+
 		  my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
 		  $str_id=~ s/'//g;
-		  my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
+		  #my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 		  my $dbh = MAP::API->dbh();
 
 
@@ -334,11 +390,22 @@ sub Subs {
 
 		 MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
+		 my $table_schema = MAP::API->get_table_MS_schema( $tableName );
+		 #$primaryKey = $table_schema->{primary_key};
+		 $defaultColumns = '';
+		 for( @{$table_schema->{columns}} )
+		 {
+
+			$defaultColumns = $defaultColumns . $_->{name} . ',' if $_->{name} ne $primaryKey;
+		 }
+
+		 $defaultColumns = $defaultColumns . $primaryKey;
+
 		 my $strColumns = params->{columns} || $defaultColumns;
 		 my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
 		  $str_id=~ s/'//g;
 		 # ===== especific
-		 my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
+		 #my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 
 		 my $dbh = MAP::API->dbh();
 

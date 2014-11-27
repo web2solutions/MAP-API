@@ -1,12 +1,12 @@
-package MAP::contact::nationality::Nationality;
+package MAP::contact::marital::History;
 use Dancer ':syntax';
 use Dancer::Plugin::REST;
 
 our $VERSION = '0.1';
-my $collectionName = 'nationality';
-my $primaryKey = 'ContactNationalityId';
-my $tableName = 'ContactNationality';
-my $defaultColumns = 'ContactNationalityId,ContactId,NationalityID';
+my $collectionName = 'maritalhistory';
+my $tableName = 'ContactMarraigeHistory';
+my $primaryKey = 'ContactMarraigeId';
+my $defaultColumns = '';
 my $root_path = '/var/www/html/userhome/MAP-API/'.$collectionName;
 
 my $relationalColumn = 'ContactId'; # undef

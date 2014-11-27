@@ -1,18 +1,30 @@
-package MAP::contact::nationality::Nationality;
-use Dancer ':syntax';
+package MAP::Users;
+use Dancer qw(:syntax :moose);
 use Dancer::Plugin::REST;
 
+#use MAP::MyEndPointTemplate::MyChildEndPointTemplate;
+
 our $VERSION = '0.1';
-my $collectionName = 'nationality';
-my $primaryKey = 'ContactNationalityId';
-my $tableName = 'ContactNationality';
-my $defaultColumns = 'ContactNationalityId,ContactId,NationalityID';
+
+
+
+
+
+# ======== CHANGE HERE
+my $tableName = 'user_accounts';
+my $collectionName = 'users';
+my $primaryKey = '';
+my $defaultColumns = '';
+# ======== CHANGE HERE
+
+
+
 my $root_path = '/var/www/html/userhome/MAP-API/'.$collectionName;
 
-my $relationalColumn = 'ContactId'; # undef
+my $relationalColumn = undef; # undef
 
 my $specific_append_sql_logic_select = '';
-my $prefix = '/contact/:'. $relationalColumn;
+my $prefix = undef;
 
 prefix $prefix; # | undef
 
