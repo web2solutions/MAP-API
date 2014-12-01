@@ -81,7 +81,7 @@ sub Subs {
 
 	  get '/'.$collectionName.'.:format' => sub {
 
-		 #MAP::API->check_authorization( params->{token}, request->header("Origin") );
+		 MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
 
 		 my $table_schema = MAP::API->get_table_MS_schema( $tableName );

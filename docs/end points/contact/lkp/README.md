@@ -143,3 +143,18 @@ https://perltest.myadoptionportal.com/contact/degrees/doc
 *Online live doc:* 
 
 https://perltest.myadoptionportal.com/contact/lkp/races/doc
+
+
+
+### **lkp Term Reason**
+
+*Online live doc:* 
+
+https://perltest.myadoptionportal.com/contact/lkp/termreason/doc
+
+
+### **lkp Marital Status**
+
+*Online live doc:* 
+
+https://perltest.myadoptionportal.com/contact/lkp/maritalstatus/doc

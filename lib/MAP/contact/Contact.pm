@@ -36,6 +36,9 @@ use MAP::contact::lkp::Culture;
 use MAP::contact::lkp::Ethnicity;
 use MAP::contact::lkp::Races;
 
+use MAP::contact::lkp::TermReason;
+use MAP::contact::lkp::MaritalStatus;
+
 
 use MAP::contact::relationship::Relationship;
 use MAP::contact::relationship::EmployerSearch;
