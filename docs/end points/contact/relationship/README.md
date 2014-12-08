@@ -12,6 +12,20 @@ Return Values:
 	
 	PrimaryConnId	PrimaryName	RelConnId	RelName	RelationshipSubTypeId	RelationshipSubTypeText	ConnectionId1	RelTypeid1	RelTypeText1
 	
+
+**Relationship show detail**
+
+	GET		/contact/relationship/00000.json
+	where 00000 is a RelationshipId
+
+Calling Parameters: 		
+
+	none	
+
+Return Values:	
+	
+	RelationshipId	PrimaryConnId	PrimaryName	RelConnId	RelName	RelationshipSubTypeId	ConnectionId1	RelationshipTypeId
+
 	
 **Couple contact list**
 
