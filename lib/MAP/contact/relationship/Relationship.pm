@@ -11,7 +11,14 @@ our $VERSION = '0.1';
 my $collectionName = 'relationship';
 my $primaryKey = 'PrimaryConnId';
 my $storedProcedureName= 'usp_RelationshipGridList';
-my $defaultColumns = 'PrimaryConnId,PrimaryName,RelConnId,RelName,RelationshipSubTypeId,RelationshipSubTypeText,ConnectionId1,RelTypeid1,RelTypeText1';
+my $defaultColumns = 'PrimaryConnId,PrimaryName,RelConnId,RelName,RelationshipSubTypeId,RelationshipSubTypeText,ConnectionId1,RelTypeid1,RelTypeText1,RelStDate,RelEndDate';
+
+
+
+
+
+
+
 my $root_path = '/var/www/html/userhome/MAP-API/'.$collectionName;
 
 my $relationalColumn = undef; # undef
@@ -395,46 +402,47 @@ del '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 	};
 };
 
-get '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
+#get '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 
-   MAP::API->check_authorization( params->{token}, request->header("Origin") );
+ #  MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
-   my $dbh = MAP::API->dbh();
+ #  my $dbh = MAP::API->dbh();
 
-   my $strColumns = params->{columns} || $defaultColumns;
-   $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
+ #  my $strColumns = params->{columns} || $defaultColumns;
+ #  $strColumns = $dbh->quote( MAP::API->normalizeColumnNames( $strColumns, $defaultColumns ) );
 
-   my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
+ #  my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
 
-   my $newDoc = XML::Mini::Document->new();
-   my $newDocRoot = $newDoc->getRoot();
+   #my $newDoc = XML::Mini::Document->new();
+   #my $newDocRoot = $newDoc->getRoot();
    #my $xmlHeader = $newDocRoot->header('xml');
-   my $FilterNode = $newDocRoot->createChild('Filter');
+   #my $FilterNode = $newDocRoot->createChild('Filter');
 
-   my $ValuesNode = $FilterNode->createChild('Values');
-		my $ColumnNameNode = $ValuesNode->createChild('ColumnName');
-		$ColumnNameNode->text( 'ContactId');
-		my $ColumnValueNode = $ValuesNode->createChild('ColumnValue');
-		$ColumnValueNode->text( $str_id );
+   #my $ValuesNode = $FilterNode->createChild('Values');
+	#	my $ColumnNameNode = $ValuesNode->createChild('ColumnName');
+	#	$ColumnNameNode->text( 'ContactId');
+	#	my $ColumnValueNode = $ValuesNode->createChild('ColumnValue');
+	#	$ColumnValueNode->text( $str_id );
 
-   my $string_xml_filter =  $newDoc->toString();
+   #my $string_xml_filter =  $newDoc->toString();
 
-   my $strSQL = 'EXEC '.$storedProcedureName.' @filter= \''.$string_xml_filter.'\', @columns=  '. $strColumns .' ';
+   #my $strSQL = 'EXEC '.$storedProcedureName.' @filter= \''.$string_xml_filter.'\', @columns=  '. $strColumns .' ';
 
-   #my $strSQL = 'SELECT '.$strColumns.' FROM '.$storedProcedureName.' WHERE '.$primaryKey.' = ?';
-   my $sth = $dbh->prepare( $strSQL, );
-   $sth->execute(  ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL );
+#		my $strSQL = 'EXEC usp_RelationshipDetail @RelationshipId = ? ';
+
+ #  my $sth = $dbh->prepare( $strSQL, );
+  # $sth->execute( $str_id ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL );
 
 	#$dbh->disconnect();
-   MAP::API->normal_header();
-   return {
-		   status => 'success',
-		   response => 'Succcess',
-		   hash => $sth->fetchrow_hashref(),
-		   xml_filters => $string_xml_filter,
-		   sql =>  $strSQL
-   };
-};
+   #MAP::API->normal_header();
+   #return {
+	#	   status => 'success',
+	#	   response => 'Succcess',
+	#	   hash => $sth->fetchrow_hashref(),
+		   #xml_filters => $string_xml_filter,
+	#	   sql =>  $strSQL
+   #};
+#};
 
 get '/'.$collectionName.'/types/all.:format' => sub {
     MAP::API->check_authorization( params->{token}, request->header("Origin") );

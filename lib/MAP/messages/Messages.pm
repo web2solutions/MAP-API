@@ -1,22 +1,13 @@
-package MAP::Users;
-use Dancer qw(:syntax :moose);
+package MAP::messages::Messages;
+use Dancer ':syntax';
 use Dancer::Plugin::REST;
 
 our $VERSION = '0.1';
+my $collectionName = 'messages';
+my $tableName = 'user_messages';
+my $primaryKey = 'message_id';
 
-
-
-
-
-# ======== CHANGE HERE
-my $tableName = 'user_accounts';
-my $collectionName = 'users';
-my $primaryKey = '';
 my $defaultColumns = '';
-# ======== CHANGE HERE
-
-
-
 my $root_path = '/var/www/html/userhome/MAP-API/'.$collectionName;
 
 my $relationalColumn = undef; # undef

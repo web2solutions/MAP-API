@@ -94,21 +94,31 @@ direction: is a valid SQL keyword that defines the direction of the ordering<br>
 default: <% primaryKey %> ASC
 <br> <span>not mandatory</span>
 </p>
+<p>
+<span>posStart</span> - The initial record position on the page.<br>
+default: 1 <br>
+<span>not mandatory</span>
+</p>
+<p>
+<span>count</span> - The total records on the page.<br>
+default: 1000 <br>
+<span>not mandatory</span>
+</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <h3><span>POST</span> <b><% prefix %>/<% collectionName %></b></h3>
 <p>
 <span>hash</span> - hash is a JSON object 100% compatible with form.getFormData() hash. <br>
 It holds pairs of key/values, where key is the column name from a table and value is the properly value for that column when creating the record<br>
-<span>mandatory</span><br> 
-</p>            
+<span>mandatory</span><br>
+</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <h3><span>PUT</span> <b><% prefix %>/<% collectionName %>/:<% primaryKey %></b></h3>
 <p>
 <span>hash</span> - hash is a JSON object 100% compatible with form.getFormData() hash. <br>
 It holds pairs of key/values, where key is the column name from a table and value is the properly value for that column when updating the record<br>
-<span>mandatory</span><br> 
+<span>mandatory</span><br>
 </p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
@@ -130,24 +140,24 @@ default: <% defaultColumnsStr %>
 <h3>list all records with all default columns</h3>
 <pre class="brush: js;ruler: true; first-line: 1;">
 CAIRS.MAP.API.get({
-    resource :  "<% prefix %>/<% collectionName %>" 
+    resource :  "<% prefix %>/<% collectionName %>"
     ,format : "json" // not mandatory, default json
-    ,onSuccess : function( request ) 
-    { 
+    ,onSuccess : function( request )
+    {
         var json = JSON.parse( request.response );
         console.log(request);
         alert("Id of the first record: " + json.<% collectionName %>[0].<% primaryKey %>);
-		
+
 		json.<% collectionName %>.forEach( function (row, index, array)
 		{
 			<% FOREACH variable IN defaultColumns %>
 			console.log( row.<% variable %> )
 			<% END %>
 		});
-		
+
     }
     ,onFail : function( request )
-    { 
+    {
         var json = JSON.parse( request.response );
     }
 });
@@ -156,15 +166,15 @@ CAIRS.MAP.API.get({
 <h3>list all records, but returning only specified columns</h3>
 <pre class="brush: js;ruler: true; first-line: 1;">
 CAIRS.MAP.API.get({
-    resource :  "<% prefix %>/<% collectionName %>" 
+    resource :  "<% prefix %>/<% collectionName %>"
     ,format : "json" // not mandatory, default json
     ,payload : "columns=<% defaultColumns.1 %>,<% defaultColumns.0 %>"
-    ,onSuccess : function( request ) 
-    { 
+    ,onSuccess : function( request )
+    {
         var json = JSON.parse( request.response );
         console.log(request);
         alert("specified column of the first record: " + json.<% collectionName %>[0].<% defaultColumns.0 %>);
-		
+
 		json.<% collectionName %>.forEach( function (row, index, array)
 		{
 			console.log( row.<% defaultColumns.1 %> );
@@ -172,7 +182,7 @@ CAIRS.MAP.API.get({
 		});
     }
     ,onFail : function( request )
-    { 
+    {
         var json = JSON.parse( request.response );
     }
 });
@@ -182,17 +192,17 @@ CAIRS.MAP.API.get({
 <h3>list filtered data</h3>
 <pre class="brush: js;ruler: true; first-line: 1;">
 CAIRS.MAP.API.get({
-    resource :  "<% prefix %>/<% collectionName %>" 
+    resource :  "<% prefix %>/<% collectionName %>"
     ,format : "json" // not mandatory, default json
     ,payload : "filter_operator=AND&filter={ '<% defaultColumns.last %>' : 'some value'}"
-    ,onSuccess : function( request ) 
-    { 
+    ,onSuccess : function( request )
+    {
         var json = JSON.parse( request.response );
         console.log(request);
         alert("specified column of the first record: " + json.<% collectionName %>[0].<% defaultColumns.0 %>);
     }
     ,onFail : function( request )
-    { 
+    {
         var json = JSON.parse( request.response );
     }
 });
@@ -202,17 +212,17 @@ CAIRS.MAP.API.get({
 <h3>list ordered data</h3>
 <pre class="brush: js;ruler: true; first-line: 1;">
 CAIRS.MAP.API.get({
-    resource :  "<% prefix %>/<% collectionName %>" 
+    resource :  "<% prefix %>/<% collectionName %>"
     ,format : "json" // not mandatory, default json
     ,payload : "order={direction: 'DESC', orderby: '<% defaultColumns.last %>'}"
-    ,onSuccess : function( request ) 
-    { 
+    ,onSuccess : function( request )
+    {
         var json = JSON.parse( request.response );
         console.log(request);
         alert("specified column of the first record: " + json.<% collectionName %>[0].<% defaultColumns.0 %>);
     }
     ,onFail : function( request )
-    { 
+    {
         var json = JSON.parse( request.response );
     }
 });
@@ -227,17 +237,17 @@ var hash = {
 };
 
 CAIRS.MAP.API.post({
-    resource :  "<% prefix %>/<% collectionName %>" 
+    resource :  "<% prefix %>/<% collectionName %>"
     ,format : "json" // not mandatory, default json
     ,payload : "hash=" + JSON.stringify( hash )
-    ,onSuccess : function( request ) 
-    { 
+    ,onSuccess : function( request )
+    {
         var json = JSON.parse( request.response );
         console.log(request);
         alert("Id of the new record: " + json.<% primaryKey %>);
     }
     ,onFail : function( request )
-    { 
+    {
         var json = JSON.parse( request.response );
     }
 });
@@ -252,17 +262,17 @@ var hash = {
 };
 
 CAIRS.MAP.API.put({
-    resource :  "<% prefix %>/<% collectionName %>/:<% primaryKey %>" 
+    resource :  "<% prefix %>/<% collectionName %>/:<% primaryKey %>"
     ,format : "json" // not mandatory, default json
     ,payload : "hash=" + JSON.stringify( hash )
-    ,onSuccess : function( request ) 
-    { 
+    ,onSuccess : function( request )
+    {
         var json = JSON.parse( request.response );
         console.log(request);
         alert("Id of the record: " + json.<% primaryKey %>);
     }
     ,onFail : function( request )
-    { 
+    {
         var json = JSON.parse( request.response );
     }
 });
@@ -279,17 +289,17 @@ var hash = {
 
 CAIRS.MAP.API.put({
     // :<% primaryKey %> is a valid record id (number)
-	resource :  "<% prefix %>/<% collectionName %>/:<% primaryKey %>,:<% primaryKey %>,:<% primaryKey %>,:<% primaryKey %>,:<% primaryKey %>" 
+	resource :  "<% prefix %>/<% collectionName %>/:<% primaryKey %>,:<% primaryKey %>,:<% primaryKey %>,:<% primaryKey %>,:<% primaryKey %>"
     ,format : "json" // not mandatory, default json
     ,payload : "hash=" + JSON.stringify( hash )
-    ,onSuccess : function( request ) 
-    { 
+    ,onSuccess : function( request )
+    {
         var json = JSON.parse( request.response );
         console.log(request);
         alert("Id of the record: " + json.<% primaryKey %>);
     }
     ,onFail : function( request )
-    { 
+    {
         var json = JSON.parse( request.response );
     }
 });
@@ -299,16 +309,16 @@ CAIRS.MAP.API.put({
 <h3>Delete <% collectionName %></h3>
 <pre class="brush: js;ruler: true; first-line: 1;">
 CAIRS.MAP.API.del({
-    resource :  "<% prefix %>/<% collectionName %>/:<% primaryKey %>" 
+    resource :  "<% prefix %>/<% collectionName %>/:<% primaryKey %>"
     ,format : "json" // not mandatory, default json
-    ,onSuccess : function( request ) 
-    { 
+    ,onSuccess : function( request )
+    {
         var json = JSON.parse( request.response );
         console.log(request);
         alert("Id of the deleted record: " + json.<% primaryKey %>);
     }
     ,onFail : function( request )
-    { 
+    {
         var json = JSON.parse( request.response );
     }
 });
@@ -320,16 +330,16 @@ CAIRS.MAP.API.del({
 <pre class="brush: js;ruler: true; first-line: 1;">
 CAIRS.MAP.API.del({
     // :<% primaryKey %> is a valid record id (number)
-	resource :  "<% prefix %>/<% collectionName %>/:<% primaryKey %>,:<% primaryKey %>,:<% primaryKey %>,:<% primaryKey %>" 
+	resource :  "<% prefix %>/<% collectionName %>/:<% primaryKey %>,:<% primaryKey %>,:<% primaryKey %>,:<% primaryKey %>"
     ,format : "json" // not mandatory, default json
-    ,onSuccess : function( request ) 
-    { 
+    ,onSuccess : function( request )
+    {
         var json = JSON.parse( request.response );
         console.log(request);
         alert("Id of the deleted record: " + json.<% primaryKey %>);
     }
     ,onFail : function( request )
-    { 
+    {
         var json = JSON.parse( request.response );
     }
 });
@@ -339,10 +349,10 @@ CAIRS.MAP.API.del({
 <h3>Get <% collectionName %></h3>
 <pre class="brush: js;ruler: true; first-line: 1;">
 CAIRS.MAP.API.get({
-    resource :  "<% prefix %>/<% collectionName %>/:<% primaryKey %>" 
+    resource :  "<% prefix %>/<% collectionName %>/:<% primaryKey %>"
     ,format : "json" // not mandatory, default json
-    ,onSuccess : function( request ) 
-    { 
+    ,onSuccess : function( request )
+    {
         var json = JSON.parse( request.response );
         console.log(request);
 		<% FOREACH variable IN defaultColumns %>
@@ -350,7 +360,7 @@ CAIRS.MAP.API.get({
 		<% END %>
     }
     ,onFail : function( request )
-    { 
+    {
         var json = JSON.parse( request.response );
     }
 });
@@ -415,7 +425,7 @@ var <% tableName %>_settings = {
                 labelWidth: 120,
                 inputWidth: 160
             }
-			
+
 			/* ---------- fields ---------- */<% FOREACH variable IN defaultColumns %><% IF variable != defaultColumns.first %>
 			, {
                 type: 'input',
@@ -423,7 +433,7 @@ var <% tableName %>_settings = {
                 label: '<% variable %>'
             }<% END %><% END %>
 			/* ---------- fields ---------- */
-			
+
 			/* ---------- save, update and delete buttons - hot operations ---------- */
             , {
                 type: "button",
@@ -462,7 +472,7 @@ var <% tableName %>_settings = {
         "icon": "dock.gif",
         "icon_dis": "dock.gif"
     }
-	
+
 	,"conf_toolbar": {
         "icon_path": "http://cdmap01.myadoptionportal.com/modules/codebase3.6/imgs/",
         "items": [
@@ -511,7 +521,7 @@ var <% tableName %>_app = {
 	,toolbar: null
     ,datastore: null
 	,view : {
-		
+
 		start_window_manager: function () {
 			var self = <% tableName %>_app;
 			self.window_manager = new dhtmlXWindows();
@@ -523,33 +533,33 @@ var <% tableName %>_app = {
             render: function()
 			{
 				var self = <% tableName %>_app;
-				
+
 				if (self.window_manager === null)
 					self.view.start_window_manager();
-		
+
 				if (self.window_manager.isWindow("window_<% tableName %>_app_edit"))
 				{
 					self.window.show();
 					self.window.bringToTop();
 					return;
 				}
-				
+
 				self.window = self.window_manager.createWindow(
-					"window_<% tableName %>_app_edit", 
+					"window_<% tableName %>_app_edit",
 					<% tableName %>_settings.conf_window.left,
-					<% tableName %>_settings.conf_window.top, 
-					<% tableName %>_settings.conf_window.width, 
+					<% tableName %>_settings.conf_window.top,
+					<% tableName %>_settings.conf_window.width,
 					<% tableName %>_settings.conf_window.height
 				);
-				
+
 				self.window.setText('Save/Update window');
 				self.window.setIcon(
-					<% tableName %>_settings.conf_window.icon, 
+					<% tableName %>_settings.conf_window.icon,
 					<% tableName %>_settings.conf_window.icon_dis
 				);
-				
+
 				self.view.form.render();
-		
+
 				self.window.attachEvent("onClose", function (win) {
 					return true;
 				});
@@ -613,18 +623,18 @@ var <% tableName %>_app = {
 					self.datastore.setCursor({
 						position: id
 					});
-					
+
 					self.toolbar.enableItem("edit");
 					self.toolbar.enableItem("delete");
 				});
-				
+
 				// enable live saving after editing a cell
 				self.grid.saveOnEdit = true;
-				
+
 				// end grid code
 			}
 		}
-		,form : 
+		,form :
 		{
 			render: function () {
 				var self = <% tableName %>_app;
@@ -635,37 +645,37 @@ var <% tableName %>_app = {
 		}
 	}
 	,datasystem : {
-	
+
 		start : function (){
 			var self = <% tableName %>_app;
-			
+
 			CAIRS.showDirections("creating dataset ");
-			
-			// create main the dataset. 
+
+			// create main the dataset.
 			self.datastore = new CAIRS.dataStore({
 				// For best conventions, use the same name of the table on the database
 				data_set_name: "<% tableName %>"
-				
+
 				// primary key name of the table
 				,primary_key: "<% primaryKey %>"
-				
+
 				// provide an static array containing the data for filling the dataset
 				//,data : []
-				
+
 				// should overwrite this dataset on the memory if it already exists?
 				,overwrite: true
-				
-				// provide API informations for fetching data from server 
+
+				// provide API informations for fetching data from server
 				// use it when creating the dataset with server data, instead providing an static array
 				// not mandatory default false
 				,api_service: {
-					
+
 					// API end point (before running look for :variables and replace by a valid record id (number)
 					end_point: "<% prefix %>/<% collectionName %>"
-					
+
 					// API data collection name -&gt; MANDATORY
 					,collection_name: "<% collectionName %>"
-					
+
 					// request payload. not mandatory
 					,api_payload: "columns=" + <% tableName %>_settings.conf_grid.ids + ",<% defaultColumns.first %>"
 				}
@@ -687,10 +697,10 @@ var <% tableName %>_app = {
 				,component_id: "grid" // mandatory
 				,onSuccess: function () {
 					// if grid was successful synced, then
-					
+
 					// select the first record on the grid
 					self.grid.selectRow(0, true, false, false);
-					
+
 					CAIRS.hideDirections();
 				},
 				onFail: function (reason) {
@@ -699,7 +709,7 @@ var <% tableName %>_app = {
 				}
 			});
 		}
-		
+
 		,bind_form : function(){
 			var self = <% tableName %>_app;
 			// bind form
@@ -711,30 +721,30 @@ var <% tableName %>_app = {
 	}
     ,start: function () {
         var self = this;
-        
+
 		CAIRS.hideDirections();
-        
+
 		// set global dhtmlx img path
         window.dhx_globalImgPath = "http://cdmap01.myadoptionportal.com/modules/codebase3.6/imgs/";
-        
-		
-		
+
+
+
 		self.view.layout.render();
         self.view.toolbar.render();
 		self.view.grid.render();
-		self.datasystem.start(); 
+		self.datasystem.start();
     }
 };
 
 
 // start application when DOM is loaded
 window.onload = function (e) {
-    
+
 	// lets init CAIRS fw (necessary for log and some other features)
 	CAIRS.init();
-	
+
 	CAIRS.showDirections("authorizing application ");
-	
+
 	// authorize application
     CAIRS.MAP.API.authorize( {
         database: "MAPTEST",

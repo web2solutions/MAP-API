@@ -81,7 +81,12 @@ sub Subs {
 
 	  get '/'.$collectionName.'.:format' => sub {
 
-		 MAP::API->check_authorization( params->{token}, request->header("Origin") );
+		 #MAP::API->check_authorization( params->{token}, request->header("Origin") );
+
+		 my $count = params->{count} || 1000;
+		 my $posStart = params->{posStart} || 0;
+		 $count = $count + 1;
+		 $posStart = $posStart + 1;
 
 
 		 my $table_schema = MAP::API->get_table_MS_schema( $tableName );
@@ -158,17 +163,41 @@ sub Subs {
 			  $strSQLstartWhere = '( ['.$relationalColumn.'] IN ('.$relational_id.') ) ';
 		 }
 
-		  my $strSQL = '';
-		  if ( length($strSQLstartWhere) < 3 && length($sql_filters) < 3 ) {
-			  $strSQL = 'SELECT '.$strColumns.' FROM '.$tableName.' '. $sql_ordering . '';
-		  }
-		  else
-		  {
-			  $strSQL = 'SELECT '.$strColumns.' FROM '.$tableName.' WHERE '.$strSQLstartWhere.' ' . $sql_filters . ' '. $sql_ordering . '';
-		  }
+		 my $totalCount = 0;
+		 my $sth = $dbh->prepare( 'SELECT COUNT('.$primaryKey.') as total_count FROM '.$tableName.' WHERE '.$strSQLstartWhere.' ' . $sql_filters . ';', );
+		 $sth->execute() or MAP::API->fail( $sth->errstr );
+		 while ( my $record = $sth->fetchrow_hashref())
+		 {
+			$totalCount = $record->{"total_count"};
+		 }
+
+		 my $strSQL = '';
+		 if ( length($strSQLstartWhere) < 3 && length($sql_filters) < 3 ) {
+			#$strSQL = 'SELECT '.$strColumns.' FROM '.$tableName.' '. $sql_ordering .
+			$strSQL = '; WITH results AS (
+				  SELECT
+					 rowNo = ROW_NUMBER() OVER( '.$sql_ordering.' ), *
+				 FROM '.$tableName.' WHERE '.$strSQLstartWhere.' ' . $sql_filters . '
+			 )
+			 SELECT *
+				 FROM results
+				 WHERE rowNo BETWEEN '.$posStart.' AND '. $posStart. ' + '.$count.'';
+		 }
+		 else
+		 {
+			#$strSQL = 'SELECT '.$strColumns.' FROM '.$tableName.' WHERE '.$strSQLstartWhere.' ' . $sql_filters . ' '. $sql_ordering . '';
+			$strSQL = '; WITH results AS (
+				  SELECT
+					 rowNo = ROW_NUMBER() OVER( '.$sql_ordering.' ), *
+				 FROM '.$tableName.' WHERE '.$strSQLstartWhere.' ' . $sql_filters . '
+			 )
+			 SELECT *
+				 FROM results
+				 WHERE rowNo BETWEEN '.$posStart.' AND '. $posStart. ' + '.$count.'';
+		 }
 
 
-		  my $sth = $dbh->prepare( $strSQL, );
+		 $sth = $dbh->prepare( $strSQL, );
 		 $sth->execute() or MAP::API->fail( $sth->errstr . ' ----------- '.$strSQL);
 
 		 my @records;
@@ -185,6 +214,10 @@ sub Subs {
 					  push @values, decode('UTF-8', $record->{$_});
 					  $row->{$_} = decode('UTF-8', $record->{$_});
 				  }
+				  elsif ( $record->{$_} == 0 ) {
+					  push @values, 0;
+					  $row->{$_} = 0;
+				  }
 				  else
 				  {
 					  push @values, "";
@@ -195,14 +228,26 @@ sub Subs {
 			  push @records, $row;
 		 }
 		  #$dbh->disconnect();
+
+		 if( $posStart == 0 )
+		 {
+			 $posStart = "";
+		 }
+		 else
+		 {
+			 $posStart = $posStart - 1;
+		 }
+
 		 MAP::API->normal_header();
 		 return {
-				 status => 'success',
-				 response => 'Succcess',
-				 ''.$collectionName.'' => [@records],
-				 sql =>  $strSQL,
-				 sql_filters => $sql_filters,
-				 sql_ordering => $sql_ordering
+			   status => 'success',
+			   response => 'Succcess',
+			   ''.$collectionName.'' => [@records],
+			   sql =>  $strSQL,
+			   sql_filters => $sql_filters,
+			   sql_ordering => $sql_ordering,
+			   total_count => $totalCount,
+			   pos => $posStart,
 		 };
 	  };
 
@@ -340,13 +385,30 @@ sub Subs {
 
 
 		  MAP::API->normal_header();
-		  return {
-			  status => 'success',
-			  response => 'Item '.$item_id.' updated on ' . $collectionName,
-			  sql => $strSQL,
-			  ''.$primaryKey.'' => $item_id,
-			  place_holders_dump => dump(@sql_values)
-		  };
+
+		 if ( $sth->rows < 1 ) {
+			status 404;
+			return {
+			   status => 'err',
+			   response => 'resource not found. nothing updated',
+			   sql => $strSQL,
+			   ''.$primaryKey.'' => $item_id,
+			   place_holders_dump => dump(@sql_values)
+		   };
+		 }
+		 else
+		 {
+			return {
+			   status => 'success',
+			   response => 'Item '.$item_id.' updated on ' . $collectionName,
+			   sql => $strSQL,
+			   ''.$primaryKey.'' => $item_id,
+			   place_holders_dump => dump(@sql_values)
+		   };
+		 }
+
+
+
 	  };
 
 
@@ -377,12 +439,25 @@ sub Subs {
 
 
 		  MAP::API->normal_header();
-		  return {
-			  status => 'success',
-			  response => 'Item(s) '.$str_id.' deleted from '.$collectionName.'',
-			  sql => $strSQL,
-			  ''.$primaryKey.'' => $str_id
-		  };
+
+		 if ( $sth->rows < 1 ) {
+			status 404;
+			return {
+			   status => 'success',
+			   response => 'resource not found. nothing deleted',
+			   sql => $strSQL,
+			   ''.$primaryKey.'' => $str_id
+		   };
+		 }
+		 else
+		 {
+			return {
+			   status => 'success',
+			   response => 'Item(s) '.$str_id.' deleted from '.$collectionName.'',
+			   sql => $strSQL,
+			   ''.$primaryKey.'' => $str_id
+		   };
+		 }
 	  };
 
 

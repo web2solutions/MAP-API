@@ -130,7 +130,9 @@ use MAP::Agencies::Agencies;
 use MAP::contact::Contact;
 use MAP::address::ZipSearch;
 use MAP::Users;
+use MAP::messages::Messages;
 
+use MAP::Payments;
 
 
 sub set_branch{
@@ -404,7 +406,7 @@ sub get_table_MS_schema{
 
     $schema->{columns} = [@columns];
 
-	debug $schema->{primary_key};
+	#debug $schema->{primary_key};
 
 	return $schema;
 }
