@@ -28,7 +28,7 @@ Executes an authorize.net CC payments
 	card_securitycode
 
 	
-#### Options parameters
+#### Optional parameters
 	
 	billing_address2 
 	billing_mobilenumber 
