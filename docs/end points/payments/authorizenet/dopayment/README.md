@@ -37,7 +37,8 @@ Executes an authorize.net CC payments
 
 	
 ### Restful client example
-	
+
+````javascript	
 	CAIRS.MAP.API.post({
 		resource: "/payments/authorizenet/dopayment",
 		payload: params,
@@ -55,4 +56,4 @@ Executes an authorize.net CC payments
 			
 		}
 	});
-
+````
