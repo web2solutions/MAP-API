@@ -218,7 +218,9 @@ sub dbh{
 
     if ( $os eq "linux") {
 		$ENV{DSQUERY} = $server;
-		$dbh = DBI->connect('DBI:Sybase:database=IRRISCentral;scriptName=MAP_API;', "ESCairs", "FishB8") or  MAP::API->fail("Can't connect to sql server: $DBI::errstr");
+		$dbh = DBI->connect('DBI:Sybase:database=IRRISCentral;scriptName=MAP_API;', "ESCairs", "FishB8", {
+				RaiseError => 1
+		}) or  MAP::API->fail("Can't connect to sql server: $DBI::errstr");
 		$dbh->do('use IRRISCentral');
 
 		my $strSQL = "SELECT MAPDBName FROM dbo.lutPrimaryAgency WHERE map_agency_id = ?";
@@ -230,7 +232,9 @@ sub dbh{
 		}
 		$dbh->disconnect;
 
-		$dbh = DBI->connect('DBI:Sybase:database='.$database.';scriptName=MAP_API;', "ESCairs", "FishB8") or  MAP::API->fail("Can't connect to sql server: $DBI::errstr");
+		$dbh = DBI->connect('DBI:Sybase:database='.$database.';scriptName=MAP_API;', "ESCairs", "FishB8", {
+				RaiseError => 1
+		}) or  MAP::API->fail("Can't connect to sql server: $DBI::errstr");
 		$dbh->do('use '. $database);
 	}
 	else

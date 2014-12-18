@@ -4,6 +4,7 @@ our $VERSION = '0.1';
 
 
 use MAP::payments::AuthorizeNet;
+use MAP::payments::PaymentSettings;
 
 
 #prefix '/payments';

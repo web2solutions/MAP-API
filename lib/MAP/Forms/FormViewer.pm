@@ -154,7 +154,9 @@ post '/save.:format' => sub {
 		 $existing_columns = $existing_columns . $record->{COLUMN_NAME} . "|";
 	}
 
-	debug $strSQLCheckExistColumn;
+	debug '     '. $strSQLCheckExistColumn;
+	debug '';
+	debug '';
 	debug $existing_columns;
 
 
@@ -168,12 +170,12 @@ post '/save.:format' => sub {
 		{
 			if ( defined( $key ) )
 			{
-				debug 'key defined';
+				#debug 'key defined';
 				if ( defined( $hash{$key} ) )
 				{
-					debug 'hash{key} defined';
-					debug index($existing_columns, $key);
-					if ( index($existing_columns, $key) != -1 )
+					#debug 'hash{key} defined';
+					#debug index($existing_columns, $key);
+					if ( index($existing_columns, '' .$key.'') != -1 )
 					{
 						debug 'exists';
 						if ( $key ne 'data_id' )
@@ -182,7 +184,10 @@ post '/save.:format' => sub {
 							push @sql_values, $hash{$key};
 						}
 					}
-
+					else
+					{
+					debug '===       ' . $key . ' column not found';
+					}
 				}
 			}
 		}
@@ -191,11 +196,7 @@ post '/save.:format' => sub {
 		push @sql_values, $connectionId;
 		push @sql_values, $user_id;
 
-		my $strSQLquery = 'UPDATE
-			' . $tableName . '
-			SET ' . substr($strUpdate, 0, -2) . '
-			WHERE
-				connId = '.$connId.' AND connectionId = '.$connectionId.' AND user_id = '.$user_id.'';
+		my $strSQLquery = 'UPDATE ' . $tableName . ' SET ' . substr($strUpdate, 0, -2) . ' WHERE connId = '.$connId.' AND connectionId = '.$connectionId.' AND user_id = '.$user_id.'';
 
 		my $sth = $dbh->prepare( $strSQLquery, );
 		$sth->execute(  ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLquery );

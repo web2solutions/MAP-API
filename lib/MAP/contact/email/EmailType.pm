@@ -4,9 +4,9 @@ use Dancer::Plugin::REST;
 
 our $VERSION = '0.1';
 my $collectionName = 'emailTypes';
-my $primaryKey = 'EMailTypeId';
+my $primaryKey = 'EmailTypeID';
 my $tableName = 'lkpEmailType';
-my $defaultColumns = 'EMailTypeId,EmailType,EmailSequence';
+my $defaultColumns = '';
 my $root_path = '/var/www/html/userhome/MAP-API/'.$collectionName;
 
 my $relationalColumn = undef; # undef

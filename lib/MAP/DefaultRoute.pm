@@ -81,7 +81,7 @@ sub Subs {
 
 	  get '/'.$collectionName.'.:format' => sub {
 
-		 #MAP::API->check_authorization( params->{token}, request->header("Origin") );
+		 MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
 		 my $count = params->{count} || 1000;
 		 my $posStart = params->{posStart} || 0;
@@ -386,7 +386,7 @@ sub Subs {
 
 		  MAP::API->normal_header();
 
-		 if ( $sth->rows < 1 ) {
+		 if ( $sth->rows == 0 ) {
 			status 404;
 			return {
 			   status => 'err',
@@ -440,7 +440,7 @@ sub Subs {
 
 		  MAP::API->normal_header();
 
-		 if ( $sth->rows < 1 ) {
+		 if ( $sth->rows == 0 ) {
 			status 404;
 			return {
 			   status => 'success',
@@ -491,12 +491,27 @@ sub Subs {
 		  #$dbh->disconnect();
 		 MAP::API->normal_header();
 
-		 return {
+
+		 if ( $sth->rows == 0 ) {
+			status 404;
+			return {
+			   status => 'success',
+			   response => 'resource not found. nothing deleted',
+			   sql => $strSQL,
+			   ''.$primaryKey.'' => $str_id
+		   };
+		 }
+		 else
+		 {
+			return {
 				 status => 'success',
 				 response => 'Succcess',
 				 hash => Data::Recursive::Encode->decode_utf8( $sth->fetchrow_hashref() ),
 				 sql =>  $strSQL
-		 };
+			};
+		 }
+
+
 	  };
 
 	  # HELPERS
