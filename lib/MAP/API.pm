@@ -600,7 +600,7 @@ post '/github_hooks.:format' => sub {
 		);
 		my $status = $mail->send(
 			from    => 'eduardo@web2solutions.com.br',
-			from_title => 'Eduardo',
+			from_title => 'CAIRS\' GitHub Hooker',
 			reply   => 'eduardo@web2solutions.com.br' ,
 			error   => 'eduardo@web2solutions.com.br' ,
 			to      => 'eduardo@web2solutions.com.br' ,
