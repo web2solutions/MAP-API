@@ -571,4 +571,64 @@ get '/LibraryFields/search.:format' => sub {
 	};
 };
 
+
+
+
+
+get '/LibraryFields/userdata/:field_id.:format' => sub {
+
+   MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
+
+	 my $user_id = params->{user_id};
+	 my $agency_id = params->{agency_id};
+	 my $form_id = params->{form_id};
+	 my $field_id = params->{field_id};
+
+	 my $dbh = MAP::API->dbh();
+
+   my $strSQLpages = 'SELECT page_id FROM FORMMAKER_Pages WHERE form_id = ? ';
+   my $sth = $dbh->prepare( $strSQLpages, );
+   $sth->execute( $form_id ) or MAP::API->fail( $sth->errstr );
+
+	 my @pages;
+   while ( my $record = $sth->fetchrow_hashref())
+   {
+				push @pages, $record->{page_id};
+   }
+
+
+	 my $strSQLfields = 'SELECT library_field_id FROM Formmaker_Fields WHERE library_field_id > 0 AND page_id IN ('.join(',', @pages).') ';
+   $sth = $dbh->prepare( $strSQLfields, );
+   $sth->execute(  ) or MAP::API->fail( $sth->errstr );
+
+	 my @l_b_ids;
+   while ( my $record = $sth->fetchrow_hashref())
+   {
+				push @l_b_ids, $record->{library_field_id};
+   }
+
+   my @fields;
+	 my $strSQL = 'EXEC ViewMAPDataGroup @AgencyId = ?, @User_Id = ?, @SaveFieldName = ?';
+   $sth = $dbh->prepare( $strSQL, );
+   $sth->execute( $agency_id, $user_id, join(',', @l_b_ids) ) or MAP::API->fail( $sth->errstr );
+	 while ( my $record = $sth->fetchrow_hashref())
+   {
+				my %record = %{ $record };
+				my $row = {};
+				foreach my $key (%record) {
+				 if ( defined( $record{$key} ) ) {
+					 $row->{$key} = decode('UTF-8', $record{$key});
+				 }
+				}
+				push @fields, $row;
+   }
+
+	return {
+		status => 'success',
+		response => 'Succcess',
+		sql => $strSQL,
+		fields => [@fields]
+	};
+};
+
 dance;
