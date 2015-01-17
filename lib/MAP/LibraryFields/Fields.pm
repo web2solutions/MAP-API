@@ -21,6 +21,10 @@ options '/LibraryFields/assigntags/:id.:format' => sub {
 	MAP::API->options_header();
 };
 
+options '/LibraryFields/userdata/:form_id.:format' => sub {
+	MAP::API->options_header();
+};
+
 get '/LibraryFields.:format' => sub {
 
    MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
@@ -575,14 +579,14 @@ get '/LibraryFields/search.:format' => sub {
 
 
 
-get '/LibraryFields/userdata/:field_id.:format' => sub {
+get '/LibraryFields/userdata/:form_id.:format' => sub {
 
-   MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
+   MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
-	 my $user_id = params->{user_id};
-	 my $agency_id = params->{agency_id};
-	 my $form_id = params->{form_id};
-	 my $field_id = params->{field_id};
+	 my $user_id = request->header("X-client-session-id") || MAP::API->fail( "header X-client-session-id is missing" );
+	 my $agency_id = request->header("X-AId") || MAP::API->fail( "header X-AId is missing" );;
+	 my $form_id = params->{form_id} || MAP::API->fail( "form_id is missing on url" );
+	 #my $field_id = params->{field_id};
 
 	 my $dbh = MAP::API->dbh();
 
@@ -608,18 +612,18 @@ get '/LibraryFields/userdata/:field_id.:format' => sub {
    }
 
    my @fields;
-	 my $strSQL = 'EXEC ViewMAPDataGroup @AgencyId = ?, @User_Id = ?, @SaveFieldName = ?';
+	 my $strSQL = 'EXEC USP_VIEWMAPDATAGROUPBYID @AgencyId = ?, @User_Id = ?, @FieldIDs = ?';
    $sth = $dbh->prepare( $strSQL, );
    $sth->execute( $agency_id, $user_id, join(',', @l_b_ids) ) or MAP::API->fail( $sth->errstr );
 	 while ( my $record = $sth->fetchrow_hashref())
    {
 				my %record = %{ $record };
 				my $row = {};
-				foreach my $key (%record) {
-				 if ( defined( $record{$key} ) ) {
-					 $row->{$key} = decode('UTF-8', $record{$key});
-				 }
-				}
+
+				$row->{FieldID} = $record{FieldID};
+				$row->{FieldName} = decode('UTF-8', $record{FieldName});
+				$row->{FieldValue} = decode('UTF-8', $record{FieldValue});
+
 				push @fields, $row;
    }
 
@@ -627,7 +631,7 @@ get '/LibraryFields/userdata/:field_id.:format' => sub {
 		status => 'success',
 		response => 'Succcess',
 		sql => $strSQL,
-		fields => [@fields]
+		library_fields_data => [@fields]
 	};
 };
 
