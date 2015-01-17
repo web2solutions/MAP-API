@@ -583,7 +583,7 @@ get '/LibraryFields/userdata/:form_id.:format' => sub {
 
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
-	 my $user_id = request->header("X-client-session-id") || MAP::API->fail( "header X-client-session-id is missing" );
+	 my $user_id = params->{user_id} || MAP::API->fail( "user_id is missing on url" );
 	 my $agency_id = request->header("X-AId") || MAP::API->fail( "header X-AId is missing" );;
 	 my $form_id = params->{form_id} || MAP::API->fail( "form_id is missing on url" );
 	 #my $field_id = params->{field_id};
@@ -612,9 +612,9 @@ get '/LibraryFields/userdata/:form_id.:format' => sub {
    }
 
    my @fields;
-	 my $strSQL = 'EXEC USP_VIEWMAPDATAGROUPBYID @AgencyId = ?, @User_Id = ?, @FieldIDs = ?';
+	 my $strSQL = 'EXEC USP_VIEWMAPDATAGROUPBYID @AgencyId = '.$agency_id.', @User_Id = '.$user_id.', @FieldIDs = \''.join(',', @l_b_ids).'\' ';
    $sth = $dbh->prepare( $strSQL, );
-   $sth->execute( $agency_id, $user_id, join(',', @l_b_ids) ) or MAP::API->fail( $sth->errstr );
+   $sth->execute(  ) or MAP::API->fail( $sth->errstr );
 	 while ( my $record = $sth->fetchrow_hashref())
    {
 				my %record = %{ $record };
@@ -631,7 +631,7 @@ get '/LibraryFields/userdata/:form_id.:format' => sub {
 		status => 'success',
 		response => 'Succcess',
 		sql => $strSQL,
-		library_fields_data => [@fields]
+		library_fields_userdata => [@fields]
 	};
 };
 
