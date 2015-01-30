@@ -29,6 +29,8 @@ get '/LibraryFields.:format' => sub {
 
    MAP::API->check_authorization_simple( params->{token}, request->header("Origin") );
 
+	 debug '======================= FIRST =========================';
+
    my $strColumns = params->{columns} || 'type,name,label,caption,textdefault,tips,text_size,field_format';
    #type,name,label,caption,value,tooltip,text_size
    my $searchcriteria = params->{searchcriteria} || "";
@@ -62,7 +64,10 @@ get '/LibraryFields.:format' => sub {
    #my $strSQL = 'EXEC USP_ListAllLibraryFields 2217,'.$posStart.','.$count.''; #'EXEC USP_ListAllLibraryFields @form_id = 2217, @StRow = '.$posStart.', @EndRow = '.$count; # @PosStart = '.$posStart.', @Count = '.$count.'
 
    my $sth = $dbh->prepare( $strSQL, );
-   $sth->execute();
+
+	 debug $strSQL;
+
+   $sth->execute() or MAP::API->fail( $sth->errstr . " ------- " . $strSQL);
 
    my $idfake = 1;
    while ( my $record = $sth->fetchrow_hashref())

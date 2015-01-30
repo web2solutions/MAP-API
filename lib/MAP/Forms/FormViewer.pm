@@ -154,10 +154,10 @@ post '/save.:format' => sub {
 		 $existing_columns = $existing_columns . $record->{COLUMN_NAME} . "|";
 	}
 
-	debug '     '. $strSQLCheckExistColumn;
-	debug '';
-	debug '';
-	debug $existing_columns;
+	#debug '     '. $strSQLCheckExistColumn;
+	#debug '';
+	#debug '';
+	#debug $existing_columns;
 
 
 
@@ -177,7 +177,7 @@ post '/save.:format' => sub {
 					#debug index($existing_columns, $key);
 					if ( index($existing_columns, '' .$key.'') != -1 )
 					{
-						debug 'exists';
+						#debug 'exists';
 						if ( $key ne 'data_id' )
 						{
 							$strUpdate = $strUpdate .'[' .$key.'] = \''.$hash{$key}.'\', ';
@@ -186,7 +186,7 @@ post '/save.:format' => sub {
 					}
 					else
 					{
-					debug '===       ' . $key . ' column not found';
+						#debug '===       ' . $key . ' column not found';
 					}
 				}
 			}
@@ -200,6 +200,12 @@ post '/save.:format' => sub {
 
 		my $sth = $dbh->prepare( $strSQLquery, );
 		$sth->execute(  ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLquery );
+
+
+		# save library fields data now
+		my $strSQLupdate_library_field = 'EXEC usp_SaveMapDataGroupByFormId_Main  @FormID = ?, @User_Id = ?, @ConnId = ?, @ConnectionID = ?';
+		$sth = $dbh->prepare( $strSQLupdate_library_field, );
+		$sth->execute( $form_id, $user_id, $connId, $connectionId ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLupdate_library_field );
 
 		MAP::API->normal_header();
 		return {
@@ -254,6 +260,11 @@ post '/save.:format' => sub {
 
 		my $sth = $dbh->prepare( $strSQLquery, );
 		$sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLquery );
+
+		# save library fields data now
+		my $strSQLupdate_library_field = 'EXEC usp_SaveMapDataGroupByFormId_Main  @FormID = ?, @User_Id = ?, @ConnId = ?, @ConnectionID = ?';
+		$sth = $dbh->prepare( $strSQLupdate_library_field, );
+		$sth->execute( $form_id, $user_id, $connId, $connectionId ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLupdate_library_field );
 
 		MAP::API->normal_header();
 		return {
@@ -434,6 +445,11 @@ post '/submit.:format' => sub {
 		my $sth = $dbh->prepare( $strSQLquery, );
 		$sth->execute(  ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLquery );
 
+		# save library fields data now
+		my $strSQLupdate_library_field = 'EXEC usp_SaveMapDataGroupByFormId_Main  @FormID = ?, @User_Id = ?, @ConnId = ?, @ConnectionID = ?';
+		$sth = $dbh->prepare( $strSQLupdate_library_field, );
+		$sth->execute( $form_id, $user_id, $connId, $connectionId ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLupdate_library_field );
+
 		MAP::API->normal_header();
 		return {
 				status => 'success',
@@ -487,6 +503,11 @@ post '/submit.:format' => sub {
 
 		my $sth = $dbh->prepare( $strSQLquery, );
 		$sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLquery );
+
+		# save library fields data now
+		my $strSQLupdate_library_field = 'EXEC usp_SaveMapDataGroupByFormId_Main  @FormID = ?, @User_Id = ?, @ConnId = ?, @ConnectionID = ?';
+		$sth = $dbh->prepare( $strSQLupdate_library_field, );
+		$sth->execute( $form_id, $user_id, $connId, $connectionId ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLupdate_library_field );
 
 		MAP::API->normal_header();
 		return {
