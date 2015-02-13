@@ -589,7 +589,8 @@ post '/github_hooks.:format' => sub {
 				'aravind.buddha@mediaus.com',
 				'nivya.rajeev@mediaus.com',
 				'vince.rossignol@cairsolutions.com',
-				'joseph.abraham@mediaus.com'
+				'joseph.abraham@mediaus.com',
+				'jenson@mediaus.com'
 		);
 
 		my $mail = new Mail::SendEasy(
