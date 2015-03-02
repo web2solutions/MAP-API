@@ -7,7 +7,7 @@ use Data::Dump qw(dump);
 
 our $VERSION = '0.1';
 
-my $branch = ''; # default test
+my $branch = 'test'; # default test
 #my $apiURL = "https://api.myadoptionportal.com";
 #my $apiURLdev = "https://apidev.myadoptionportal.com";
 #my $apiURLtest = "https://perltest.myadoptionportal.com";
@@ -25,6 +25,30 @@ set 'log'         => 'debug';
 set 'show_errors' => 1;
 set 'warnings'    => 0;
 #set 'template'    => 'template_toolkit';
+
+
+use MAP::auth::Auth;
+
+use MAP::dataStores::ClientListing;
+use MAP::LibraryFields::Fields;
+use MAP::LibraryFields::Category;
+use MAP::LibraryFields::SubCategory;
+use MAP::LibraryFields::Options;
+use MAP::LibraryFields::Groups;
+use MAP::LibraryFields::Tags;
+use MAP::Forms::Forms;
+use MAP::EmailMessages::EmailMessages;
+use MAP::Agency::Agency;
+use MAP::DHTMLX;
+use MAP::Agencies::Agencies;
+use MAP::contact::Contact;
+use MAP::address::ZipSearch;
+use MAP::Users;
+use MAP::messages::Messages;
+
+use MAP::Payments;
+
+use MAP::gridMaker;
 
 
 
@@ -113,26 +137,6 @@ hook after => sub {
 };
 
 
-use MAP::auth::Auth;
-
-use MAP::dataStores::ClientListing;
-use MAP::LibraryFields::Fields;
-use MAP::LibraryFields::Category;
-use MAP::LibraryFields::SubCategory;
-use MAP::LibraryFields::Options;
-use MAP::LibraryFields::Groups;
-use MAP::LibraryFields::Tags;
-use MAP::Forms::Forms;
-use MAP::EmailMessages::EmailMessages;
-use MAP::Agency::Agency;
-use MAP::DHTMLX;
-use MAP::Agencies::Agencies;
-use MAP::contact::Contact;
-use MAP::address::ZipSearch;
-use MAP::Users;
-use MAP::messages::Messages;
-
-use MAP::Payments;
 
 
 sub set_branch{
