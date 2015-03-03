@@ -86,6 +86,15 @@ hook after => sub {
 
 						my $client_session_id = Dancer::request->header("X-client-session-id") || 0;
 
+						my $agency_database = '';
+						#debug 'xxxxxxxxxxxxxxxxxx';
+						#debug Dancer::request->header("X-db");
+						if ( defined Dancer::request->header("X-db")  )
+						{
+								$agency_database = MIME::Base64::decode( Dancer::request->header("X-db") );
+						}
+
+
 						my $json_document = to_json({
 								request_date => $rdate,
 								request_time => $rtime,
@@ -95,7 +104,7 @@ hook after => sub {
 								origin_domain => $origin,
 								referer => $referer,
 								agency_id => $agency_id,
-								agency_database => MIME::Base64::decode( Dancer::request->header("X-db") ),
+								agency_database => $agency_database,
 								token => $token,
 								client_ip => $client_ip,
 								client_vendor => $client_vendor,
