@@ -11,7 +11,7 @@ our $VERSION = '0.1';
 my $collectionName = 'tables';
 my $primaryKey = 'gridmaker_table_id';
 my $tableName = 'gridmaker_table';
-my $defaultColumns = 'gridmaker_table_id,table_name,grid_name';
+my $defaultColumns = 'field_id,table_name,grid_name,grid_date_format,gridmaker_table_id';
 
 
 my $relationalColumn = undef; # undef
@@ -285,18 +285,10 @@ prefix $prefix; # | undef
 		  my $sql_placeholders = "";
 		  my @sql_values;
 
-		  debug '===========================';
-			debug ref($hash);
 
 
-			if ( ref($hash) eq 'HASH' ) {
-
-			}
-			elsif( ref($hash) eq 'HASH' )
-			{
-
-			}
-
+		  # ===== especific
+		  my $table_name = params->{table_name}  or MAP::API->fail( "The param table_name is mandatory for this end point" );
 
 		  my %hash = %{ $hash };
 
@@ -325,12 +317,28 @@ prefix $prefix; # | undef
 			  }
 		  }
 
+
+		# ===== especific
+			my $strSQLtable = '
+				CREATE TABLE dbo.'. $table_name .'(
+						[data_id] INT not null Identity(1,1),
+						[user_id] INT not null,
+						[connID] INT not null,
+						[ConnectionId] INT not null,
+						CONSTRAINT '. $table_name .'_pkey PRIMARY KEY (data_id)
+				);
+			';
+			my $sth = $dbh->prepare( $strSQLtable, );
+			$sth->execute( ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQLtable );
+
+
 		  my $strSQL = 'INSERT INTO
 			  '.$tableName.'(' . substr($sql_columns, 0, -2) . ')
 			  VALUES(' . substr($sql_placeholders, 0, -2) . ');
 			  SELECT SCOPE_IDENTITY() AS '.$primaryKey.';
 		  ';
-		  my $sth = $dbh->prepare( $strSQL, );
+
+			$sth = $dbh->prepare( $strSQL, );
 		  $sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL );
 		  my $record_id = 0;
 		  while ( my $record = $sth->fetchrow_hashref())
