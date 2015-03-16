@@ -377,6 +377,10 @@ put '/'.$collectionName.'/:'.$primaryKey.'/metadata.:format' => sub {
 	# path of files json
 	my $path = $root_path . '/' .$agency_id . '/dhtmlx_form_' . $item_id . '.json';
 
+	debug $path;
+
+	debug $template;
+
 	# create or change files json
 	open(FILE, ">$path") || MAP::API->fail( "unable save file" );
 	print FILE $template;
