@@ -232,7 +232,7 @@ sub dbh{
     if ( $os eq "linux") {
 		$ENV{DSQUERY} = $server;
 		$dbh = DBI->connect('DBI:Sybase:database=IRRISCentral;scriptName=MAP_API;', "ESCairs", "FishB8", {
-				RaiseError => 1
+				RaiseError => 0
 		}) or  MAP::API->fail("Can't connect to sql server: $DBI::errstr");
 		$dbh->do('use IRRISCentral');
 
@@ -246,7 +246,7 @@ sub dbh{
 		$dbh->disconnect;
 
 		$dbh = DBI->connect('DBI:Sybase:database='.$database.';scriptName=MAP_API;', "ESCairs", "FishB8", {
-				RaiseError => 1
+				RaiseError => 0
 		}) or  MAP::API->fail("Can't connect to sql server: $DBI::errstr");
 		$dbh->do('use '. $database);
 	}

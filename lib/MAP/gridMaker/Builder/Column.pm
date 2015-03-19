@@ -479,10 +479,12 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 
 	$defaultColumns = $defaultColumns . $primaryKey;
 
-	my $item_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
-	$item_id=~ s/'//g;
+	#my $item_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
+	#$item_id=~ s/'//g;
 	#my $agency_id = request->header("X-AId") || MAP::API->fail( "please provide agency_id" );
 	#$defaultColumns = MAP::API->normalizeColumnNames( $defaultColumns, $defaultColumns );
+
+	my $column_name  = params->{'column_name'} || MAP::API->fail( "column_name is missing on url" );
 
 	my $hashStr = params->{hash} || '{}';
 	my $json_bytes = encode('UTF-8', $hashStr);
@@ -511,9 +513,9 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 	}
 
 	my $dbh = MAP::API->dbh();
-	my $strSQL = 'UPDATE '.$tableName.' SET ' . substr($sql_setcolumns, 0, -2) . ' WHERE ['.$primaryKey.'] IN ('.$item_id.')';
+	my $strSQL = 'UPDATE '.$tableName.' SET ' . substr($sql_setcolumns, 0, -2) . ' WHERE column_name = \''.$column_name.'\' ';
 	my $sth = $dbh->prepare( $strSQL, );
-	$sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL . " --- " . dump(@sql_values) . " ----- " . $item_id );
+	$sth->execute( @sql_values ) or MAP::API->fail( $sth->errstr . " --------- ".$strSQL . " --- " . dump(@sql_values) . " ----- " . $column_name );
 
 
 	MAP::API->normal_header();
@@ -524,7 +526,7 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 			status => 'err',
 			response => 'resource not found. nothing updated',
 			sql => $strSQL,
-			''.$primaryKey.'' => $item_id,
+			'column_name' => $column_name,
 			place_holders_dump => dump(@sql_values)
 		};
 	}
@@ -532,9 +534,9 @@ put '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
 	{
 		return {
 			status => 'success',
-			response => 'Item '.$item_id.' updated on ' . $collectionName,
+			response => 'Item '.$column_name.' updated on ' . $collectionName,
 			sql => $strSQL,
-			''.$primaryKey.'' => $item_id,
+			'column_name' => $column_name,
 			place_holders_dump => dump(@sql_values)
 		};
 	}
