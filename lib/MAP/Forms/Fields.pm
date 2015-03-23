@@ -14,7 +14,7 @@ our $VERSION = '0.1';
 my $collectionName = 'fields';
 my $primaryKey = 'field_id';
 my $tableName = 'Formmaker_Fields';
-my $defaultColumns = 'page_id,type,type_standard,label,caption,name,tooltip,required,verification,size,textareacolumn,textarearow,index,text_size,value,mailsendercopy,key_id,use_library,library_field_id,library_field_name,section_id,field_group_id,field_format,use_as_label,MultiRecord,className,mask_to_use,info,note,grouping,tips,textdefault,validate,rule_action,rule_match,rule_enable';
+my $defaultColumns = 'page_id,type,type_standard,label,caption,name,tooltip,required,verification,size,textareacolumn,textarearow,index,text_size,value,mailsendercopy,key_id,use_library,library_field_id,library_field_name,section_id,field_group_id,field_format,use_as_label,MultiRecord,className,mask_to_use,info,note,grouping,tips,textdefault,validate,rule_action,rule_match,rule_enable,gridmaker_table_id,grid_maker_json';
 
 my $relationalColumn = 'page_id';
 
