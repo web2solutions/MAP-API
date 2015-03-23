@@ -17,7 +17,7 @@ our $VERSION = '0.1';
 my $collectionName = 'forms';
 my $primaryKey = 'form_id';
 my $tableName = 'formmaker_properties';
-my $defaultColumns = 'form_id,formlabel,formname,formtext,formindex,redirecturl,adminalert,autorespond,tiplocation,display,preview,nomultiple,captcha,key_id,form_agency_id,submissionmsg,displaycolumns,numofrecords,formtype,formdisplaytype,skin';
+my $defaultColumns = 'form_id,formlabel,formname,formtext,formindex,redirecturl,adminalert,autorespond,tiplocation,display,preview,nomultiple,captcha,key_id,form_agency_id,submissionmsg,displaycolumns,numofrecords,formtype,formdisplaytype,skin,has_json';
 
 my $api_path = '/var/www/html/userhome/MAP-API';
 
@@ -49,9 +49,18 @@ get '/'.$collectionName.'.:format' => sub {
 
    MAP::API->check_authorization( params->{token}, request->header("Origin") );
 
+	 my $agency_id = request->header("X-AId") ? request->header("X-AId") : ( params->{agency_id} ? params->{agency_id} : -1 );
+
    my $strColumns = params->{columns} || $defaultColumns;
    my @columns = split(/,/, $strColumns);
    $strColumns = MAP::API->normalizeColumnNames( $strColumns, $defaultColumns );
+
+	 #debug $strColumns;
+
+	 $strColumns =~ s/\,\[has_json\]//g;
+
+	 #debug $strColumns;
+
 
    my $relational_id = undef;
    if ( defined(  $relationalColumn ) ) {
@@ -99,15 +108,50 @@ get '/'.$collectionName.'.:format' => sub {
 		};
 		foreach (@columns)
 		{
-			if (defined($record->{$_})) {
-				push @values, decode('UTF-8', $record->{$_});
-				$row->{$_} = decode('UTF-8', $record->{$_});
-			}
-			else
+			if ($_ eq 'has_json') {
+								# path of files json
+								my $path = $root_path . '/' .$agency_id . '/dhtmlx_form_' . $record->{$primaryKey} . '.json';
+
+								if ( -e $path ) {
+
+												#debug ( $path );
+												#debug ( -e $path );
+
+
+												push @values, "yes";
+												$row->{$_} = "yes";
+								}
+								else
+								{
+												push @values, "no";
+												$row->{$_} = "no";
+								}
+
+
+								#unless(-e $root_path . '/' .$agency_id . '/') {
+								#mkdir($root_path . '/' .$agency_id . '/', 0777);
+							#}
+
+			}else
 			{
-				push @values, "";
-				$row->{$_} = "";
+
+				      if (defined($record->{$_})) {
+								push @values, decode('UTF-8', $record->{$_});
+								$row->{$_} = decode('UTF-8', $record->{$_});
+							}
+							else
+							{
+								push @values, "";
+								$row->{$_} = "";
+							}
+
 			}
+
+
+
+
+
+
 		}
 		$row->{data} = [@values];
 		push @records, $row;
@@ -377,9 +421,9 @@ put '/'.$collectionName.'/:'.$primaryKey.'/metadata.:format' => sub {
 	# path of files json
 	my $path = $root_path . '/' .$agency_id . '/dhtmlx_form_' . $item_id . '.json';
 
-	debug $path;
+	#debug $path;
 
-	debug $template;
+	#debug $template;
 
 	# create or change files json
 	open(FILE, ">$path") || MAP::API->fail( "unable save file" );
@@ -478,6 +522,8 @@ get '/'.$collectionName.'/:'.$primaryKey.'.:format' => sub {
    $tableName = 'formmaker_properties';
 
    my $strColumns = params->{columns} || $defaultColumns;
+	 $strColumns =~ s/\,\[has_json\]//g;
+	 $strColumns =~ s/\,has_json//g;
    my $str_id  = params->{$primaryKey} || MAP::API->fail( "id is missing on url" );
 
    # ===== especific
