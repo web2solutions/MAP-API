@@ -462,8 +462,9 @@ sub SelectOne
 	my $self = shift;
 
 	my $dbh = dbh();
-	my $res = $dbh->selectrow_arrayref(shift,undef,@_);
-	die"Can't execute select:\n".$dbh->errstr if $dbh->err;
+	my $sql = shift;
+	my $res = $dbh->selectrow_arrayref($sql,undef,@_);
+	die"Can't execute select:\n".$dbh->errstr . '    -   '. $sql if $dbh->err;
 	return $res->[0];
 }
 
