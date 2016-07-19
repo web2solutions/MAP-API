@@ -17,8 +17,6 @@ Database Server: SQL Server
 
 **What is RESTful?**
 
-We could shortly describe it as AJAX on steroids. It defines standards for HTTP requests and responses but also implements advanced features in terms of communication between client and server.
-
 >" Representational state transfer (REST) is an abstraction of the architecture of the World Wide Web; more precisely, REST is an architectural style consisting of a coordinated set of architectural constraints applied to components, connectors, and data elements, within a distributed hypermedia system. "
 
 >" REST ignores the details of component implementation and protocol syntax in order to focus on the roles of components, the constraints upon their interaction with other components, and their interpretation of significant data elements. "
